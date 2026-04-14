@@ -6,21 +6,24 @@ const API_BASE = window.location.hostname.includes("localhost")
 console.log("API BASE:", API_BASE);
 
 // ─────────────────────────────
-// 🔹 AUTH MODAL (FIXED)
+// 🔹 AUTH MODAL
 // ─────────────────────────────
 function openAuthModal() {
     const modal = document.getElementById("authModal");
-    if (modal) modal.style.display = "block";
-    console.log("Auth modal opened");
+    if (modal) {
+        modal.style.display = "block";
+    }
 }
 
 function closeAuthModal() {
     const modal = document.getElementById("authModal");
-    if (modal) modal.style.display = "none";
+    if (modal) {
+        modal.style.display = "none";
+    }
 }
 
 // ─────────────────────────────
-// 🔹 FETCH HELPERS
+// 🔹 API HELPERS
 // ─────────────────────────────
 async function apiGet(endpoint) {
     try {
@@ -33,11 +36,11 @@ async function apiGet(endpoint) {
             }
         });
 
-        if (!res.ok) throw new Error("API error");
+        if (!res.ok) throw new Error(`GET ${endpoint} failed`);
 
         return await res.json();
     } catch (err) {
-        console.error("API Error:", err);
+        console.error("API GET Error:", err);
         return null;
     }
 }
@@ -52,9 +55,11 @@ async function apiPost(endpoint, body) {
             body: JSON.stringify(body)
         });
 
+        if (!res.ok) throw new Error(`POST ${endpoint} failed`);
+
         return await res.json();
     } catch (err) {
-        console.error("POST Error:", err);
+        console.error("API POST Error:", err);
         return null;
     }
 }
@@ -66,16 +71,24 @@ async function login() {
     const email = document.getElementById("authEmail")?.value;
     const password = document.getElementById("authPassword")?.value;
 
-    const data = await apiPost("/api/auth/login", { email, password });
+    if (!email || !password) {
+        alert("Enter email & password");
+        return;
+    }
 
-    console.log("Login:", data);
+    const data = await apiPost("/api/auth/login", {
+        email,
+        password
+    });
+
+    console.log("Login Response:", data);
 
     if (data && data.access_token) {
         localStorage.setItem("token", data.access_token);
-        alert("Login successful");
+        alert("Login successful ✅");
         location.reload();
     } else {
-        alert("Login failed");
+        alert("Login failed ❌");
     }
 }
 
@@ -83,14 +96,22 @@ async function signup() {
     const email = document.getElementById("authEmail")?.value;
     const password = document.getElementById("authPassword")?.value;
 
-    const data = await apiPost("/api/auth/signup", { email, password });
+    if (!email || !password) {
+        alert("Enter email & password");
+        return;
+    }
 
-    console.log("Signup:", data);
+    const data = await apiPost("/api/auth/signup", {
+        email,
+        password
+    });
+
+    console.log("Signup Response:", data);
 
     if (data && data.id) {
-        alert("Signup successful. Please login.");
+        alert("Signup successful 🎉 Please login.");
     } else {
-        alert("Signup failed");
+        alert("Signup failed ❌");
     }
 }
 
@@ -103,13 +124,16 @@ async function loadBusinesses() {
     const select = document.getElementById("businessSelect");
 
     if (!select) {
-        console.warn("businessSelect not found in DOM");
+        console.warn("businessSelect not found");
         return;
     }
 
     const data = await apiGet("/api/businesses/");
 
-    if (!data) return;
+    if (!data || !Array.isArray(data)) {
+        console.warn("No businesses found");
+        return;
+    }
 
     select.innerHTML = '<option value="">— Select business —</option>';
 
@@ -127,7 +151,7 @@ async function loadBusinesses() {
 }
 
 // ─────────────────────────────
-// 🔹 DASHBOARD
+// 🔹 DASHBOARD (FIXED SYNTAX)
 // ─────────────────────────────
 async function loadDashboard() {
     if (!selectedBusinessId) return;
@@ -136,14 +160,19 @@ async function loadDashboard() {
 
     if (!data) return;
 
-    document.getElementById("totalLeads")?.innerText = data.total_leads || "—";
-    document.getElementById("whatsappOptIn")?.innerText = data.whatsapp_opt_in || "—";
-    document.getElementById("qrScans")?.innerText = data.qr_scans || "—";
-    document.getElementById("churnRisk")?.innerText = data.churn_risk || "—";
-    document.getElementById("campaignsSent")?.innerText = data.campaigns_sent || "—";
-    document.getElementById("googleRating")?.innerText = data.google_rating || "—";
-    document.getElementById("vipCustomers")?.innerText = data.vip_customers || "—";
-    document.getElementById("revenueTracked")?.innerText = data.revenue_tracked || "—";
+    const set = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = value || "—";
+    };
+
+    set("totalLeads", data.total_leads);
+    set("whatsappOptIn", data.whatsapp_opt_in);
+    set("qrScans", data.qr_scans);
+    set("churnRisk", data.churn_risk);
+    set("campaignsSent", data.campaigns_sent);
+    set("googleRating", data.google_rating);
+    set("vipCustomers", data.vip_customers);
+    set("revenueTracked", data.revenue_tracked);
 }
 
 // ─────────────────────────────
