@@ -6,7 +6,21 @@ const API_BASE = window.location.hostname.includes("localhost")
 console.log("API BASE:", API_BASE);
 
 // ─────────────────────────────
-// 🔹 Fetch Wrapper (with token)
+// 🔹 AUTH MODAL (FIXED)
+// ─────────────────────────────
+function openAuthModal() {
+    const modal = document.getElementById("authModal");
+    if (modal) modal.style.display = "block";
+    console.log("Auth modal opened");
+}
+
+function closeAuthModal() {
+    const modal = document.getElementById("authModal");
+    if (modal) modal.style.display = "none";
+}
+
+// ─────────────────────────────
+// 🔹 FETCH HELPERS
 // ─────────────────────────────
 async function apiGet(endpoint) {
     try {
@@ -30,13 +44,10 @@ async function apiGet(endpoint) {
 
 async function apiPost(endpoint, body) {
     try {
-        const token = localStorage.getItem("token");
-
         const res = await fetch(`${API_BASE}${endpoint}`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                ...(token && { Authorization: `Bearer ${token}` })
+                "Content-Type": "application/json"
             },
             body: JSON.stringify(body)
         });
@@ -52,13 +63,10 @@ async function apiPost(endpoint, body) {
 // 🔹 AUTH
 // ─────────────────────────────
 async function login() {
-    const email = document.getElementById("authEmail").value;
-    const password = document.getElementById("authPassword").value;
+    const email = document.getElementById("authEmail")?.value;
+    const password = document.getElementById("authPassword")?.value;
 
-    const data = await apiPost("/api/auth/login", {
-        email,
-        password
-    });
+    const data = await apiPost("/api/auth/login", { email, password });
 
     console.log("Login:", data);
 
@@ -72,13 +80,10 @@ async function login() {
 }
 
 async function signup() {
-    const email = document.getElementById("authEmail").value;
-    const password = document.getElementById("authPassword").value;
+    const email = document.getElementById("authEmail")?.value;
+    const password = document.getElementById("authPassword")?.value;
 
-    const data = await apiPost("/api/auth/signup", {
-        email,
-        password
-    });
+    const data = await apiPost("/api/auth/signup", { email, password });
 
     console.log("Signup:", data);
 
@@ -95,9 +100,14 @@ async function signup() {
 let selectedBusinessId = null;
 
 async function loadBusinesses() {
-    const data = await apiGet("/api/businesses/");
-
     const select = document.getElementById("businessSelect");
+
+    if (!select) {
+        console.warn("businessSelect not found in DOM");
+        return;
+    }
+
+    const data = await apiGet("/api/businesses/");
 
     if (!data) return;
 
@@ -126,14 +136,14 @@ async function loadDashboard() {
 
     if (!data) return;
 
-    document.getElementById("totalLeads").innerText = data.total_leads || "—";
-    document.getElementById("whatsappOptIn").innerText = data.whatsapp_opt_in || "—";
-    document.getElementById("qrScans").innerText = data.qr_scans || "—";
-    document.getElementById("churnRisk").innerText = data.churn_risk || "—";
-    document.getElementById("campaignsSent").innerText = data.campaigns_sent || "—";
-    document.getElementById("googleRating").innerText = data.google_rating || "—";
-    document.getElementById("vipCustomers").innerText = data.vip_customers || "—";
-    document.getElementById("revenueTracked").innerText = data.revenue_tracked || "—";
+    document.getElementById("totalLeads")?.innerText = data.total_leads || "—";
+    document.getElementById("whatsappOptIn")?.innerText = data.whatsapp_opt_in || "—";
+    document.getElementById("qrScans")?.innerText = data.qr_scans || "—";
+    document.getElementById("churnRisk")?.innerText = data.churn_risk || "—";
+    document.getElementById("campaignsSent")?.innerText = data.campaigns_sent || "—";
+    document.getElementById("googleRating")?.innerText = data.google_rating || "—";
+    document.getElementById("vipCustomers")?.innerText = data.vip_customers || "—";
+    document.getElementById("revenueTracked")?.innerText = data.revenue_tracked || "—";
 }
 
 // ─────────────────────────────
