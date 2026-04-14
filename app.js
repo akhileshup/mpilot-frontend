@@ -1,125 +1,92 @@
-// 🔥 API BASE
+// 🔥 Detect environment
 const API_BASE = window.location.hostname.includes("localhost")
     ? "http://localhost:8000"
     : "https://mpilot-backend.onrender.com";
 
 console.log("API BASE:", API_BASE);
 
-// ─────────────────────────────
-// 🔹 AUTH MODAL
-// ─────────────────────────────
-function openAuthModal() {
-    const modal = document.getElementById("authModal");
-    if (modal) {
-        modal.style.display = "block";
+// 🔐 Store auth token
+let TOKEN = localStorage.getItem("token") || null;
+let CURRENT_BIZ = null;
+
+// ─────────────────────────────────────────────
+// 🔹 API Wrapper
+// ─────────────────────────────────────────────
+async function apiRequest(endpoint, method = "GET", body = null) {
+    try {
+        const res = await fetch(`${API_BASE}${endpoint}`, {
+            method,
+            headers: {
+                "Content-Type": "application/json",
+                ...(TOKEN && { "Authorization": `Bearer ${TOKEN}` })
+            },
+            body: body ? JSON.stringify(body) : null
+        });
+
+        if (!res.ok) throw new Error(await res.text());
+        return await res.json();
+    } catch (err) {
+        console.error("API Error:", err);
+        return null;
     }
+}
+
+// ─────────────────────────────────────────────
+// 🔹 AUTH FUNCTIONS
+// ─────────────────────────────────────────────
+function openAuthModal() {
+    document.getElementById("authModal").style.display = "block";
 }
 
 function closeAuthModal() {
-    const modal = document.getElementById("authModal");
-    if (modal) {
-        modal.style.display = "none";
-    }
-}
-
-// ─────────────────────────────
-// 🔹 API HELPERS
-// ─────────────────────────────
-async function apiGet(endpoint) {
-    try {
-        const token = localStorage.getItem("token");
-
-        const res = await fetch(`${API_BASE}${endpoint}`, {
-            headers: {
-                "Content-Type": "application/json",
-                ...(token && { Authorization: `Bearer ${token}` })
-            }
-        });
-
-        if (!res.ok) throw new Error(`GET ${endpoint} failed`);
-
-        return await res.json();
-    } catch (err) {
-        console.error("API GET Error:", err);
-        return null;
-    }
-}
-
-async function apiPost(endpoint, body) {
-    try {
-        const res = await fetch(`${API_BASE}${endpoint}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
-        });
-
-        if (!res.ok) throw new Error(`POST ${endpoint} failed`);
-
-        return await res.json();
-    } catch (err) {
-        console.error("API POST Error:", err);
-        return null;
-    }
-}
-
-// ─────────────────────────────
-// 🔹 AUTH
-// ─────────────────────────────
-async function login() {
-    const email = document.getElementById("authEmail")?.value;
-    const password = document.getElementById("authPassword")?.value;
-
-    if (!email || !password) {
-        alert("Enter email & password");
-        return;
-    }
-
-    const data = await apiPost("/api/auth/login", {
-        email,
-        password
-    });
-
-    console.log("Login Response:", data);
-
-    if (data && data.access_token) {
-        localStorage.setItem("token", data.access_token);
-        alert("Login successful ✅");
-        location.reload();
-    } else {
-        alert("Login failed ❌");
-    }
+    document.getElementById("authModal").style.display = "none";
 }
 
 async function signup() {
-    const email = document.getElementById("authEmail")?.value;
-    const password = document.getElementById("authPassword")?.value;
+    const email = document.getElementById("authEmail").value;
+    const password = document.getElementById("authPassword").value;
 
-    if (!email || !password) {
-        alert("Enter email & password");
-        return;
-    }
-
-    const data = await apiPost("/api/auth/signup", {
+    const res = await apiRequest("/api/auth/signup", "POST", {
         email,
         password
     });
 
-    console.log("Signup Response:", data);
-
-    if (data && data.id) {
-        alert("Signup successful 🎉 Please login.");
-    } else {
-        alert("Signup failed ❌");
+    if (res?.access_token) {
+        TOKEN = res.access_token;
+        localStorage.setItem("token", TOKEN);
+        alert("Signup success");
+        closeAuthModal();
+        initApp();
     }
 }
 
-// ─────────────────────────────
-// 🔹 BUSINESS
-// ─────────────────────────────
-let selectedBusinessId = null;
+async function login() {
+    const email = document.getElementById("authEmail").value;
+    const password = document.getElementById("authPassword").value;
 
+    const res = await apiRequest("/api/auth/login", "POST", {
+        email,
+        password
+    });
+
+    if (res?.access_token) {
+        TOKEN = res.access_token;
+        localStorage.setItem("token", TOKEN);
+        alert("Login success");
+        closeAuthModal();
+        initApp();
+    }
+}
+
+// expose globally (IMPORTANT)
+window.openAuthModal = openAuthModal;
+window.closeAuthModal = closeAuthModal;
+window.login = login;
+window.signup = signup;
+
+// ─────────────────────────────────────────────
+// 🔹 LOAD BUSINESSES
+// ─────────────────────────────────────────────
 async function loadBusinesses() {
     const select = document.getElementById("businessSelect");
 
@@ -128,12 +95,9 @@ async function loadBusinesses() {
         return;
     }
 
-    const data = await apiGet("/api/businesses/");
+    const data = await apiRequest("/api/businesses/");
 
-    if (!data || !Array.isArray(data)) {
-        console.warn("No businesses found");
-        return;
-    }
+    if (!data || !Array.isArray(data)) return;
 
     select.innerHTML = '<option value="">— Select business —</option>';
 
@@ -145,43 +109,54 @@ async function loadBusinesses() {
     });
 
     select.addEventListener("change", () => {
-        selectedBusinessId = select.value;
+        CURRENT_BIZ = select.value;
         loadDashboard();
     });
 }
 
-// ─────────────────────────────
-// 🔹 DASHBOARD (FIXED SYNTAX)
-// ─────────────────────────────
+// ─────────────────────────────────────────────
+// 🔹 DASHBOARD
+// ─────────────────────────────────────────────
 async function loadDashboard() {
-    if (!selectedBusinessId) return;
+    if (!CURRENT_BIZ) return;
 
-    const data = await apiGet(`/api/dashboard/stats/${selectedBusinessId}`);
+    const data = await apiRequest(`/api/dashboard/stats/${CURRENT_BIZ}`);
 
     if (!data) return;
 
-    const set = (id, value) => {
-        const el = document.getElementById(id);
-        if (el) el.innerText = value || "—";
-    };
-
-    set("totalLeads", data.total_leads);
-    set("whatsappOptIn", data.whatsapp_opt_in);
-    set("qrScans", data.qr_scans);
-    set("churnRisk", data.churn_risk);
-    set("campaignsSent", data.campaigns_sent);
-    set("googleRating", data.google_rating);
-    set("vipCustomers", data.vip_customers);
-    set("revenueTracked", data.revenue_tracked);
+    setText("totalLeads", data.total_leads);
+    setText("whatsappOptIn", data.whatsapp_opt_in);
+    setText("qrScans", data.qr_scans);
+    setText("churnRisk", data.churn_risk);
+    setText("campaignsSent", data.campaigns_sent);
+    setText("googleRating", data.google_rating);
+    setText("vipCustomers", data.vip_customers);
+    setText("revenueTracked", data.revenue_tracked);
 }
 
-// ─────────────────────────────
+// ─────────────────────────────────────────────
+// 🔹 HELPERS
+// ─────────────────────────────────────────────
+function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.innerText = value ?? "—";
+}
+
+// ─────────────────────────────────────────────
 // 🔹 INIT
-// ─────────────────────────────
+// ─────────────────────────────────────────────
 async function initApp() {
     console.log("🚀 MPilot Frontend Loaded");
+
+    if (!TOKEN) {
+        console.log("User not logged in");
+        return;
+    }
 
     await loadBusinesses();
 }
 
+// ─────────────────────────────────────────────
+// 🔹 START
+// ─────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", initApp);
