@@ -1,16 +1,18 @@
-// 🔥 Detect environment
+// 🔥 API BASE
 const API_BASE = window.location.hostname.includes("localhost")
     ? "http://localhost:8000"
     : "https://mpilot-backend.onrender.com";
 
 console.log("API BASE:", API_BASE);
 
-// 🔐 Store auth token
+// ─────────────────────────────────────────────
+// 🔹 GLOBAL STATE
+// ─────────────────────────────────────────────
 let TOKEN = localStorage.getItem("token") || null;
 let CURRENT_BIZ = null;
 
 // ─────────────────────────────────────────────
-// 🔹 API Wrapper
+// 🔹 FETCH WRAPPER
 // ─────────────────────────────────────────────
 async function apiRequest(endpoint, method = "GET", body = null) {
     try {
@@ -23,73 +25,74 @@ async function apiRequest(endpoint, method = "GET", body = null) {
             body: body ? JSON.stringify(body) : null
         });
 
-        if (!res.ok) throw new Error(await res.text());
+        if (!res.ok) {
+            console.error("API ERROR:", endpoint, res.status);
+            return null;
+        }
+
         return await res.json();
     } catch (err) {
-        console.error("API Error:", err);
+        console.error("API FAIL:", err);
         return null;
     }
 }
 
 // ─────────────────────────────────────────────
-// 🔹 AUTH FUNCTIONS
+// 🔹 AUTH MODAL (FIXED)
 // ─────────────────────────────────────────────
 function openAuthModal() {
-    document.getElementById("authModal").style.display = "block";
+    const modal = document.getElementById("authModal");
+    if (modal) modal.style.display = "block";
 }
 
 function closeAuthModal() {
-    document.getElementById("authModal").style.display = "none";
+    const modal = document.getElementById("authModal");
+    if (modal) modal.style.display = "none";
 }
 
-async function signup() {
-    const email = document.getElementById("authEmail").value;
-    const password = document.getElementById("authPassword").value;
-
-    const res = await apiRequest("/api/auth/signup", "POST", {
-        email,
-        password
-    });
-
-    if (res?.access_token) {
-        TOKEN = res.access_token;
-        localStorage.setItem("token", TOKEN);
-        alert("Signup success");
-        closeAuthModal();
-        initApp();
-    }
-}
-
+// 🔹 LOGIN
 async function login() {
-    const email = document.getElementById("authEmail").value;
-    const password = document.getElementById("authPassword").value;
+    const email = document.getElementById("email")?.value;
+    const password = document.getElementById("password")?.value;
 
     const res = await apiRequest("/api/auth/login", "POST", {
         email,
         password
     });
 
-    if (res?.access_token) {
+    if (res && res.access_token) {
         TOKEN = res.access_token;
         localStorage.setItem("token", TOKEN);
-        alert("Login success");
+        alert("Login successful");
         closeAuthModal();
         initApp();
+    } else {
+        alert("Login failed");
     }
 }
 
-// expose globally (IMPORTANT)
-window.openAuthModal = openAuthModal;
-window.closeAuthModal = closeAuthModal;
-window.login = login;
-window.signup = signup;
+// 🔹 SIGNUP
+async function signup() {
+    const email = document.getElementById("email")?.value;
+    const password = document.getElementById("password")?.value;
+
+    const res = await apiRequest("/api/auth/signup", "POST", {
+        email,
+        password
+    });
+
+    if (res) {
+        alert("Signup successful. Please login.");
+    } else {
+        alert("Signup failed");
+    }
+}
 
 // ─────────────────────────────────────────────
 // 🔹 LOAD BUSINESSES
 // ─────────────────────────────────────────────
 async function loadBusinesses() {
     const select = document.getElementById("businessSelect");
-
     if (!select) {
         console.warn("businessSelect not found");
         return;
@@ -97,9 +100,9 @@ async function loadBusinesses() {
 
     const data = await apiRequest("/api/businesses/");
 
-    if (!data || !Array.isArray(data)) return;
+    if (!data) return;
 
-    select.innerHTML = '<option value="">— Select business —</option>';
+    select.innerHTML = '<option value="">Select Business</option>';
 
     data.forEach(biz => {
         const option = document.createElement("option");
@@ -108,10 +111,10 @@ async function loadBusinesses() {
         select.appendChild(option);
     });
 
-    select.addEventListener("change", () => {
+    select.onchange = () => {
         CURRENT_BIZ = select.value;
         loadDashboard();
-    });
+    };
 }
 
 // ─────────────────────────────────────────────
@@ -135,7 +138,7 @@ async function loadDashboard() {
 }
 
 // ─────────────────────────────────────────────
-// 🔹 HELPERS
+// 🔹 SAFE DOM SETTER
 // ─────────────────────────────────────────────
 function setText(id, value) {
     const el = document.getElementById(id);
@@ -146,17 +149,13 @@ function setText(id, value) {
 // 🔹 INIT
 // ─────────────────────────────────────────────
 async function initApp() {
-    console.log("🚀 MPilot Frontend Loaded");
-
-    if (!TOKEN) {
-        console.log("User not logged in");
-        return;
-    }
+    console.log("🚀 MPilot Loaded");
 
     await loadBusinesses();
+
+    if (CURRENT_BIZ) {
+        await loadDashboard();
+    }
 }
 
-// ─────────────────────────────────────────────
-// 🔹 START
-// ─────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", initApp);
