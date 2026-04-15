@@ -470,6 +470,31 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 .chnav-sub{font-size:10px;color:var(--muted);margin-top:1px}
 .chnav-badge{font-size:9px;padding:2px 7px;border-radius:99px;white-space:nowrap}
 
+
+/* ── Shared Plan Card Styles (upgrade modal + pricing modal) ── */
+.plan-card{background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:18px;display:flex;flex-direction:column;position:relative;transition:border-color .2s}
+.plan-card:hover{border-color:rgba(255,255,255,.15)}
+.plan-card.popular{border-color:var(--accent);background:rgba(108,99,255,.06)}
+.plan-hot-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:3px 12px;border-radius:20px;white-space:nowrap}
+.plan-name{font-family:var(--fh);font-size:15px;font-weight:700;margin-bottom:3px}
+.plan-card.popular .plan-name{color:var(--accent)}
+.plan-price{font-family:var(--fh);font-size:28px;font-weight:800;line-height:1;margin:10px 0 3px}
+.plan-price sup{font-size:14px;font-weight:500;vertical-align:top;margin-top:5px;font-family:var(--fb);color:var(--muted)}
+.plan-price sub{font-size:12px;font-weight:400;color:var(--muted);font-family:var(--fb)}
+.plan-period{font-size:10.5px;color:var(--muted);margin-bottom:5px}
+.plan-desc{font-size:11.5px;color:var(--muted);margin-bottom:12px;min-height:28px;line-height:1.5}
+.plan-limits-bar{background:rgba(108,99,255,.08);border:1px solid rgba(108,99,255,.15);border-radius:7px;padding:6px 10px;margin-bottom:12px;font-size:10.5px;color:var(--accent);font-weight:500;text-align:center}
+.plan-divider{height:1px;background:var(--border);margin:10px 0}
+.plan-feats{list-style:none;margin-bottom:16px;flex:1}
+.plan-feats li{font-size:11.5px;padding:4px 0;display:flex;align-items:flex-start;gap:7px;color:var(--muted);line-height:1.5;border-bottom:1px solid rgba(255,255,255,.04)}
+.plan-feats li.on{color:var(--text)}
+.plan-feats li:last-child{border-bottom:none}
+.plan-feats .ck{color:var(--a2);flex-shrink:0;font-size:12px;margin-top:1px}
+.plan-feats .cx{color:var(--muted);opacity:.28;flex-shrink:0;font-size:12px;margin-top:1px}
+.plan-btn{width:100%;padding:9px;border-radius:8px;font-size:12.5px;font-weight:500;cursor:pointer;border:none;font-family:var(--fb);transition:all .15s;margin-top:auto}
+.plan-btn-primary{background:var(--accent);color:#fff}.plan-btn-primary:hover{background:#5a52e0}
+.plan-btn-secondary{background:var(--s3);color:var(--text);border:1px solid var(--border)}.plan-btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+.plan-btn-current{background:rgba(0,212,170,.1);color:var(--a2);border:1px solid rgba(0,212,170,.2);cursor:default}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
@@ -1510,6 +1535,7 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
     <button class="setup-tab on" data-tab="profile"  onclick="switchSetupTab('profile')">Profile</button>
     <button class="setup-tab"    data-tab="channels" onclick="switchSetupTab('channels')">Channels</button>
     <button class="setup-tab"    data-tab="advanced" onclick="switchSetupTab('advanced')">Automation</button>
+    <button class="setup-tab"    data-tab="myprofile" onclick="switchSetupTab('myprofile')">My Account</button>
   </div>
 
   <!-- ── TAB: Profile ──────────────────────────────── -->
@@ -1693,6 +1719,43 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 
   </div>
 
+  <!-- ── TAB: My Account ────────────────────────────── -->
+  <div id="setup-tab-myprofile" class="setup-tab-panel" style="display:none">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div class="card">
+        <div class="ct">
+          <span>Personal Information</span>
+          <span style="font-size:10px;color:var(--muted);background:var(--s2);padding:3px 8px;border-radius:6px;font-weight:400">Read only</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Full Name</div><div id="mp-name" style="font-size:13.5px;font-weight:500;padding:9px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div></div>
+          <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Email Address</div><div id="mp-email" style="font-size:13.5px;font-weight:500;padding:9px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div></div>
+          <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Role</div><div id="mp-role" style="font-size:13.5px;font-weight:500;padding:9px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div></div>
+          <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Current Plan</div><div id="mp-plan" style="font-size:13.5px;font-weight:600;padding:9px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div></div>
+          <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Active Business</div><div id="mp-biz" style="font-size:13.5px;font-weight:500;padding:9px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div></div>
+          <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Member Since</div><div id="mp-since" style="font-size:12.5px;color:var(--muted);padding:9px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card">
+          <div class="ct">Change Password</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <div><label class="fl">Current Password</label><input id="cp-current" type="password" class="fi" placeholder="Your current password"></div>
+            <div><label class="fl">New Password</label><input id="cp-new" type="password" class="fi" placeholder="Min 6 characters"></div>
+            <div><label class="fl">Confirm New Password</label><input id="cp-confirm" type="password" class="fi" placeholder="Repeat new password" onkeydown="if(event.key==='Enter')changePassword()"></div>
+            <div id="cp-err" style="color:var(--a3);font-size:12px;display:none;padding:8px 10px;background:rgba(255,107,107,.08);border-radius:6px;border:1px solid rgba(255,107,107,.18)"></div>
+            <div id="cp-ok"  style="color:var(--a2);font-size:12px;display:none;padding:8px 10px;background:rgba(0,212,170,.08);border-radius:6px;border:1px solid rgba(0,212,170,.18)"></div>
+            <button id="cp-btn" onclick="changePassword()" class="btn bp" style="justify-content:center;padding:10px">Update Password</button>
+          </div>
+        </div>
+        <div class="card" style="border-color:rgba(255,107,107,.2)">
+          <div class="ct" style="color:var(--a3)">Session</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Log out of all devices and sessions.</div>
+          <button onclick="doLogout()" class="btn bd" style="justify-content:center;width:100%;padding:9px">Log Out of MPilot</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- compat stubs -->
   <div id="biz-summary" style="display:none"></div>
   <div id="prof-card-icon" style="display:none"></div>
@@ -2180,46 +2243,23 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 <div class="toastwrap" id="toasts"></div>
 
 <!-- UPGRADE MODAL -->
-<div id="upgrade-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;align-items:center;justify-content:center;padding:16px;overflow-y:auto" onclick="if(event.target===this)closeUpgradeModal()">
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:28px;width:900px;max-width:100%;position:relative">
-    <button onclick="closeUpgradeModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1">×</button>
-    <div style="font-family:var(--fh);font-size:20px;font-weight:700;margin-bottom:4px">Upgrade your plan</div>
-    <div style="font-size:12.5px;color:var(--muted);margin-bottom:22px">All prices in INR + GST. Cancel anytime.</div>
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">
-      <div class="uplan-card" data-plan="free" data-label="Free" style="border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column">
-        <div style="font-family:var(--fh);font-size:15px;font-weight:700;margin-bottom:4px">Free</div>
-        <div style="font-family:var(--fh);font-size:26px;font-weight:800;margin-bottom:2px">Rs.0<span style="font-size:12px;font-weight:400;color:var(--muted)">/mo</span></div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;flex:1">1 QR · 100 leads · Google Business · Reviews</div>
-        <button class="uplan-btn" onclick="upgradePlan('free','Free')" style="width:100%;padding:9px;border-radius:8px;font-size:12.5px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--s2);color:var(--text);font-family:var(--fb)">Free Plan</button>
-      </div>
-      <div class="uplan-card" data-plan="starter" data-label="Starter" style="border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column">
-        <div style="font-family:var(--fh);font-size:15px;font-weight:700;margin-bottom:4px">Starter</div>
-        <div style="font-family:var(--fh);font-size:26px;font-weight:800;margin-bottom:2px">Rs.299<span style="font-size:12px;font-weight:400;color:var(--muted)">/mo</span></div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;flex:1">3 QR · 500 leads · 1,000 WA msgs · AI content · CRM</div>
-        <button class="uplan-btn" onclick="upgradePlan('starter','Starter')" style="width:100%;padding:9px;border-radius:8px;font-size:12.5px;font-weight:500;cursor:pointer;border:none;background:var(--s2);color:var(--text);font-family:var(--fb)">Upgrade to Starter</button>
-      </div>
-      <div class="uplan-card" data-plan="growth" data-label="Growth" style="border:2px solid var(--accent);border-radius:12px;padding:16px;display:flex;flex-direction:column;background:rgba(108,99,255,.05);position:relative">
-        <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:10px;font-weight:600;padding:2px 10px;border-radius:20px;white-space:nowrap">Most Popular</div>
-        <div style="font-family:var(--fh);font-size:15px;font-weight:700;margin-bottom:4px;color:var(--accent)">Growth</div>
-        <div style="font-family:var(--fh);font-size:26px;font-weight:800;margin-bottom:2px">Rs.799<span style="font-size:12px;font-weight:400;color:var(--muted)">/mo</span></div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;flex:1">10 QR · 5,000 leads · 3,000 msgs · Instagram+FB · Footfall AI · Competitor analysis · Reels</div>
-        <button class="uplan-btn" onclick="upgradePlan('growth','Growth')" style="width:100%;padding:9px;border-radius:8px;font-size:12.5px;font-weight:500;cursor:pointer;border:none;background:var(--accent);color:#fff;font-family:var(--fb)">Upgrade to Growth</button>
-      </div>
-      <div class="uplan-card" data-plan="pro" data-label="Pro" style="border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column">
-        <div style="font-family:var(--fh);font-size:15px;font-weight:700;margin-bottom:4px">Pro</div>
-        <div style="font-family:var(--fh);font-size:26px;font-weight:800;margin-bottom:2px">Rs.1499<span style="font-size:12px;font-weight:400;color:var(--muted)">/mo</span></div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;flex:1">50 QR · Unlimited leads · 8,000 msgs · Meta Ads · Multi-location · 5 staff logins</div>
-        <button class="uplan-btn" onclick="upgradePlan('pro','Pro')" style="width:100%;padding:9px;border-radius:8px;font-size:12.5px;font-weight:500;cursor:pointer;border:none;background:var(--s2);color:var(--text);font-family:var(--fb)">Upgrade to Pro</button>
-      </div>
-      <div class="uplan-card" data-plan="agency" data-label="Agency" style="border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column">
-        <div style="font-family:var(--fh);font-size:15px;font-weight:700;margin-bottom:4px">Agency</div>
-        <div style="font-family:var(--fh);font-size:26px;font-weight:800;margin-bottom:2px">Rs.2999<span style="font-size:12px;font-weight:400;color:var(--muted)">/mo</span></div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;flex:1">Unlimited · 25 businesses · 20,000 msgs · White-label reports · Bulk scheduling</div>
-        <button class="uplan-btn" onclick="upgradePlan('agency','Agency')" style="width:100%;padding:9px;border-radius:8px;font-size:12.5px;font-weight:500;cursor:pointer;border:none;background:var(--s2);color:var(--text);font-family:var(--fb)">Upgrade to Agency</button>
+<div id="upgrade-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto" onclick="if(event.target===this)closeUpgradeModal()">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:30px;width:100%;max-width:1060px;position:relative;margin:auto">
+    <button onclick="closeUpgradeModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1">×</button>
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-family:var(--fh);font-size:21px;font-weight:700;margin-bottom:6px">Choose your plan</div>
+      <div style="font-size:12.5px;color:var(--muted)">All plans include 1 business · No setup fee · Upgrade or downgrade anytime</div>
+      <div style="display:flex;align-items:center;gap:10px;justify-content:center;margin-top:14px">
+        <span id="um-lbl-m" style="font-size:13px;cursor:pointer;color:var(--text);font-weight:500" onclick="setUpgradePeriod('monthly')">Monthly</span>
+        <div id="um-track" style="width:42px;height:22px;background:var(--accent);border-radius:11px;position:relative;cursor:pointer;transition:background .2s" onclick="toggleUpgradePeriod()">
+          <div id="um-thumb" style="width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.3)"></div>
+        </div>
+        <span id="um-lbl-a" style="font-size:13px;cursor:pointer;color:var(--muted)" onclick="setUpgradePeriod('annual')">Annual <span style="background:rgba(0,212,170,.12);color:var(--a2);font-size:10px;font-weight:600;padding:2px 7px;border-radius:12px;border:1px solid rgba(0,212,170,.2)">Save 20%</span></span>
       </div>
     </div>
-    <div style="margin-top:14px;padding:10px 14px;background:var(--s2);border-radius:8px;font-size:11.5px;color:var(--muted)">
-      🔒 Dev mode: upgrades apply instantly. For live payments, add <code style="color:var(--accent)">RAZORPAY_KEY_ID</code> to .env
+    <div id="upgrade-plan-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px"></div>
+    <div style="margin-top:16px;padding:10px 14px;background:var(--s2);border-radius:8px;font-size:11.5px;color:var(--muted);text-align:center">
+      🔒 Secure · All prices in INR + 18% GST · For live payments configure <code style="color:var(--accent)">RAZORPAY_KEY_ID</code>
     </div>
   </div>
 </div>
@@ -2387,7 +2427,7 @@ async function doForgotPassword() {
   var err = document.getElementById('fp-err');
   var ok  = document.getElementById('fp-ok');
   if (err) { err.textContent=''; err.style.display='none'; }
-  if (ok)  { ok.style.display='none'; }
+  if (ok)  { ok.innerHTML=''; ok.style.display='none'; }
   var email = (document.getElementById('fp-email')?.value || '').trim();
   if (!email) {
     if (err) { err.textContent='Enter your email address.'; err.style.display='block'; }
@@ -2397,12 +2437,22 @@ async function doForgotPassword() {
   try {
     var data = await req('POST', '/api/auth/forgot-password', { email });
     if (ok) {
-      ok.textContent = 'If that email exists, a reset link has been sent. Check your inbox.';
+      if (data && data.reset_url) {
+        // Dev/demo mode: show clickable link directly (no email server needed)
+        ok.innerHTML = '<strong style="color:var(--a2)">Reset link ready!</strong><br><br>'
+          + '<span style="font-size:11px;color:var(--muted)">Click to set a new password:</span><br>'
+          + '<a href="' + data.reset_url + '" style="color:var(--accent);font-size:12px;word-break:break-all;display:block;margin-top:6px;padding:8px;background:rgba(108,99,255,.08);border-radius:6px;border:1px solid rgba(108,99,255,.2)">'
+          + data.reset_url + '</a>'
+          + '<div style="font-size:10.5px;color:var(--muted);margin-top:8px">⏱ Expires in 1 hour.</div>';
+      } else {
+        ok.innerHTML = 'If that email is registered, a reset link has been sent. Check your inbox.';
+      }
       ok.style.display = 'block';
     }
-    if (btn) btn.textContent = 'Sent ✓';
+    if (btn) { btn.textContent = 'Sent ✓'; }
   } catch(e) {
-    if (err) { err.textContent='Error sending reset email. Try again.'; err.style.display='block'; }
+    console.error('[doForgotPassword]', e);
+    if (err) { err.textContent='Error — please try again.'; err.style.display='block'; }
     if (btn) { btn.textContent='Send Reset Link'; btn.disabled=false; }
   }
 }
@@ -4986,6 +5036,17 @@ function confirmDeleteBiz() {
     const hasUser = !!(USER.email || USER.name);
     const p       = new URLSearchParams(window.location.search);
 
+    // Auth intent from landing page (login vs signup)
+    const _intent = localStorage.getItem('mpilot_auth_intent');
+    if (_intent) {
+      localStorage.removeItem('mpilot_auth_intent');
+      if (!localStorage.getItem('mpilot_token')) {
+        initUserUI();
+        setTimeout(() => { openAuthModal(_intent); }, 150);
+        return;
+      }
+    }
+
     // Password reset callback — ?reset_token=xxx
     if (p.get('reset_token')) {
       initUserUI();
@@ -5035,15 +5096,15 @@ function confirmDeleteBiz() {
       return;
     }
 
-    // Not logged in → show login modal
-    initUserUI();
-    setTimeout(() => openAuthModal('login'), 200);
+    // Not logged in → redirect to landing page
+    window.location.replace('landing.html');
 
   } catch(err) {
     console.error('[MPilot] Startup error:', err);
-    initUserUI();
     if (!localStorage.getItem('mpilot_token')) {
-      setTimeout(() => openAuthModal('login'), 400);
+      window.location.replace('landing.html');
+    } else {
+      initUserUI();
     }
   }
 })();
@@ -5059,9 +5120,10 @@ function switchSetupTab(tab) {
   document.querySelectorAll('.setup-tab-panel').forEach(p => {
     p.style.display = p.id === 'setup-tab-' + tab ? 'block' : 'none';
   });
-  if (tab === 'qr')       loadSetupQRList();
-  if (tab === 'channels') _loadSetupChannels();
-  if (tab === 'advanced') _loadAdvancedSettings();
+  if (tab === 'qr')        loadSetupQRList();
+  if (tab === 'channels')  _loadSetupChannels();
+  if (tab === 'advanced')  _loadAdvancedSettings();
+  if (tab === 'myprofile') loadMyProfile();
 }
 
 

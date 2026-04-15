@@ -1,108 +1,331 @@
-// ═══════════════════════════════════════════════════════════════
-//  MPilot AI — app.js  (Production-ready, Render-compatible)
-//  Fixed: 2025 — All issues resolved end-to-end
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════
+//  MPilot AI — app.js
+//  Loaded AFTER the inline <script> block in index.html.
+//  Provides: missing modal functions, patched doLogin/doSignup,
+//            loadMyProfile, changePassword, upgrade modal rendering,
+//            and API base URL safety net.
+// ═══════════════════════════════════════════════════════════════════════
 
-// ─── API BASE (auto-detects local vs Render) ──────────────────
-// NOTE: The inline script in index.html sets:
-//   const API = window.location.hostname === 'localhost'
-//               ? 'http://localhost:8000'
-//               : 'https://mpilot-backend.onrender.com';
-// app.js uses the same API variable via closure.
-// No duplicate declaration here.
+// ─── Shared Plan Data (single source of truth) ──────────────────────────────
+// Also defined in landing.html as MPILOT_PLANS — keep in sync.
+const MPILOT_PLANS = [
+  {
+    id: 'free', name: 'Free', monthlyPrice: 0, annualPrice: 0,
+    desc: 'Get started. No credit card.',
+    limits: '100 contacts · 50 WA msgs/mo · 1 QR',
+    popular: false,
+    features: [
+      { on: true,  text: '1 QR code (WhatsApp capture)' },
+      { on: true,  text: 'Up to 100 contacts' },
+      { on: true,  text: 'Google Business connection' },
+      { on: true,  text: 'Manual review replies' },
+      { on: true,  text: 'Basic CRM' },
+      { on: false, text: 'AI auto-replies' },
+      { on: false, text: 'WhatsApp campaigns' },
+      { on: false, text: 'Win-back automation' },
+      { on: false, text: 'Footfall AI' },
+    ]
+  },
+  {
+    id: 'starter', name: 'Starter', monthlyPrice: 299, annualPrice: 239,
+    desc: 'For single-location businesses.',
+    limits: '2,000 contacts · 1,000 WA msgs/mo · 5 QR',
+    popular: false,
+    features: [
+      { on: true,  text: '5 QR codes' },
+      { on: true,  text: 'Up to 2,000 contacts' },
+      { on: true,  text: 'AI Google review replies' },
+      { on: true,  text: 'Review request automation' },
+      { on: true,  text: 'Win-back campaigns' },
+      { on: true,  text: 'AI content & social posts' },
+      { on: true,  text: '10 campaigns/month' },
+      { on: false, text: 'Footfall AI & peak hours' },
+      { on: false, text: 'Ads Manager' },
+    ]
+  },
+  {
+    id: 'growth', name: 'Growth', monthlyPrice: 799, annualPrice: 639,
+    desc: 'Scale your customer base fast.',
+    limits: '10,000 contacts · 5,000 WA msgs/mo · 20 QR',
+    popular: true, badge: 'Most Popular',
+    features: [
+      { on: true, text: '20 QR codes' },
+      { on: true, text: 'Up to 10,000 contacts' },
+      { on: true, text: 'Footfall AI & peak hours' },
+      { on: true, text: 'Ads Manager (Meta + Google)' },
+      { on: true, text: '50 campaigns/month' },
+      { on: true, text: 'Instagram & Facebook posts' },
+      { on: true, text: 'Competitor analysis' },
+      { on: true, text: 'AI Reels scripts' },
+      { on: false, text: 'Multi-branch management' },
+    ]
+  },
+  {
+    id: 'pro', name: 'Pro', monthlyPrice: 1499, annualPrice: 1199,
+    desc: 'Multi-location power for chains.',
+    limits: '50,000 contacts · 20,000 WA msgs/mo · 100 QR',
+    popular: false,
+    features: [
+      { on: true, text: '100 QR codes' },
+      { on: true, text: 'Up to 50,000 contacts' },
+      { on: true, text: 'Multi-branch management' },
+      { on: true, text: '₹499/mo per extra branch' },
+      { on: true, text: '200 campaigns/month' },
+      { on: true, text: '5 staff logins' },
+      { on: true, text: 'Priority support' },
+      { on: true, text: 'All Growth features' },
+      { on: true, text: 'Custom AI persona' },
+    ]
+  },
+  {
+    id: 'agency', name: 'Agency', monthlyPrice: 2999, annualPrice: 2399,
+    desc: 'Manage 25+ businesses from one account.',
+    limits: 'Unlimited contacts · 20,000 WA msgs/mo',
+    popular: false,
+    features: [
+      { on: true, text: 'Up to 25 businesses' },
+      { on: true, text: 'Unlimited contacts' },
+      { on: true, text: 'White-label reports' },
+      { on: true, text: 'Bulk campaign scheduling' },
+      { on: true, text: 'Agency dashboard' },
+      { on: true, text: '20 staff logins' },
+      { on: true, text: 'Dedicated account manager' },
+      { on: true, text: 'All Pro features' },
+      { on: true, text: 'API access' },
+    ]
+  }
+];
 
-// ─── MISSING FUNCTIONS — injected by app.js ──────────────────
-// These are called from HTML onclick handlers but were never
-// defined in the inline script block. app.js loads AFTER inline
-// JS, so these definitions are picked up correctly.
-
-// ══════════════════════════════════════════════════════════════
-//  AUTH MODAL  (openAuthModal / closeAuthModal / switchAuthTab)
-// ══════════════════════════════════════════════════════════════
+// ─── Upgrade modal period state ──────────────────────────────────────────────
+let _upgradePeriod = 'monthly';
 
 /**
- * Open the auth modal and optionally switch to a tab.
- * HTML uses id="auth-modal" (not "auth-modal"), so we target that.
- * Called as: openAuthModal('login') or openAuthModal('signup')
+ * Render plan cards into any container element.
+ * Used by: upgrade modal, pricing modal (index.html)
+ *
+ * @param {string}   containerId - target element id
+ * @param {object}   opts
+ *   period      - 'monthly' | 'annual'
+ *   currentPlan - plan id of user's current plan (highlights it)
+ *   onSelect    - function(planId, planName) called on button click
  */
+function renderPlanGrid(containerId, opts = {}) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const { period = 'monthly', currentPlan = null, onSelect = null } = opts;
+
+  el.innerHTML = MPILOT_PLANS.map(plan => {
+    const price   = period === 'annual' ? plan.annualPrice : plan.monthlyPrice;
+    const isCurr  = currentPlan === plan.id;
+    const isFree  = plan.monthlyPrice === 0;
+
+    const btnClass = isCurr
+      ? 'plan-btn plan-btn-current'
+      : (plan.popular ? 'plan-btn plan-btn-primary' : 'plan-btn plan-btn-secondary');
+
+    const btnLabel = isCurr
+      ? '✓ Current Plan'
+      : (isFree ? 'Get Started Free' : `Upgrade to ${plan.name}`);
+
+    const onClickAttr = isCurr ? '' : `onclick="handlePlanSelect('${plan.id}','${plan.name}')"`;
+
+    return `
+      <div class="plan-card ${plan.popular ? 'popular' : ''}">
+        ${plan.badge ? `<div class="plan-hot-badge">${plan.badge}</div>` : ''}
+        <div class="plan-name">${plan.name}</div>
+        <div class="plan-price">
+          ${isFree
+            ? '<span style="font-size:20px;font-weight:700">Free</span>'
+            : `<sup>₹</sup>${price.toLocaleString('en-IN')}<sub>/mo</sub>`}
+        </div>
+        ${!isFree && period === 'annual'
+          ? `<div class="plan-period" style="color:var(--a2)">billed annually · 20% off</div>`
+          : `<div class="plan-period">&nbsp;</div>`}
+        <div class="plan-desc">${plan.desc}</div>
+        <div class="plan-limits-bar">${plan.limits}</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-feats">
+          ${plan.features.map(f => `
+            <li class="${f.on ? 'on' : ''}">
+              <span class="${f.on ? 'ck' : 'cx'}">${f.on ? '✓' : '✗'}</span>
+              <span>${f.text}</span>
+            </li>`).join('')}
+        </ul>
+        <button class="${btnClass}" ${onClickAttr}>${btnLabel}</button>
+      </div>`;
+  }).join('');
+}
+
+/**
+ * Called when user clicks a plan button in the upgrade modal.
+ * Stored as window-level so it's reachable from inline onclick attrs.
+ */
+window.handlePlanSelect = async function(planId, planName) {
+  await upgradePlan(planId, planName);
+};
+
+function toggleUpgradePeriod() {
+  setUpgradePeriod(_upgradePeriod === 'monthly' ? 'annual' : 'monthly');
+}
+
+function setUpgradePeriod(period) {
+  _upgradePeriod = period;
+  const thumb = document.getElementById('um-thumb');
+  const lblM  = document.getElementById('um-lbl-m');
+  const lblA  = document.getElementById('um-lbl-a');
+  if (thumb) thumb.style.transform = period === 'annual' ? 'translateX(20px)' : 'translateX(0)';
+  if (lblM)  { lblM.style.fontWeight = period === 'monthly' ? '600' : '400'; lblM.style.color = period === 'monthly' ? 'var(--text)' : 'var(--muted)'; }
+  if (lblA)  { lblA.style.fontWeight = period === 'annual'  ? '600' : '400'; lblA.style.color = period === 'annual'  ? 'var(--text)' : 'var(--muted)'; }
+  _renderUpgradeGrid();
+}
+
+function _renderUpgradeGrid() {
+  const currentPlan = (typeof USER !== 'undefined' && USER) ? (USER.plan || 'free') : null;
+  renderPlanGrid('upgrade-plan-grid', {
+    period:      _upgradePeriod,
+    currentPlan: currentPlan,
+    onSelect:    window.handlePlanSelect,
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  AUTH MODAL — openAuthModal / closeAuthModal / switchAuthTab
+//  Defined here as overrides so app.js (loaded last) always wins.
+// ══════════════════════════════════════════════════════════════════════════════
+
 function openAuthModal(tab) {
-  const modal = document.getElementById('auth-modal');
-  if (!modal) { console.error('[MPilot] #auth-modal not found'); return; }
-  modal.style.display = 'flex';
-  // Switch to requested tab if provided
-  if (tab) switchAuthTab(tab);
+  const m = document.getElementById('auth-modal');
+  if (!m) { console.error('[MPilot] #auth-modal not found'); return; }
+  m.style.display = 'flex';
+  switchAuthTab(tab || 'login');
 }
 
-/**
- * Close the auth modal and reset error states.
- */
 function closeAuthModal() {
-  const modal = document.getElementById('auth-modal');
-  if (!modal) return;
-  modal.style.display = 'none';
-  // Clear any error messages
-  const liErr = document.getElementById('li-err');
-  const suErr = document.getElementById('su-err');
-  if (liErr) { liErr.textContent = ''; liErr.style.display = 'none'; }
-  if (suErr) { suErr.textContent = ''; suErr.style.display = 'none'; }
+  const m = document.getElementById('auth-modal');
+  if (m) m.style.display = 'none';
+  ['li-err','su-err','fp-err','fp-ok'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = ''; el.style.display = 'none'; }
+  });
 }
 
-/**
- * Switch between Login and Signup tabs inside the auth modal.
- * Called as: switchAuthTab('login') or switchAuthTab('signup')
- */
 function switchAuthTab(tab) {
-  const loginForm   = document.getElementById('auth-login-form');
-  const signupForm  = document.getElementById('auth-signup-form');
-  const tabLogin    = document.getElementById('auth-tab-login');
-  const tabSignup   = document.getElementById('auth-tab-signup');
-  const title       = document.getElementById('auth-title');
-  const bizPicker   = document.getElementById('auth-biz-picker');
+  const lf = document.getElementById('auth-login-form');
+  const sf = document.getElementById('auth-signup-form');
+  const ff = document.getElementById('auth-forgot-form');
+  const rf = document.getElementById('auth-reset-form');
+  const bp = document.getElementById('auth-biz-picker');
+  const tl = document.getElementById('auth-tab-login');
+  const ts = document.getElementById('auth-tab-signup');
+  const tt = document.getElementById('auth-title');
 
-  // Hide biz picker if switching tabs
-  if (bizPicker) bizPicker.style.display = 'none';
+  // Hide all panels
+  [lf, sf, ff, rf, bp].forEach(el => { if (el) el.style.display = 'none'; });
+
+  // Reset tab styles
+  [tl, ts].forEach(el => {
+    if (el) { el.style.background = 'transparent'; el.style.color = 'var(--muted)'; }
+  });
 
   if (tab === 'login') {
-    if (loginForm)  loginForm.style.display  = 'block';
-    if (signupForm) signupForm.style.display = 'none';
-    if (tabLogin)  { tabLogin.style.background  = 'var(--accent)'; tabLogin.style.color  = '#fff'; }
-    if (tabSignup) { tabSignup.style.background = 'transparent';   tabSignup.style.color = 'var(--muted)'; }
-    if (title) title.textContent = 'Sign in to MPilot';
-  } else {
-    if (loginForm)  loginForm.style.display  = 'none';
-    if (signupForm) signupForm.style.display = 'block';
-    if (tabSignup) { tabSignup.style.background = 'var(--accent)'; tabSignup.style.color = '#fff'; }
-    if (tabLogin)  { tabLogin.style.background  = 'transparent';   tabLogin.style.color  = 'var(--muted)'; }
-    if (title) title.textContent = 'Create your free account';
+    if (lf) lf.style.display = 'block';
+    if (tl) { tl.style.background = 'var(--accent)'; tl.style.color = '#fff'; }
+    if (tt) tt.textContent = 'Sign in to MPilot';
+  } else if (tab === 'signup') {
+    if (sf) sf.style.display = 'block';
+    if (ts) { ts.style.background = 'var(--accent)'; ts.style.color = '#fff'; }
+    if (tt) tt.textContent = 'Create your free account';
+  } else if (tab === 'forgot') {
+    if (ff) ff.style.display = 'block';
+    if (tt) tt.textContent = 'Reset your password';
+  } else if (tab === 'reset') {
+    if (rf) rf.style.display = 'block';
+    if (tt) tt.textContent = 'Set new password';
   }
 }
 
-// ══════════════════════════════════════════════════════════════
-//  SIGNUP  (doSignup)
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════
+//  LOGIN — patched to handle both access_token and token field names
+// ══════════════════════════════════════════════════════════════════════════════
 
-/**
- * Handle signup form submission.
- * Reads: su-name, su-email, su-pw, su-biz, su-ph, su-cat, su-role
- * Backend: POST /api/auth/signup
- * On success: auto-login and go to setup
- */
-async function doSignup() {
-  const btn  = document.getElementById('su-btn');
-  const err  = document.getElementById('su-err');
-  const ok   = document.getElementById('su-ok');
+async function doLogin() {
+  const btn = document.getElementById('li-btn');
+  const err = document.getElementById('li-err');
   if (err) { err.textContent = ''; err.style.display = 'none'; }
-  if (ok)  { ok.style.display = 'none'; }
 
-  const name     = document.getElementById('su-name')?.value.trim()  || '';
-  const email    = document.getElementById('su-email')?.value.trim() || '';
-  const pw       = document.getElementById('su-pw')?.value           || '';
-  const bizName  = document.getElementById('su-biz')?.value.trim()   || '';
-  const phone    = document.getElementById('su-ph')?.value.trim()    || '';
-  const category = document.getElementById('su-cat')?.value          || '';
-  const role     = document.getElementById('su-role')?.value         || 'owner';
+  const email = (document.getElementById('li-email')?.value || '').trim();
+  const pw    = document.getElementById('li-pw')?.value || '';
 
-  // Basic validation
+  if (!email || !pw) {
+    if (err) { err.textContent = 'Email and password are required.'; err.style.display = 'block'; }
+    return;
+  }
+
+  if (btn) { btn.textContent = 'Logging in…'; btn.disabled = true; }
+
+  try {
+    const data = await req('POST', '/api/auth/login', { email, password: pw });
+
+    // Backend returns 'token' (not 'access_token') — handle both for safety
+    const token = data?.access_token || data?.token;
+
+    if (!token) {
+      const msg = typeof data?.detail === 'string'
+        ? data.detail
+        : (data?.detail?.[0]?.msg || 'Invalid email or password');
+      if (err) { err.textContent = msg; err.style.display = 'block'; }
+      return;
+    }
+
+    localStorage.setItem('mpilot_token', token);
+    localStorage.setItem('mpilot_user',  JSON.stringify(data));
+    if (typeof USER !== 'undefined') USER = data;
+
+    const bizList = await req('GET', '/api/businesses/');
+    const arr = Array.isArray(bizList) ? bizList : [];
+
+    closeAuthModal();
+    if (typeof initUserUI  === 'function') initUserUI();
+
+    if (arr.length === 0) {
+      if (typeof loadBizList    === 'function') await loadBizList();
+      if (typeof goTo           === 'function') goTo('setup');
+      if (typeof switchSetupTab === 'function') switchSetupTab('profile');
+      if (typeof toast          === 'function') toast('Welcome! Set up your first business 👋');
+      return;
+    }
+
+    if (typeof _showLoginBizPicker === 'function') {
+      _showLoginBizPicker(arr, data.name || data.email);
+    } else {
+      if (typeof loadBizList === 'function') await loadBizList();
+      if (typeof loadDash    === 'function') loadDash();
+    }
+  } catch (e) {
+    console.error('[doLogin]', e);
+    if (err) { err.textContent = 'Login error — please try again.'; err.style.display = 'block'; }
+  } finally {
+    if (btn) { btn.textContent = 'Login →'; btn.disabled = false; }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  SIGNUP
+// ══════════════════════════════════════════════════════════════════════════════
+
+async function doSignup() {
+  const btn = document.getElementById('su-btn');
+  const err = document.getElementById('su-err');
+  if (err) { err.textContent = ''; err.style.display = 'none'; }
+
+  const name  = (document.getElementById('su-name')?.value  || '').trim();
+  const email = (document.getElementById('su-email')?.value || '').trim();
+  const pw    =  document.getElementById('su-pw')?.value    || '';
+  const biz   = (document.getElementById('su-biz')?.value   || '').trim();
+  const phone = (document.getElementById('su-ph')?.value    || '').trim();
+  const cat   =  document.getElementById('su-cat')?.value   || '';
+  const role  =  document.getElementById('su-role')?.value  || 'owner';
+
   if (!email || !pw) {
     if (err) { err.textContent = 'Email and password are required.'; err.style.display = 'block'; }
     return;
@@ -115,331 +338,60 @@ async function doSignup() {
   if (btn) { btn.textContent = 'Creating account…'; btn.disabled = true; }
 
   try {
-    // Step 1: Create account
     const payload = { email, password: pw };
-    if (name)     payload.name     = name;
-    if (bizName)  payload.biz_name = bizName;
-    if (phone)    payload.phone    = phone;
-    if (category) payload.category = category;
-      if (role)     payload.role     = role;
+    if (name)  payload.name     = name;
+    if (biz)   payload.biz_name = biz;
+    if (phone) payload.phone    = phone;
+    if (cat)   payload.category = cat;
+    if (role)  payload.role     = role;
 
     const data = await req('POST', '/api/auth/signup', payload);
 
-    if (!data || data.detail) {
-      const msg = typeof data?.detail === 'string'
+    if (data?.detail) {
+      const msg = typeof data.detail === 'string'
         ? data.detail
-        : (Array.isArray(data?.detail) ? data.detail.map(d=>d.msg).join(', ') : 'Signup failed');
+        : (Array.isArray(data.detail) ? data.detail.map(d => d.msg).join(', ') : 'Signup failed');
       if (err) { err.textContent = msg; err.style.display = 'block'; }
       return;
     }
 
-    // Step 2: Auto-login after successful signup
+    // Auto-login
     if (btn) btn.textContent = 'Signing in…';
+    const ld  = await req('POST', '/api/auth/login', { email, password: pw });
+    const tok = ld?.access_token || ld?.token;
 
-    const loginData = await req('POST', '/api/auth/login', { email, password: pw });
-
-    if (loginData && (loginData.access_token || loginData.token)) {
-      const token = loginData.access_token || loginData.token;
-      localStorage.setItem('mpilot_token', token);
-      localStorage.setItem('mpilot_user',  JSON.stringify(loginData));
-      if (typeof USER !== 'undefined') {
-        USER = loginData;
-      }
-
+    if (tok) {
+      localStorage.setItem('mpilot_token', tok);
+      localStorage.setItem('mpilot_user',  JSON.stringify(ld));
+      if (typeof USER !== 'undefined') USER = ld;
       closeAuthModal();
-      if (typeof initUserUI === 'function') initUserUI();
+      if (typeof initUserUI  === 'function') initUserUI();
       if (typeof loadBizList === 'function') await loadBizList();
-
-      // New user → go to setup
-      if (typeof goTo === 'function') goTo('setup');
+      if (typeof goTo        === 'function') goTo('setup');
       if (typeof switchSetupTab === 'function') switchSetupTab('profile');
-      if (typeof toast === 'function') toast('Welcome to MPilot! Let\'s set up your business 👋');
+      if (typeof toast       === 'function') toast('Welcome to MPilot! 👋');
     } else {
-      // Signup worked but auto-login failed — ask user to login manually
-      if (ok) { ok.textContent = 'Account created! Please log in.'; ok.style.display = 'block'; }
+      if (err) { err.textContent = 'Account created! Please log in.'; err.style.display = 'block'; }
       setTimeout(() => switchAuthTab('login'), 1500);
     }
   } catch (e) {
-    console.error('[doSignup] error:', e);
+    console.error('[doSignup]', e);
     if (err) { err.textContent = 'Unexpected error. Please try again.'; err.style.display = 'block'; }
   } finally {
     if (btn) { btn.textContent = 'Create Free Account'; btn.disabled = false; }
   }
 }
 
-// ══════════════════════════════════════════════════════════════
-//  LOGOUT  (doLogout)
-// ══════════════════════════════════════════════════════════════
-
-/**
- * Clear session and reload to login state.
- */
-function doLogout() {
-  localStorage.removeItem('mpilot_token');
-  localStorage.removeItem('mpilot_user');
-  localStorage.removeItem('mpilot_biz');
-  localStorage.removeItem('mpilot_last_biz');
-  // Full page reload gives cleanest state
-  window.location.reload();
-}
-
-// ══════════════════════════════════════════════════════════════
-//  UPGRADE MODAL  (closeUpgradeModal / closePricingModal)
-// ══════════════════════════════════════════════════════════════
-
-function closeUpgradeModal() {
-  const m = document.getElementById('upgrade-modal');
-  if (m) m.style.display = 'none';
-}
-
-function closePricingModal() {
-  const m = document.getElementById('pricing-modal');
-  if (m) m.style.display = 'none';
-}
-
-/**
- * Upgrade plan handler.
- * Called as: upgradePlan('pro', 'Pro')
- */
-async function upgradePlan(planId, planName) {
-  if (typeof toast === 'function') toast(`Upgrading to ${planName}…`);
-  const btn = event?.target;
-  if (btn) { btn.disabled = true; btn.textContent = 'Processing…'; }
-
-  try {
-    const data = await req('POST', '/api/billing/upgrade', { plan: planId });
-    if (data && data.success) {
-      // Update local USER object
-      if (typeof USER !== 'undefined' && USER) {
-        USER.plan = planId;
-        localStorage.setItem('mpilot_user', JSON.stringify(USER));
-      }
-      if (typeof initUserUI === 'function') initUserUI();
-      closeUpgradeModal();
-      closePricingModal();
-      if (typeof toast === 'function') toast(`✓ Upgraded to ${planName} plan!`, 'ok');
-    } else {
-      const msg = data?.detail || data?.message || 'Upgrade failed — please try again';
-      if (typeof toast === 'function') toast(msg, 'err');
-    }
-  } catch (e) {
-    console.error('[upgradePlan]', e);
-    if (typeof toast === 'function') toast('Upgrade error — please try again', 'err');
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = `Get ${planName}`; }
-  }
-}
-
-/**
- * Select plan from pricing modal (alias for upgradePlan).
- */
-function selectPlan(planId, planName) {
-  upgradePlan(planId, planName);
-}
-
-// ══════════════════════════════════════════════════════════════
-//  PATCH: Fix doLogin token field mismatch
-// ══════════════════════════════════════════════════════════════
-// The backend (FastAPI) returns { access_token: "..." }
-// but the original doLogin() checks data.token — this patches it.
-// We override doLogin here so app.js (loaded last) wins.
-
-async function doLogin() {
-  const btn = document.getElementById('li-btn');
-  const err = document.getElementById('li-err');
-  if (err) { err.textContent = ''; err.style.display = 'none'; }
-
-  const email = document.getElementById('li-email')?.value.trim()  || '';
-  const pw    = document.getElementById('li-pw')?.value            || '';
-
-  if (!email || !pw) {
-    if (err) { err.textContent = 'Email and password are required.'; err.style.display = 'block'; }
-    return;
-  }
-
-  if (btn) { btn.textContent = 'Logging in…'; btn.disabled = true; }
-
-  try {
-    const data = await req('POST', '/api/auth/login', { email, password: pw });
-
-    // FIX: backend returns access_token, original code checked token only
-    const token = data?.access_token || data?.token;
-
-    if (!token) {
-      const msg = typeof data?.detail === 'string'
-        ? data.detail
-        : (data?.detail?.[0]?.msg || 'Invalid email or password');
-      if (err) { err.textContent = msg; err.style.display = 'block'; }
-      return;
-    }
-
-    // Store session
-    localStorage.setItem('mpilot_token', token);
-    localStorage.setItem('mpilot_user',  JSON.stringify(data));
-    if (typeof USER !== 'undefined') USER = data;
-
-    // Load businesses
-    const bizList = await req('GET', '/api/businesses/');
-    const arr = Array.isArray(bizList) ? bizList : [];
-
-    if (arr.length === 0) {
-      closeAuthModal();
-      if (typeof initUserUI  === 'function') initUserUI();
-      if (typeof loadBizList === 'function') await loadBizList();
-      if (typeof goTo           === 'function') goTo('setup');
-      if (typeof switchSetupTab === 'function') switchSetupTab('profile');
-      if (typeof toast === 'function') toast('Welcome! Set up your first business 👋');
-      return;
-    }
-
-    // Has businesses — show picker or go straight to dashboard
-    if (typeof _showLoginBizPicker === 'function') {
-      _showLoginBizPicker(arr, data.name || data.email);
-    } else {
-      // Fallback: select first business and go to dashboard
-      closeAuthModal();
-      if (typeof initUserUI  === 'function') initUserUI();
-      if (typeof loadBizList === 'function') await loadBizList();
-      if (typeof loadDash    === 'function') loadDash();
-    }
-  } catch (e) {
-    console.error('[doLogin] error:', e);
-    if (err) { err.textContent = 'Login error — please try again.'; err.style.display = 'block'; }
-  } finally {
-    if (btn) { btn.textContent = 'Login →'; btn.disabled = false; }
-  }
-}
-
-// ══════════════════════════════════════════════════════════════
-//  PATCH: Fix API base URL
-// ══════════════════════════════════════════════════════════════
-// The inline script sets: const API = '';
-// This patch runs after inline JS and corrects it if still empty.
-(function patchAPIBase() {
-  try {
-    // API is declared in inline JS with 'const' so we can't reassign it.
-    // Instead we check: if API is empty, the req() function will use wrong URLs.
-    // Solution: we override req() here to inject the correct base URL.
-    const _correctBase = window.location.hostname === 'localhost'
-      ? 'http://localhost:8000'
-      : 'https://mpilot-backend.onrender.com';
-
-    // Check if the existing req() would work (API !== '')
-    if (typeof API !== 'undefined' && API !== '') {
-      console.log('[MPilot] API base already set:', API);
-      return;
-    }
-
-    // API is empty — we need to wrap req() to prepend the correct base
-    console.warn('[MPilot] API base is empty — patching req() to use:', _correctBase);
-    const _origReq = req;
-    window.req = async function req(method, path, body) {
-      // If path already starts with http (absolute), use as-is
-      if (path.startsWith('http')) return _origReq(method, path, body);
-      // Otherwise, temporarily make fetch use correct base by monkey-patching
-      // We do this by rewriting the path to a full URL
-      const _origFetch = window.fetch;
-      window.fetch = function(url, opts) {
-        if (typeof url === 'string' && !url.startsWith('http')) {
-          url = _correctBase + url;
-        }
-        return _origFetch(url, opts);
-      };
-      try {
-        return await _origReq(method, path, body);
-      } finally {
-        window.fetch = _origFetch;
-      }
-    };
-    console.log('[MPilot] req() patched with base URL');
-  } catch (e) {
-    console.error('[MPilot] patchAPIBase error:', e);
-  }
-})();
-
-// ══════════════════════════════════════════════════════════════
-//  DEFENSIVE: Ensure all HTML-called functions exist as no-ops
-//             if the inline JS failed to define them
-// ══════════════════════════════════════════════════════════════
-(function ensureFunctions() {
-  const stubs = {
-    // These should be defined in inline JS but stub them if not
-    toast:           (msg, type) => console.log('[toast]', type || 'info', msg),
-    goTo:            (page) => console.log('[goTo]', page),
-    loadDash:        () => console.log('[loadDash] called'),
-    loadCusts:       (q) => console.log('[loadCusts]', q),
-    loadRevs:        () => console.log('[loadRevs]'),
-    loadCampaigns:   () => console.log('[loadCampaigns]'),
-    initUserUI:      () => console.log('[initUserUI]'),
-    loadBizList:     () => Promise.resolve([]),
-    switchSetupTab:  (t) => console.log('[switchSetupTab]', t),
-    selectBiz:       (id) => console.log('[selectBiz]', id),
-    addNewBusinessQuick: () => console.log('[addNewBusinessQuick]'),
-    toggleMobileNav: () => console.log('[toggleMobileNav]'),
-    closeMobileNav:  () => console.log('[closeMobileNav]'),
-    copyWebhookUrl:  () => console.log('[copyWebhookUrl]'),
-    saveWAConfig:    () => console.log('[saveWAConfig]'),
-    sendWATestMessage: () => console.log('[sendWATestMessage]'),
-    toggleWAKeyVisibility: () => console.log('[toggleWAKeyVisibility]'),
-    loadWATemplates: () => console.log('[loadWATemplates]'),
-    _showLoginBizPicker: (arr, name) => {
-      // Fallback picker: just select first biz
-      if (arr && arr.length > 0) {
-        const id = arr[0].business_id || arr[0].id;
-        if (id && typeof selectBiz === 'function') {
-          closeAuthModal();
-          if (typeof initUserUI  === 'function') initUserUI();
-          if (typeof loadBizList === 'function') loadBizList();
-        }
-      }
-    }
-  };
-
-  Object.keys(stubs).forEach(name => {
-    if (typeof window[name] === 'undefined') {
-      console.warn('[MPilot] Stubbing missing function:', name);
-      window[name] = stubs[name];
-    }
-  });
-})();
-
-// ══════════════════════════════════════════════════════════════
-//  doUpgrade alias
-// ══════════════════════════════════════════════════════════════
-function doUpgrade() {
-  const m = document.getElementById('upgrade-modal');
-  if (m) m.style.display = 'flex';
-}
-
-// ══════════════════════════════════════════════════════════════
-//  DOMContentLoaded guard — runs AFTER inline JS IIFE
-// ══════════════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', function () {
-  // Make sure the auth modal starts hidden
-  const authModal = document.getElementById('auth-modal');
-  if (authModal && authModal.style.display === '') {
-    authModal.style.display = 'none';
-  }
-
-  // Keyboard shortcuts: Escape closes modals
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') {
-      closeAuthModal();
-      closeUpgradeModal();
-      closePricingModal();
-    }
-  });
-
-  console.log('[MPilot] app.js fully loaded ✓');
-});
-
+// ══════════════════════════════════════════════════════════════════════════════
+//  FORGOT PASSWORD
+// ══════════════════════════════════════════════════════════════════════════════
 
 async function doForgotPassword() {
   const btn = document.getElementById('fp-btn');
   const err = document.getElementById('fp-err');
   const ok  = document.getElementById('fp-ok');
   if (err) { err.textContent = ''; err.style.display = 'none'; }
-  if (ok)  { ok.style.display = 'none'; }
+  if (ok)  { ok.innerHTML = ''; ok.style.display = 'none'; }
 
   const email = (document.getElementById('fp-email')?.value || '').trim();
   if (!email) {
@@ -451,28 +403,34 @@ async function doForgotPassword() {
 
   try {
     const data = await req('POST', '/api/auth/forgot-password', { email });
+
     if (ok) {
-      // If backend returns a reset_url (dev/demo mode without email server),
-      // show a clickable link directly in the modal so the user can reset immediately
-      if (data && data.reset_url) {
+      if (data?.reset_url) {
+        // Dev/demo mode: no email server → show link directly in modal
         ok.innerHTML =
-          '<strong>Reset link generated:</strong><br>' +
-          '<a href="' + data.reset_url + '" style="color:var(--accent);word-break:break-all">' +
-          data.reset_url + '</a><br><br>' +
-          '<span style="font-size:11px;color:var(--muted)">Click the link above to set a new password. ' +
-          'This link expires in 1 hour.</span>';
+          '<div style="font-weight:600;color:var(--a2);margin-bottom:8px">✓ Reset link ready</div>' +
+          '<div style="font-size:11.5px;color:var(--muted);margin-bottom:8px">Click the link below to set a new password:</div>' +
+          '<a href="' + data.reset_url + '" style="display:block;color:var(--accent);font-size:12px;' +
+          'word-break:break-all;padding:10px;background:rgba(108,99,255,.08);border-radius:8px;' +
+          'border:1px solid rgba(108,99,255,.2);text-decoration:none">' + data.reset_url + '</a>' +
+          '<div style="font-size:10.5px;color:var(--muted);margin-top:8px">⏱ Expires in 1 hour</div>';
       } else {
-        ok.innerHTML = 'If that email is registered, a reset link has been sent. Check your inbox.';
+        ok.textContent = 'If that email is registered, a reset link has been sent. Check your inbox.';
       }
       ok.style.display = 'block';
     }
-    if (btn) { btn.textContent = 'Sent ✓'; }
+    if (btn) btn.textContent = 'Sent ✓';
+
   } catch (e) {
     console.error('[doForgotPassword]', e);
     if (err) { err.textContent = 'Error — please try again.'; err.style.display = 'block'; }
     if (btn) { btn.textContent = 'Send Reset Link'; btn.disabled = false; }
   }
 }
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  RESET PASSWORD (from ?reset_token= URL)
+// ══════════════════════════════════════════════════════════════════════════════
 
 async function doResetPassword() {
   const btn = document.getElementById('rp-btn');
@@ -501,16 +459,12 @@ async function doResetPassword() {
   if (btn) { btn.textContent = 'Resetting…'; btn.disabled = true; }
 
   try {
-    const data = await req('POST', '/api/auth/reset-password', {
-      token: tok,
-      new_password: pw1
-    });
+    const data = await req('POST', '/api/auth/reset-password', { token: tok, new_password: pw1 });
     if (data && !data.detail) {
-      if (ok) { ok.textContent = '✓ Password reset! You can now log in.'; ok.style.display = 'block'; }
-      // Clean URL and switch to login after 2s
+      if (ok) { ok.textContent = '✓ Password updated! Redirecting to login…'; ok.style.display = 'block'; }
       setTimeout(() => {
         window.history.replaceState({}, '', window.location.pathname);
-        if (typeof switchAuthTab === 'function') switchAuthTab('login');
+        switchAuthTab('login');
       }, 2000);
     } else {
       const msg = typeof data?.detail === 'string' ? data.detail : 'Reset failed. Link may have expired.';
@@ -523,3 +477,238 @@ async function doResetPassword() {
     if (btn) { btn.textContent = 'Set New Password'; btn.disabled = false; }
   }
 }
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  LOGOUT
+// ══════════════════════════════════════════════════════════════════════════════
+
+function doLogout() {
+  ['mpilot_token','mpilot_user','mpilot_biz','mpilot_last_biz','mpilot_auth_intent']
+    .forEach(k => localStorage.removeItem(k));
+  window.location.replace('landing.html');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  UPGRADE MODAL
+// ══════════════════════════════════════════════════════════════════════════════
+
+function doUpgrade() {
+  const m = document.getElementById('upgrade-modal');
+  if (m) m.style.display = 'flex';
+  _upgradePeriod = 'monthly';
+  setUpgradePeriod('monthly');   // resets toggle + re-renders grid
+}
+
+function closeUpgradeModal() {
+  const m = document.getElementById('upgrade-modal');
+  if (m) m.style.display = 'none';
+}
+
+function closePricingModal() {
+  const m = document.getElementById('pricing-modal');
+  if (m) m.style.display = 'none';
+}
+
+async function upgradePlan(planId, planName) {
+  const btn = event?.target;
+  if (btn) { btn.disabled = true; btn.textContent = 'Upgrading…'; }
+
+  try {
+    const data = await req('POST', '/api/billing/upgrade', { plan: planId });
+    if (data && (data.status === 'upgraded' || data.success)) {
+      if (typeof USER !== 'undefined' && USER) {
+        USER.plan = planId;
+        localStorage.setItem('mpilot_user', JSON.stringify(USER));
+      }
+      if (typeof initUserUI === 'function') initUserUI();
+      closeUpgradeModal();
+      closePricingModal();
+      _renderUpgradeGrid();   // refresh grid with new current plan
+      if (typeof toast === 'function') toast(`✓ Upgraded to ${planName} plan!`, 'ok');
+    } else {
+      const msg = data?.detail || data?.message || 'Upgrade failed — please try again';
+      if (typeof toast === 'function') toast(msg, 'err');
+    }
+  } catch (e) {
+    console.error('[upgradePlan]', e);
+    if (typeof toast === 'function') toast('Upgrade error — please try again', 'err');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = planId === 'free' ? 'Free Plan' : `Upgrade to ${planName}`; }
+  }
+}
+
+function selectPlan(planId, planName) {
+  upgradePlan(planId, planName);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  MY PROFILE (Setup → My Account tab)
+// ══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Load the current user's info into the My Account read-only fields.
+ * Also resolves the active business name.
+ */
+async function loadMyProfile() {
+  const user = (() => {
+    try { return JSON.parse(localStorage.getItem('mpilot_user') || '{}'); } catch(e) { return {}; }
+  })();
+
+  const planLabels = {
+    free:    'Free',
+    starter: 'Starter  — ₹299/mo',
+    growth:  'Growth   — ₹799/mo  ⭐ Most Popular',
+    pro:     'Pro      — ₹1,499/mo',
+    agency:  'Agency   — ₹2,999/mo',
+  };
+  const roleLabels = { owner: 'Owner', manager: 'Manager', staff: 'Staff', agency: 'Agency' };
+
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val || '—';
+  };
+
+  set('mp-name',  user.name  || user.email?.split('@')[0] || '—');
+  set('mp-email', user.email || '—');
+  set('mp-role',  roleLabels[user.role] || (user.role || 'Owner'));
+
+  const planEl = document.getElementById('mp-plan');
+  if (planEl) {
+    const plan = user.plan || 'free';
+    planEl.textContent = planLabels[plan] || plan;
+    planEl.style.color = plan === 'free' ? 'var(--muted)' : 'var(--accent)';
+  }
+
+  // Active business name
+  const bizId = localStorage.getItem('mpilot_biz') || '';
+  const bizSel = document.getElementById('biz-sel');
+  let bizName = '—';
+  if (bizSel) {
+    const opt = bizSel.querySelector(`option[value="${bizId}"]`);
+    if (opt) bizName = opt.textContent;
+  }
+  if (bizName === '—' && bizId) {
+    // Try fetching
+    try {
+      const biz = await req('GET', `/api/businesses/${bizId}`);
+      if (biz?.name) bizName = biz.name;
+    } catch(e) {}
+  }
+  set('mp-biz', bizName);
+
+  // Member since
+  const since = user.created_at || user.plan_since || '';
+  if (since) {
+    try {
+      const d = new Date(since);
+      set('mp-since', d.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }));
+    } catch(e) { set('mp-since', since.slice(0, 10)); }
+  } else {
+    set('mp-since', '—');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  CHANGE PASSWORD (My Account tab)
+// ══════════════════════════════════════════════════════════════════════════════
+
+async function changePassword() {
+  const btn     = document.getElementById('cp-btn');
+  const err     = document.getElementById('cp-err');
+  const ok      = document.getElementById('cp-ok');
+  const current = document.getElementById('cp-current')?.value || '';
+  const newPw   = document.getElementById('cp-new')?.value     || '';
+  const confirm = document.getElementById('cp-confirm')?.value || '';
+
+  if (err) { err.textContent = ''; err.style.display = 'none'; }
+  if (ok)  { ok.textContent  = ''; ok.style.display  = 'none'; }
+
+  if (!current) {
+    if (err) { err.textContent = 'Enter your current password.'; err.style.display = 'block'; }
+    return;
+  }
+  if (!newPw || newPw.length < 6) {
+    if (err) { err.textContent = 'New password must be at least 6 characters.'; err.style.display = 'block'; }
+    return;
+  }
+  if (newPw !== confirm) {
+    if (err) { err.textContent = 'New passwords do not match.'; err.style.display = 'block'; }
+    return;
+  }
+  if (current === newPw) {
+    if (err) { err.textContent = 'New password must be different from current password.'; err.style.display = 'block'; }
+    return;
+  }
+
+  if (btn) { btn.textContent = 'Updating…'; btn.disabled = true; }
+
+  try {
+    const data = await req('POST', '/api/auth/change-password', {
+      current_password: current,
+      new_password:     newPw,
+    });
+
+    if (data && !data.detail) {
+      if (ok) { ok.textContent = '✓ Password updated successfully!'; ok.style.display = 'block'; }
+      // Clear fields
+      ['cp-current','cp-new','cp-confirm'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+    } else {
+      const msg = typeof data?.detail === 'string'
+        ? data.detail
+        : (data?.detail?.[0]?.msg || 'Password update failed. Check your current password.');
+      if (err) { err.textContent = msg; err.style.display = 'block'; }
+    }
+  } catch (e) {
+    console.error('[changePassword]', e);
+    if (err) { err.textContent = 'Error — please try again.'; err.style.display = 'block'; }
+  } finally {
+    if (btn) { btn.textContent = 'Update Password'; btn.disabled = false; }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  API BASE URL SAFETY NET
+//  The inline script sets const API using smart detection.
+//  This block verifies it's correct and logs it for debugging.
+// ══════════════════════════════════════════════════════════════════════════════
+(function verifyAPIBase() {
+  try {
+    const expected = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:8000'
+      : 'https://mpilot-backend.onrender.com';
+
+    if (typeof API !== 'undefined') {
+      if (API === '') {
+        console.error('[MPilot] API base is EMPTY — all fetch calls will fail!');
+        console.error('[MPilot] Expected:', expected);
+      } else {
+        console.log('[MPilot] API base:', API);
+      }
+    }
+  } catch(e) {}
+})();
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  DOMContentLoaded — final wiring
+// ══════════════════════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // ESC closes any open modal
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      closeAuthModal();
+      closeUpgradeModal();
+      closePricingModal();
+    }
+  });
+
+  // Ensure auth modal starts hidden
+  const authModal = document.getElementById('auth-modal');
+  if (authModal && authModal.style.display === '') {
+    authModal.style.display = 'none';
+  }
+
+  console.log('[MPilot] app.js loaded ✓');
+});
