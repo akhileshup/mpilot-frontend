@@ -207,6 +207,10 @@ function closeAuthModal() {
     const el = document.getElementById(id);
     if (el) { el.textContent = ''; el.style.display = 'none'; }
   });
+  // If closed without logging in, return to landing page
+  if (!localStorage.getItem('mpilot_token')) {
+    window.location.replace('landing.html');
+  }
 }
 
 function switchAuthTab(tab) {
@@ -277,6 +281,9 @@ async function doLogin() {
       return;
     }
 
+    // Clear previous session's business selection on login (prevents cross-account data bleed)
+    localStorage.removeItem('mpilot_biz');
+    localStorage.removeItem('mpilot_last_biz');
     localStorage.setItem('mpilot_token', token);
     localStorage.setItem('mpilot_user',  JSON.stringify(data));
     if (typeof USER !== 'undefined') USER = data;
@@ -361,6 +368,8 @@ async function doSignup() {
     const tok = ld?.access_token || ld?.token;
 
     if (tok) {
+      localStorage.removeItem('mpilot_biz');
+      localStorage.removeItem('mpilot_last_biz');
       localStorage.setItem('mpilot_token', tok);
       localStorage.setItem('mpilot_user',  JSON.stringify(ld));
       if (typeof USER !== 'undefined') USER = ld;
@@ -550,23 +559,40 @@ function selectPlan(planId, planName) {
  * Also resolves the active business name.
  */
 async function loadMyProfile() {
-  const user = (() => {
-    try { return JSON.parse(localStorage.getItem('mpilot_user') || '{}'); } catch(e) { return {}; }
-  })();
-
-  const planLabels = {
-    free:    'Free',
-    starter: 'Starter  — ₹299/mo',
-    growth:  'Growth   — ₹799/mo  ⭐ Most Popular',
-    pro:     'Pro      — ₹1,499/mo',
-    agency:  'Agency   — ₹2,999/mo',
-  };
-  const roleLabels = { owner: 'Owner', manager: 'Manager', staff: 'Staff', agency: 'Agency' };
-
   const set = (id, val) => {
     const el = document.getElementById(id);
     if (el) el.textContent = val || '—';
   };
+
+  // Show loading state
+  ['mp-name','mp-email','mp-role','mp-plan','mp-biz','mp-since']
+    .forEach(id => set(id, '…'));
+
+  // Always fetch fresh from backend — localStorage may be stale
+  let user = {};
+  try {
+    const fresh = await req('GET', '/api/auth/me');
+    if (fresh && fresh.email) {
+      user = fresh;
+      // Keep localStorage in sync
+      localStorage.setItem('mpilot_user', JSON.stringify(fresh));
+      if (typeof USER !== 'undefined') USER = fresh;
+    } else {
+      // Fallback to localStorage if fetch failed
+      user = JSON.parse(localStorage.getItem('mpilot_user') || '{}');
+    }
+  } catch(e) {
+    user = JSON.parse(localStorage.getItem('mpilot_user') || '{}');
+  }
+
+  const planLabels = {
+    free:    'Free Plan',
+    starter: 'Starter — ₹299/month',
+    growth:  'Growth — ₹799/month ⭐',
+    pro:     'Pro — ₹1,499/month',
+    agency:  'Agency — ₹2,999/month',
+  };
+  const roleLabels = { owner: 'Owner', manager: 'Manager', staff: 'Staff', agency: 'Agency' };
 
   set('mp-name',  user.name  || user.email?.split('@')[0] || '—');
   set('mp-email', user.email || '—');
@@ -579,29 +605,28 @@ async function loadMyProfile() {
     planEl.style.color = plan === 'free' ? 'var(--muted)' : 'var(--accent)';
   }
 
-  // Active business name
-  const bizId = localStorage.getItem('mpilot_biz') || '';
+  // Active business — read from currently selected dropdown
+  const bizId  = localStorage.getItem('mpilot_biz') || (typeof BIZ !== 'undefined' ? BIZ : '');
   const bizSel = document.getElementById('biz-sel');
-  let bizName = '—';
+  let bizName  = '';
   if (bizSel) {
     const opt = bizSel.querySelector(`option[value="${bizId}"]`);
-    if (opt) bizName = opt.textContent;
+    if (opt && opt.value) bizName = opt.textContent;
   }
-  if (bizName === '—' && bizId) {
-    // Try fetching
+  if (!bizName && bizId) {
     try {
       const biz = await req('GET', `/api/businesses/${bizId}`);
       if (biz?.name) bizName = biz.name;
     } catch(e) {}
   }
-  set('mp-biz', bizName);
+  set('mp-biz', bizName || (bizId ? bizId : '— no business selected —'));
 
   // Member since
   const since = user.created_at || user.plan_since || '';
   if (since) {
     try {
       const d = new Date(since);
-      set('mp-since', d.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }));
+      set('mp-since', d.toLocaleDateString('en-IN', { year:'numeric', month:'long', day:'numeric' }));
     } catch(e) { set('mp-since', since.slice(0, 10)); }
   } else {
     set('mp-since', '—');
@@ -694,6 +719,17 @@ async function changePassword() {
 // ══════════════════════════════════════════════════════════════════════════════
 //  DOMContentLoaded — final wiring
 // ══════════════════════════════════════════════════════════════════════════════
+
+// ── My Account page routing ─────────────────────────────────────────────────
+// Extend loadPage to handle 'myaccount'
+const _origLoadPage = typeof loadPage === 'function' ? loadPage : null;
+if (_origLoadPage) {
+  window.loadPage = function(page) {
+    if (page === 'myaccount') { loadMyProfile(); return; }
+    _origLoadPage(page);
+  };
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // ESC closes any open modal
   document.addEventListener('keydown', e => {

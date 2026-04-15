@@ -32,6 +32,9 @@ a{text-decoration:none;color:inherit}
 .ni{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:12.5px;font-weight:500;color:var(--muted);transition:all .12s;margin-bottom:1px;user-select:none}
 .ni:hover{background:var(--s2);color:var(--text)}
 .ni.on{background:rgba(108,99,255,.14);color:var(--accent)}
+.ni-child{padding-left:26px;font-size:12px}
+.ni-child::before{content:"╰";position:absolute;left:13px;color:var(--border2);font-size:10px}
+.ni-child{position:relative}
 .ni svg{width:14px;height:14px;flex-shrink:0;stroke-width:2}
 .sb-foot{padding:10px 10px 14px;border-top:1px solid var(--border);flex-shrink:0}
 .plan-pill{background:var(--s2);border-radius:8px;padding:9px 11px;margin-bottom:9px;display:flex;align-items:center;justify-content:space-between}
@@ -608,6 +611,9 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
     <div class="sb-sec">Setup</div>
     <div class="ni" data-p="setup">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Business Setup
+    </div>
+    <div class="ni ni-child" data-p="myaccount" onclick="goTo('myaccount')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My Account
     </div>
 
   </nav>
@@ -1764,7 +1770,91 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
   <div id="prof-card-info" style="display:none"></div>
   <div id="prof-save-state" style="display:none"></div>
   <div id="prof-card-badge" style="display:none"></div>
-  <div id="p-chips" style="display:none"></div>
+  <div <div class="page" id="p-myaccount">
+  <div class="ph">
+    <div>
+      <div class="pt">My Account</div>
+      <div class="ps">Manage your personal information and security settings</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:900px">
+
+    <!-- Personal Info Card (read-only) -->
+    <div class="card">
+      <div class="ct">
+        <span>Personal Information</span>
+        <span style="font-size:10px;color:var(--muted);background:var(--s2);padding:3px 8px;border-radius:6px;font-weight:400">Read only</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Full Name</div>
+          <div id="mp-name" style="font-size:14px;font-weight:500;color:var(--text);padding:10px 13px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Email Address</div>
+          <div id="mp-email" style="font-size:14px;font-weight:500;color:var(--text);padding:10px 13px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Role</div>
+          <div id="mp-role" style="font-size:14px;font-weight:500;color:var(--text);padding:10px 13px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Current Plan</div>
+          <div id="mp-plan" style="font-size:14px;font-weight:600;padding:10px 13px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Active Business</div>
+          <div id="mp-biz" style="font-size:14px;font-weight:500;color:var(--text);padding:10px 13px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Member Since</div>
+          <div id="mp-since" style="font-size:13px;color:var(--muted);padding:10px 13px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column: Change Password + Logout -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card">
+        <div class="ct">Change Password</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div>
+            <label class="fl">Current Password</label>
+            <input id="cp-current" type="password" class="fi" placeholder="Your current password">
+          </div>
+          <div>
+            <label class="fl">New Password</label>
+            <input id="cp-new" type="password" class="fi" placeholder="Min 6 characters">
+          </div>
+          <div>
+            <label class="fl">Confirm New Password</label>
+            <input id="cp-confirm" type="password" class="fi" placeholder="Repeat new password"
+                   onkeydown="if(event.key==='Enter')changePassword()">
+          </div>
+          <div id="cp-err" style="color:var(--a3);font-size:12px;display:none;padding:9px 11px;background:rgba(255,107,107,.08);border-radius:7px;border:1px solid rgba(255,107,107,.2)"></div>
+          <div id="cp-ok"  style="color:var(--a2);font-size:12px;display:none;padding:9px 11px;background:rgba(0,212,170,.08);border-radius:7px;border:1px solid rgba(0,212,170,.2)"></div>
+          <button id="cp-btn" onclick="changePassword()" class="btn bp" style="justify-content:center;padding:10px;font-size:13px">
+            Update Password
+          </button>
+        </div>
+      </div>
+
+      <div class="card" style="border-color:rgba(255,107,107,.2)">
+        <div class="ct" style="color:var(--a3)">Session</div>
+        <div style="font-size:12.5px;color:var(--muted);margin-bottom:12px;line-height:1.6">
+          Log out of all devices and sessions. You'll be redirected to the landing page.
+        </div>
+        <button onclick="doLogout()" class="btn bd" style="justify-content:center;width:100%;padding:10px">
+          Log Out of MPilot
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+id="p-chips" style="display:none"></div>
   <div id="p-svc-sugs" style="display:none"></div>
   <div id="pfp-icon" style="display:none"></div>
   <div id="pfp-name" style="display:none"></div>
@@ -2379,10 +2469,14 @@ function openAuthModal(tab) {
 function closeAuthModal() {
   var m = document.getElementById('auth-modal');
   if (m) m.style.display = 'none';
-  var e1 = document.getElementById('li-err');
-  var e2 = document.getElementById('su-err');
-  if (e1) { e1.textContent = ''; e1.style.display = 'none'; }
-  if (e2) { e2.textContent = ''; e2.style.display = 'none'; }
+  ['li-err','su-err','fp-err','fp-ok'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el){el.textContent='';el.style.display='none';}
+  });
+  // If user closes modal without logging in, send back to landing
+  if (!localStorage.getItem('mpilot_token')) {
+    window.location.replace('landing.html');
+  }
 }
 function switchAuthTab(tab) {
   var lf = document.getElementById('auth-login-form');
@@ -2725,6 +2819,7 @@ function loadPage(page) {
     qr:         loadQR,    // legacy QR page still works
     inbox:      loadInbox,
     setup:      loadSetup,
+    myaccount:  loadMyProfile,
     wizard:     () => {},
   };
   if (fn[page]) fn[page]();
