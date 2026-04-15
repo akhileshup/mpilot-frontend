@@ -2239,7 +2239,57 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
       <div style="margin-bottom:14px"><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px">Password</label><input id="li-pw" type="password" placeholder="Your password" class="fi" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <div id="li-err" style="color:var(--a3);font-size:12px;margin-bottom:10px;display:none"></div>
       <button id="li-btn" onclick="doLogin()" class="btn bp" style="width:100%;padding:11px;font-size:14px;border-radius:9px;justify-content:center">Login →</button>
-      <div style="text-align:center;margin-top:12px;font-size:12px;color:var(--muted)">No account? <span onclick="switchAuthTab('signup')" style="color:var(--accent);cursor:pointer">Sign up free</span></div>
+      <div style="text-align:center;margin-top:10px;font-size:12px;color:var(--muted)">
+        <span onclick="switchAuthTab('forgot')" style="color:var(--accent);cursor:pointer">Forgot password?</span>
+        &nbsp;·&nbsp;
+        No account? <span onclick="switchAuthTab('signup')" style="color:var(--accent);cursor:pointer">Sign up free</span>
+      </div>
+    </div>
+
+    <!-- Forgot Password Form -->
+    <div id="auth-forgot-form" style="display:none">
+      <div style="font-size:12.5px;color:var(--muted);margin-bottom:16px;line-height:1.6">
+        Enter your email and we'll send you a link to reset your password.
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px">Email address</label>
+        <input id="fp-email" type="email" placeholder="your@email.com" class="fi"
+               onkeydown="if(event.key==='Enter')doForgotPassword()">
+      </div>
+      <div id="fp-err" style="color:var(--a3);font-size:12px;margin-bottom:10px;display:none"></div>
+      <div id="fp-ok"  style="color:var(--a2);font-size:12px;margin-bottom:10px;display:none;line-height:1.6;background:rgba(0,212,170,.08);padding:10px 12px;border-radius:8px;border:1px solid rgba(0,212,170,.2)"></div>
+      <button id="fp-btn" onclick="doForgotPassword()" class="btn bp"
+              style="width:100%;padding:11px;font-size:14px;border-radius:9px;justify-content:center;margin-bottom:12px">
+        Send Reset Link
+      </button>
+      <div style="text-align:center;font-size:12px;color:var(--muted)">
+        <span onclick="switchAuthTab('login')" style="color:var(--accent);cursor:pointer">← Back to login</span>
+      </div>
+    </div>
+
+    <!-- Reset Password Form (shown when ?reset_token= is in URL) -->
+    <div id="auth-reset-form" style="display:none">
+      <div style="font-size:12.5px;color:var(--muted);margin-bottom:16px;line-height:1.6">
+        Choose a new password for your account.
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px">New Password</label>
+        <input id="rp-pw1" type="password" placeholder="Min 6 characters" class="fi">
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px">Confirm Password</label>
+        <input id="rp-pw2" type="password" placeholder="Repeat password" class="fi"
+               onkeydown="if(event.key==='Enter')doResetPassword()">
+      </div>
+      <div id="rp-err" style="color:var(--a3);font-size:12px;margin-bottom:10px;display:none"></div>
+      <div id="rp-ok"  style="color:var(--a2);font-size:12px;margin-bottom:10px;display:none;background:rgba(0,212,170,.08);padding:10px 12px;border-radius:8px;border:1px solid rgba(0,212,170,.2)"></div>
+      <button id="rp-btn" onclick="doResetPassword()" class="btn bp"
+              style="width:100%;padding:11px;font-size:14px;border-radius:9px;justify-content:center;margin-bottom:12px">
+        Set New Password
+      </button>
+      <div style="text-align:center;font-size:12px;color:var(--muted)">
+        <span onclick="switchAuthTab('login')" style="color:var(--accent);cursor:pointer">← Back to login</span>
+      </div>
     </div>
 
     <!-- Step 2: Business picker (shown when user has multiple businesses) -->
@@ -2277,6 +2327,194 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 <script>const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
   ? 'http://localhost:8000'
   : 'https://mpilot-backend.onrender.com';
+
+// ─── Inline shims (loaded before app.js, overridden by app.js) ─────────────
+// These MUST exist in inline JS because the startup IIFE calls them immediately.
+function openAuthModal(tab) {
+  var m = document.getElementById('auth-modal');
+  if (!m) return;
+  m.style.display = 'flex';
+  if (tab) switchAuthTab(tab);
+}
+function closeAuthModal() {
+  var m = document.getElementById('auth-modal');
+  if (m) m.style.display = 'none';
+  var e1 = document.getElementById('li-err');
+  var e2 = document.getElementById('su-err');
+  if (e1) { e1.textContent = ''; e1.style.display = 'none'; }
+  if (e2) { e2.textContent = ''; e2.style.display = 'none'; }
+}
+function switchAuthTab(tab) {
+  var lf = document.getElementById('auth-login-form');
+  var sf = document.getElementById('auth-signup-form');
+  var tl = document.getElementById('auth-tab-login');
+  var ts = document.getElementById('auth-tab-signup');
+  var tt = document.getElementById('auth-title');
+  var bp = document.getElementById('auth-biz-picker');
+  var fp = document.getElementById('auth-forgot-form');
+  if (bp) bp.style.display = 'none';
+  if (fp) fp.style.display = 'none';
+  if (tab === 'login') {
+    if (lf) lf.style.display = 'block';
+    if (sf) sf.style.display = 'none';
+    if (tl) { tl.style.background = 'var(--accent)'; tl.style.color = '#fff'; }
+    if (ts) { ts.style.background = 'transparent';   ts.style.color = 'var(--muted)'; }
+    if (tt) tt.textContent = 'Sign in to MPilot';
+  } else if (tab === 'signup') {
+    if (lf) lf.style.display = 'none';
+    if (sf) sf.style.display = 'block';
+    if (ts) { ts.style.background = 'var(--accent)'; ts.style.color = '#fff'; }
+    if (tl) { tl.style.background = 'transparent';   tl.style.color = 'var(--muted)'; }
+    if (tt) tt.textContent = 'Create your free account';
+  } else if (tab === 'forgot') {
+    if (lf) lf.style.display = 'none';
+    if (sf) sf.style.display = 'none';
+    if (fp) fp.style.display = 'block';
+    if (tl) { tl.style.background = 'transparent'; tl.style.color = 'var(--muted)'; }
+    if (ts) { ts.style.background = 'transparent'; ts.style.color = 'var(--muted)'; }
+    if (tt) tt.textContent = 'Reset your password';
+  }
+}
+function closeUpgradeModal() { var m=document.getElementById('upgrade-modal'); if(m) m.style.display='none'; }
+function closePricingModal()  { var m=document.getElementById('pricing-modal');  if(m) m.style.display='none'; }
+function doUpgrade()          { var m=document.getElementById('upgrade-modal'); if(m) m.style.display='flex'; }
+function doLogout() {
+  ['mpilot_token','mpilot_user','mpilot_biz','mpilot_last_biz'].forEach(k => localStorage.removeItem(k));
+  window.location.reload();
+}
+async function doForgotPassword() {
+  var btn = document.getElementById('fp-btn');
+  var err = document.getElementById('fp-err');
+  var ok  = document.getElementById('fp-ok');
+  if (err) { err.textContent=''; err.style.display='none'; }
+  if (ok)  { ok.style.display='none'; }
+  var email = (document.getElementById('fp-email')?.value || '').trim();
+  if (!email) {
+    if (err) { err.textContent='Enter your email address.'; err.style.display='block'; }
+    return;
+  }
+  if (btn) { btn.textContent='Sending…'; btn.disabled=true; }
+  try {
+    var data = await req('POST', '/api/auth/forgot-password', { email });
+    if (ok) {
+      ok.textContent = 'If that email exists, a reset link has been sent. Check your inbox.';
+      ok.style.display = 'block';
+    }
+    if (btn) btn.textContent = 'Sent ✓';
+  } catch(e) {
+    if (err) { err.textContent='Error sending reset email. Try again.'; err.style.display='block'; }
+    if (btn) { btn.textContent='Send Reset Link'; btn.disabled=false; }
+  }
+}
+async function doResetPassword() {
+  var btn = document.getElementById('rp-btn');
+  var err = document.getElementById('rp-err');
+  var ok  = document.getElementById('rp-ok');
+  if (err) { err.textContent=''; err.style.display='none'; }
+  if (ok)  { ok.style.display='none'; }
+  var pw1 = document.getElementById('rp-pw1')?.value || '';
+  var pw2 = document.getElementById('rp-pw2')?.value || '';
+  var tok = new URLSearchParams(window.location.search).get('reset_token') || '';
+  if (!pw1 || pw1.length < 6) {
+    if (err) { err.textContent='Password must be at least 6 characters.'; err.style.display='block'; }
+    return;
+  }
+  if (pw1 !== pw2) {
+    if (err) { err.textContent='Passwords do not match.'; err.style.display='block'; }
+    return;
+  }
+  if (!tok) {
+    if (err) { err.textContent='Invalid reset link. Please request a new one.'; err.style.display='block'; }
+    return;
+  }
+  if (btn) { btn.textContent='Resetting…'; btn.disabled=true; }
+  try {
+    var data = await req('POST', '/api/auth/reset-password', { token: tok, new_password: pw1 });
+    if (data && !data.detail) {
+      if (ok) { ok.textContent='Password reset! You can now log in.'; ok.style.display='block'; }
+      setTimeout(() => switchAuthTab('login'), 2000);
+    } else {
+      var msg = (typeof data.detail === 'string') ? data.detail : 'Reset failed. Link may have expired.';
+      if (err) { err.textContent=msg; err.style.display='block'; }
+    }
+  } catch(e) {
+    if (err) { err.textContent='Error. Please try again.'; err.style.display='block'; }
+  } finally {
+    if (btn) { btn.textContent='Set New Password'; btn.disabled=false; }
+  }
+}
+async function doSignup() {
+  var btn = document.getElementById('su-btn');
+  var err = document.getElementById('su-err');
+  if (err) { err.textContent=''; err.style.display='none'; }
+  var name   = document.getElementById('su-name')?.value.trim()||'';
+  var email  = document.getElementById('su-email')?.value.trim()||'';
+  var pw     = document.getElementById('su-pw')?.value||'';
+  var biz    = document.getElementById('su-biz')?.value.trim()||'';
+  var phone  = document.getElementById('su-ph')?.value.trim()||'';
+  var cat    = document.getElementById('su-cat')?.value||'';
+  var role   = document.getElementById('su-role')?.value||'owner';
+  if (!email||!pw) {
+    if (err){err.textContent='Email and password required.';err.style.display='block';} return;
+  }
+  if (pw.length<6) {
+    if (err){err.textContent='Password must be at least 6 characters.';err.style.display='block';} return;
+  }
+  if (btn){btn.textContent='Creating account…';btn.disabled=true;}
+  try {
+    var payload={email,password:pw};
+    if(name)  payload.name=name;
+    if(biz)   payload.biz_name=biz;
+    if(phone) payload.phone=phone;
+    if(cat)   payload.category=cat;
+    if(role)  payload.role=role;
+    var data=await req('POST','/api/auth/signup',payload);
+    if(data&&data.detail){
+      var msg=typeof data.detail==='string'?data.detail:
+              (Array.isArray(data.detail)?data.detail.map(d=>d.msg).join(', '):'Signup failed');
+      if(err){err.textContent=msg;err.style.display='block';} return;
+    }
+    // Auto-login
+    var ld=await req('POST','/api/auth/login',{email,password:pw});
+    var tok=ld&&(ld.access_token||ld.token);
+    if(tok){
+      localStorage.setItem('mpilot_token',tok);
+      localStorage.setItem('mpilot_user',JSON.stringify(ld));
+      USER=ld;
+      closeAuthModal(); initUserUI(); await loadBizList();
+      goTo('setup'); switchSetupTab('profile');
+      toast('Welcome to MPilot! 👋');
+    } else {
+      if(err){err.textContent='Account created! Please log in.';err.style.display='block';}
+      setTimeout(()=>switchAuthTab('login'),1500);
+    }
+  } catch(e) {
+    if(err){err.textContent='Unexpected error. Please try again.';err.style.display='block';}
+  } finally {
+    if(btn){btn.textContent='Create Free Account';btn.disabled=false;}
+  }
+}
+async function upgradePlan(planId,planName){
+  if(typeof toast==='function') toast('Upgrading to '+planName+'…');
+  var btn=event&&event.target?event.target:null;
+  if(btn){btn.disabled=true;btn.textContent='Processing…';}
+  try{
+    var data=await req('POST','/api/billing/upgrade',{plan:planId});
+    if(data&&data.success){
+      if(USER){USER.plan=planId;localStorage.setItem('mpilot_user',JSON.stringify(USER));}
+      if(typeof initUserUI==='function')initUserUI();
+      closeUpgradeModal();closePricingModal();
+      if(typeof toast==='function')toast('✓ Upgraded to '+planName+'!','ok');
+    }else{
+      var msg=data?.detail||data?.message||'Upgrade failed';
+      if(typeof toast==='function')toast(msg,'err');
+    }
+  }catch(e){if(typeof toast==='function')toast('Upgrade error','err');}
+  finally{if(btn){btn.disabled=false;btn.textContent='Get '+planName;}}
+}
+function selectPlan(id,name){upgradePlan(id,name);}
+// ────────────────────────────────────────────────────────────────────────────
+
 let BIZ = localStorage.getItem('mpilot_biz') || '';
 let USER = (() => { try { return JSON.parse(localStorage.getItem('mpilot_user')||'{}'); } catch(e){ return {}; } })();
 let lastAI = '';
@@ -4747,6 +4985,22 @@ function confirmDeleteBiz() {
     const token   = localStorage.getItem('mpilot_token');
     const hasUser = !!(USER.email || USER.name);
     const p       = new URLSearchParams(window.location.search);
+
+    // Password reset callback — ?reset_token=xxx
+    if (p.get('reset_token')) {
+      initUserUI();
+      openAuthModal('login');
+      // Switch to reset panel after modal opens
+      setTimeout(() => {
+        var rf = document.getElementById('auth-reset-form');
+        var lf = document.getElementById('auth-login-form');
+        var tt = document.getElementById('auth-title');
+        if (rf) rf.style.display = 'block';
+        if (lf) lf.style.display = 'none';
+        if (tt) tt.textContent = 'Set new password';
+      }, 50);
+      return;
+    }
 
     // OAuth callbacks
     if (p.get('gbp') === 'connected') {

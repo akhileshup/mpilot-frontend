@@ -432,3 +432,94 @@ document.addEventListener('DOMContentLoaded', function () {
 
   console.log('[MPilot] app.js fully loaded ✓');
 });
+
+
+async function doForgotPassword() {
+  const btn = document.getElementById('fp-btn');
+  const err = document.getElementById('fp-err');
+  const ok  = document.getElementById('fp-ok');
+  if (err) { err.textContent = ''; err.style.display = 'none'; }
+  if (ok)  { ok.style.display = 'none'; }
+
+  const email = (document.getElementById('fp-email')?.value || '').trim();
+  if (!email) {
+    if (err) { err.textContent = 'Enter your email address.'; err.style.display = 'block'; }
+    return;
+  }
+
+  if (btn) { btn.textContent = 'Sending…'; btn.disabled = true; }
+
+  try {
+    const data = await req('POST', '/api/auth/forgot-password', { email });
+    if (ok) {
+      // If backend returns a reset_url (dev/demo mode without email server),
+      // show a clickable link directly in the modal so the user can reset immediately
+      if (data && data.reset_url) {
+        ok.innerHTML =
+          '<strong>Reset link generated:</strong><br>' +
+          '<a href="' + data.reset_url + '" style="color:var(--accent);word-break:break-all">' +
+          data.reset_url + '</a><br><br>' +
+          '<span style="font-size:11px;color:var(--muted)">Click the link above to set a new password. ' +
+          'This link expires in 1 hour.</span>';
+      } else {
+        ok.innerHTML = 'If that email is registered, a reset link has been sent. Check your inbox.';
+      }
+      ok.style.display = 'block';
+    }
+    if (btn) { btn.textContent = 'Sent ✓'; }
+  } catch (e) {
+    console.error('[doForgotPassword]', e);
+    if (err) { err.textContent = 'Error — please try again.'; err.style.display = 'block'; }
+    if (btn) { btn.textContent = 'Send Reset Link'; btn.disabled = false; }
+  }
+}
+
+async function doResetPassword() {
+  const btn = document.getElementById('rp-btn');
+  const err = document.getElementById('rp-err');
+  const ok  = document.getElementById('rp-ok');
+  if (err) { err.textContent = ''; err.style.display = 'none'; }
+  if (ok)  { ok.style.display = 'none'; }
+
+  const pw1 = document.getElementById('rp-pw1')?.value || '';
+  const pw2 = document.getElementById('rp-pw2')?.value || '';
+  const tok = new URLSearchParams(window.location.search).get('reset_token') || '';
+
+  if (!pw1 || pw1.length < 6) {
+    if (err) { err.textContent = 'Password must be at least 6 characters.'; err.style.display = 'block'; }
+    return;
+  }
+  if (pw1 !== pw2) {
+    if (err) { err.textContent = 'Passwords do not match.'; err.style.display = 'block'; }
+    return;
+  }
+  if (!tok) {
+    if (err) { err.textContent = 'Invalid reset link. Please request a new one.'; err.style.display = 'block'; }
+    return;
+  }
+
+  if (btn) { btn.textContent = 'Resetting…'; btn.disabled = true; }
+
+  try {
+    const data = await req('POST', '/api/auth/reset-password', {
+      token: tok,
+      new_password: pw1
+    });
+    if (data && !data.detail) {
+      if (ok) { ok.textContent = '✓ Password reset! You can now log in.'; ok.style.display = 'block'; }
+      // Clean URL and switch to login after 2s
+      setTimeout(() => {
+        window.history.replaceState({}, '', window.location.pathname);
+        if (typeof switchAuthTab === 'function') switchAuthTab('login');
+      }, 2000);
+    } else {
+      const msg = typeof data?.detail === 'string' ? data.detail : 'Reset failed. Link may have expired.';
+      if (err) { err.textContent = msg; err.style.display = 'block'; }
+    }
+  } catch (e) {
+    console.error('[doResetPassword]', e);
+    if (err) { err.textContent = 'Error. Please try again.'; err.style.display = 'block'; }
+  } finally {
+    if (btn) { btn.textContent = 'Set New Password'; btn.disabled = false; }
+  }
+}
