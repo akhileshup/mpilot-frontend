@@ -2274,7 +2274,9 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 </div>
 
 
-<script>const API = '';
+<script>const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:8000'
+  : 'https://mpilot-backend.onrender.com';
 let BIZ = localStorage.getItem('mpilot_biz') || '';
 let USER = (() => { try { return JSON.parse(localStorage.getItem('mpilot_user')||'{}'); } catch(e){ return {}; } })();
 let lastAI = '';
@@ -3794,12 +3796,14 @@ async function doLogin() {
   const data = await req('POST', '/api/auth/login', {email, password: pw});
   if (btn) { btn.textContent = 'Login →'; btn.disabled = false; }
 
-  if (!data.token) {
-    if (err) { err.textContent = data.detail || 'Login failed'; err.style.display = 'block'; }
+  // FIX: backend returns access_token (FastAPI OAuth2), not token
+  const _tok = data.access_token || data.token;
+  if (!_tok) {
+    if (err) { err.textContent = data.detail || 'Invalid email or password'; err.style.display = 'block'; }
     return;
   }
 
-  localStorage.setItem('mpilot_token', data.token);
+  localStorage.setItem('mpilot_token', _tok);
   localStorage.setItem('mpilot_user',  JSON.stringify(data));
   USER = data;
 
