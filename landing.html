@@ -3,675 +3,326 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>MPilot — AI Growth Engine for Local Businesses</title>
+<title>MPilot — Grow Your Local Business with AI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#07090e;--sur:#0d1017;--s2:#131820;--s3:#1a2030;
-  --border:rgba(255,255,255,.06);--border2:rgba(255,255,255,.12);
-  --accent:#6c63ff;--a2:#00d4aa;--a3:#ff6b6b;--amber:#f59e0b;
-  --text:#e2e8f0;--muted:#64748b;--dim:#94a3b8;
-  --fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;
-  --r:12px;
-}
+:root{--bg:#07090d;--sur:#0d1117;--s2:#131a24;--s3:#1a2332;--border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.14);--accent:#6c63ff;--a2:#00d4aa;--a3:#ff6b6b;--amber:#f59e0b;--text:#e2e8f0;--muted:#64748b;--dim:#94a3b8;--fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--fb);line-height:1.6;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);line-height:1.65;overflow-x:hidden}
 a{text-decoration:none;color:inherit}
-img{max-width:100%}
-
-/* ─── NAV ─── */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;height:60px;
-    display:flex;align-items:center;justify-content:space-between;
-    padding:0 6%;background:rgba(7,9,14,.9);backdrop-filter:blur(16px);
-    border-bottom:1px solid var(--border)}
-.nav-logo{display:flex;align-items:center;gap:10px}
-.nav-logo-mark{font-family:var(--fh);font-size:20px;font-weight:800;color:var(--accent);letter-spacing:-.5px}
-.nav-logo-sub{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px}
-.nav-links{display:flex;align-items:center;gap:8px}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 6%;background:rgba(7,9,13,.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:34px;height:34px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:17px;font-weight:800;color:#fff}
+.logo-name{font-family:var(--fh);font-size:18px;font-weight:800}
+.nav-links{display:flex;gap:6px}
 .nav-links a{font-size:13px;color:var(--muted);padding:6px 12px;border-radius:7px;transition:all .15s}
 .nav-links a:hover{color:var(--text);background:var(--s2)}
-.nav-btns{display:flex;gap:8px}
-.nav-login{background:transparent;border:1px solid var(--border2);color:var(--dim);
-           padding:7px 18px;border-radius:8px;font-size:13px;font-weight:500;
-           cursor:pointer;font-family:var(--fb);transition:all .15s}
-.nav-login:hover{border-color:var(--accent);color:var(--accent)}
-.nav-cta{background:var(--accent);color:#fff;padding:7px 18px;border-radius:8px;
-         font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:var(--fb);
-         transition:all .15s}
-.nav-cta:hover{background:#5a52e0;transform:translateY(-1px)}
-
-/* ─── HERO ─── */
-.hero{padding:120px 6% 80px;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);
-              width:800px;height:800px;background:radial-gradient(ellipse,rgba(108,99,255,.12) 0%,transparent 70%);
-              pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;
-            background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.22);
-            border-radius:20px;padding:5px 16px;font-size:11.5px;color:var(--accent);
-            font-weight:500;margin-bottom:28px;letter-spacing:.3px}
-.badge-dot{width:6px;height:6px;background:var(--a2);border-radius:50%;
-           animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
-h1{font-family:var(--fh);font-size:clamp(36px,5.5vw,68px);font-weight:800;
-   line-height:1.04;letter-spacing:-2px;margin-bottom:24px}
-h1 em{font-style:normal;color:var(--accent)}
-h1 strong{font-style:normal;color:var(--a2)}
-.hero-sub{font-size:clamp(15px,1.6vw,18px);color:var(--muted);max-width:580px;
-          margin:0 auto 40px;font-weight:300;line-height:1.75}
-.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:60px}
-.btn-pri{background:var(--accent);color:#fff;padding:13px 32px;border-radius:10px;
-         font-size:14.5px;font-weight:500;cursor:pointer;border:none;font-family:var(--fb);
-         transition:all .18s;display:inline-flex;align-items:center;gap:8px}
-.btn-pri:hover{background:#5a52e0;transform:translateY(-2px);box-shadow:0 8px 24px rgba(108,99,255,.3)}
-.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border2);
-           padding:13px 28px;border-radius:10px;font-size:14.5px;font-weight:500;
-           cursor:pointer;font-family:var(--fb);transition:all .18s;display:inline-flex;
-           align-items:center;gap:8px}
-.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
-.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
-            max-width:780px;margin:0 auto}
-.hstat{background:var(--sur);border:1px solid var(--border);border-radius:12px;
-       padding:18px 16px;text-align:left}
-.hstat-v{font-family:var(--fh);font-size:28px;font-weight:700;color:var(--accent);margin-bottom:3px}
-.hstat-l{font-size:11px;color:var(--muted)}
-
-/* ─── SECTION BASE ─── */
+.nav-ctas{display:flex;gap:8px}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--dim);padding:7px 18px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--fb);transition:all .15s}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn-solid{background:var(--accent);color:#fff;padding:7px 20px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:var(--fb);transition:all .15s}
+.btn-solid:hover{background:#5a52e0;transform:translateY(-1px)}
+.hero{padding:128px 6% 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:900px;height:600px;background:radial-gradient(ellipse at center,rgba(108,99,255,.13) 0%,transparent 65%);pointer-events:none}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.22);border-radius:20px;padding:5px 16px 5px 10px;margin-bottom:30px}
+.pill-dot{width:7px;height:7px;background:var(--a2);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.pill-text{font-size:11.5px;color:var(--accent);font-weight:500}
+h1{font-family:var(--fh);font-size:clamp(36px,5.5vw,68px);font-weight:800;line-height:1.04;letter-spacing:-2px;margin-bottom:22px}
+h1 .c1{color:var(--accent)}h1 .c2{color:var(--a2)}
+.hero-sub{font-size:clamp(15px,1.6vw,18px);color:var(--muted);max-width:540px;margin:0 auto 36px;font-weight:300;line-height:1.8}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
+.btn-pri{background:var(--accent);color:#fff;padding:14px 34px;border-radius:10px;font-size:15px;font-weight:500;cursor:pointer;border:none;font-family:var(--fb);transition:all .2s;display:inline-flex;align-items:center;gap:9px}
+.btn-pri:hover{background:#5a52e0;transform:translateY(-2px);box-shadow:0 10px 30px rgba(108,99,255,.35)}
+.btn-sec{background:transparent;color:var(--text);border:1px solid var(--border2);padding:14px 28px;border-radius:10px;font-size:15px;font-weight:500;cursor:pointer;font-family:var(--fb);transition:all .2s}
+.btn-sec:hover{border-color:var(--accent);color:var(--accent)}
+.trust-bar{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:52px}
+.trust-item{display:flex;align-items:center;gap:6px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:880px;margin:0 auto}
+.stat{background:var(--sur);border:1px solid var(--border);border-radius:14px;padding:20px}
+.stat-v{font-family:var(--fh);font-size:30px;font-weight:800;color:var(--accent);margin-bottom:4px}
+.stat-l{font-size:12px;color:var(--muted);line-height:1.5}
 section{padding:80px 6%}
-.sec-wrap{max-width:1200px;margin:0 auto}
-.sec-label{font-size:10px;text-transform:uppercase;letter-spacing:2.5px;color:var(--accent);
-            font-weight:600;margin-bottom:10px}
-.sec-title{font-family:var(--fh);font-size:clamp(24px,3vw,40px);font-weight:700;
-           line-height:1.12;margin-bottom:14px}
-.sec-sub{color:var(--muted);font-size:15px;max-width:520px;line-height:1.7}
-
-/* ─── PROBLEM/SOLUTION ─── */
-.ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:44px}
-.ps-card{background:var(--sur);border:1px solid var(--border);border-radius:16px;padding:28px}
-.ps-card.prob{border-color:rgba(255,107,107,.18)}
-.ps-card.sol{border-color:rgba(0,212,170,.18)}
-.ps-head{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;
-         margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.ps-card.prob .ps-head{color:var(--a3)}.ps-card.sol .ps-head{color:var(--a2)}
-.ps-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;font-size:13.5px;color:var(--dim)}
-.ps-dot{width:5px;height:5px;border-radius:50%;margin-top:8px;flex-shrink:0}
-.prob .ps-dot{background:var(--a3)}.sol .ps-dot{background:var(--a2)}
-
-/* ─── FEATURES ─── */
+.sec{max-width:1200px;margin:0 auto}
+.sec-lbl{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:2.5px;color:var(--accent);font-weight:700;margin-bottom:10px}
+.sec-title{font-family:var(--fh);font-size:clamp(24px,3.2vw,42px);font-weight:700;line-height:1.1;margin-bottom:14px}
+.sec-sub{color:var(--muted);font-size:15px;max-width:500px;line-height:1.75}
+.ctr{text-align:center}.ctr .sec-sub{margin:0 auto}
+.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:44px}
+.ba{border-radius:18px;padding:32px}
+.ba.before{background:rgba(255,107,107,.05);border:1px solid rgba(255,107,107,.18)}
+.ba.after{background:rgba(0,212,170,.05);border:1px solid rgba(0,212,170,.18)}
+.ba-lbl{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:18px}
+.before .ba-lbl{color:var(--a3)}.after .ba-lbl{color:var(--a2)}
+.ba-row{display:flex;gap:10px;margin-bottom:13px;font-size:13.5px;color:var(--dim);align-items:flex-start}
+.ba-dot{width:5px;height:5px;border-radius:50%;margin-top:8px;flex-shrink:0}
+.before .ba-dot{background:var(--a3)}.after .ba-dot{background:var(--a2)}
 .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px}
-.fcard{background:var(--sur);border:1px solid var(--border);border-radius:14px;
-       padding:24px;transition:border-color .2s,transform .2s}
-.fcard:hover{border-color:rgba(108,99,255,.3);transform:translateY(-2px)}
-.fcard-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;
-            justify-content:center;margin-bottom:14px;font-size:20px}
-.fcard-title{font-family:var(--fh);font-size:15px;font-weight:600;margin-bottom:7px}
-.fcard-desc{font-size:13px;color:var(--muted);line-height:1.65}
-.fcard-tag{display:inline-block;margin-top:10px;font-size:10px;padding:2px 9px;
-           border-radius:20px;font-weight:600;letter-spacing:.3px}
-
-/* ─── HOW IT WORKS ─── */
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:52px;position:relative}
-.steps::before{content:'';position:absolute;top:25px;left:12%;right:12%;height:1px;
-               background:var(--border)}
-.step{text-align:center;padding:0 16px}
-.step-num{width:50px;height:50px;border-radius:50%;border:1px solid rgba(108,99,255,.3);
-          background:rgba(108,99,255,.08);display:flex;align-items:center;justify-content:center;
-          margin:0 auto 16px;font-family:var(--fh);font-size:18px;font-weight:700;
-          color:var(--accent);position:relative;z-index:1}
-.step-title{font-weight:600;font-size:14px;margin-bottom:7px}
-.step-desc{font-size:12.5px;color:var(--muted);line-height:1.6}
-
-/* ══════════════════════════════════════════════════════════
-   PRICING — Unified professional design
-   Used by: landing page, upgrade modal, add-branch modal
-══════════════════════════════════════════════════════════ */
-.pricing-section{background:var(--sur);padding:80px 6%}
-.pricing-toggle{display:flex;align-items:center;gap:12px;justify-content:center;margin:16px 0 40px}
-.pricing-toggle-track{width:44px;height:24px;background:var(--accent);border-radius:12px;
-                      position:relative;cursor:pointer;transition:background .2s}
-.pricing-toggle-thumb{width:18px;height:18px;background:#fff;border-radius:50%;
-                      position:absolute;top:3px;left:3px;transition:transform .2s;
-                      box-shadow:0 1px 4px rgba(0,0,0,.3)}
-.pricing-toggle-track.annual .pricing-toggle-thumb{transform:translateX(20px)}
-.toggle-lbl{font-size:13px;color:var(--muted);cursor:pointer}
-.toggle-lbl.active{color:var(--text);font-weight:500}
-.save-badge{background:rgba(0,212,170,.12);color:var(--a2);font-size:10.5px;font-weight:600;
-            padding:2px 8px;border-radius:20px;margin-left:4px;border:1px solid rgba(0,212,170,.2)}
-
-/* Pricing grid */
-.plan-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:start;
-           max-width:1200px;margin:0 auto}
-.plan-card{background:var(--s2);border:1px solid var(--border);border-radius:16px;
-           padding:22px;display:flex;flex-direction:column;position:relative;transition:border-color .2s}
-.plan-card:hover{border-color:rgba(255,255,255,.15)}
-.plan-card.popular{border-color:var(--accent);background:rgba(108,99,255,.06)}
-.plan-hot-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);
-                background:var(--accent);color:#fff;font-size:10px;font-weight:700;
-                padding:3px 14px;border-radius:20px;white-space:nowrap;letter-spacing:.3px}
-.plan-name{font-family:var(--fh);font-size:16px;font-weight:700;margin-bottom:4px}
-.plan-card.popular .plan-name{color:var(--accent)}
-.plan-price{font-family:var(--fh);font-size:32px;font-weight:800;line-height:1;margin:12px 0 3px}
-.plan-price sup{font-size:16px;font-weight:500;vertical-align:top;margin-top:7px;
-                font-family:var(--fb);color:var(--muted)}
-.plan-price sub{font-size:13px;font-weight:400;color:var(--muted);font-family:var(--fb)}
-.plan-period{font-size:11px;color:var(--muted);margin-bottom:6px}
-.plan-desc{font-size:12px;color:var(--muted);margin-bottom:16px;min-height:34px;line-height:1.5}
-.plan-divider{height:1px;background:var(--border);margin:14px 0}
-.plan-feats{list-style:none;margin-bottom:20px;flex:1}
-.plan-feats li{font-size:12px;padding:5px 0;display:flex;align-items:flex-start;gap:8px;
-               color:var(--muted);line-height:1.5;border-bottom:1px solid rgba(255,255,255,.04)}
-.plan-feats li.on{color:var(--text)}
-.plan-feats li:last-child{border-bottom:none}
-.plan-feats .ck{color:var(--a2);flex-shrink:0;font-size:13px;margin-top:1px}
-.plan-feats .cx{color:var(--muted);opacity:.3;flex-shrink:0;font-size:13px;margin-top:1px}
-.plan-btn{width:100%;padding:10px;border-radius:9px;font-size:13px;font-weight:500;
-          cursor:pointer;border:none;font-family:var(--fb);transition:all .15s;margin-top:auto}
-.plan-btn-primary{background:var(--accent);color:#fff}
-.plan-btn-primary:hover{background:#5a52e0}
-.plan-btn-secondary{background:var(--s3);color:var(--text);border:1px solid var(--border2)}
-.plan-btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
-.plan-btn-current{background:rgba(0,212,170,.1);color:var(--a2);border:1px solid rgba(0,212,170,.2);cursor:default}
-.plan-note{text-align:center;font-size:11.5px;color:var(--muted);margin-top:28px;max-width:1200px;margin-left:auto;margin-right:auto}
-.plan-limits-bar{background:var(--s3);border-radius:8px;padding:8px 12px;margin-bottom:14px;
-                 font-size:11px;color:var(--accent);font-weight:500;text-align:center}
-
-/* ─── TESTIMONIALS ─── */
-.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px}
-.tcard{background:var(--sur);border:1px solid var(--border);border-radius:14px;padding:22px}
-.t-stars{color:var(--amber);margin-bottom:8px;font-size:13px}
-.t-body{font-size:13px;color:var(--dim);line-height:1.7;margin-bottom:14px;font-style:italic}
-.t-author{font-size:12px;font-weight:500}
-.t-biz{font-size:11px;color:var(--muted)}
-
-/* ─── FAQ ─── */
-.faq-list{margin-top:40px;display:flex;flex-direction:column;gap:2px;max-width:700px}
-.faq-item{background:var(--sur);border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.faq-q{padding:16px 20px;font-size:14px;font-weight:500;cursor:pointer;
-       display:flex;justify-content:space-between;align-items:center;
-       transition:color .15s;user-select:none}
-.faq-q:hover{color:var(--accent)}
-.faq-q .faq-icon{font-size:18px;color:var(--muted);transition:transform .2s;flex-shrink:0}
-.faq-a{padding:0 20px;font-size:13.5px;color:var(--muted);line-height:1.75;max-height:0;
-       overflow:hidden;transition:max-height .3s ease,padding .3s}
-.faq-item.open .faq-a{max-height:200px;padding:0 20px 16px}
-.faq-item.open .faq-icon{transform:rotate(45deg)}
-
-/* ─── CTA BAND ─── */
-.cta-band{background:linear-gradient(135deg,rgba(108,99,255,.15) 0%,rgba(0,212,170,.08) 100%);
-          border:1px solid rgba(108,99,255,.2);border-radius:20px;padding:52px;
-          text-align:center;margin:0 6% 80px;position:relative;overflow:hidden}
-.cta-band::before{content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;
-                  background:radial-gradient(ellipse,rgba(108,99,255,.15),transparent 70%)}
-.cta-band-title{font-family:var(--fh);font-size:clamp(22px,3vw,36px);font-weight:700;margin-bottom:12px}
-.cta-band-sub{font-size:15px;color:var(--muted);margin-bottom:28px}
-
-/* ─── FOOTER ─── */
-footer{border-top:1px solid var(--border);padding:40px 6%;
-       display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
-.footer-logo{font-family:var(--fh);font-size:16px;font-weight:700;color:var(--accent)}
-.footer-links{display:flex;gap:20px;font-size:12.5px;color:var(--muted)}
+.fc{background:var(--sur);border:1px solid var(--border);border-radius:16px;padding:26px;transition:all .22s}
+.fc:hover{border-color:rgba(108,99,255,.35);transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.25)}
+.fc-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px}
+.fc-title{font-family:var(--fh);font-size:15.5px;font-weight:700;margin-bottom:8px}
+.fc-desc{font-size:13px;color:var(--muted);line-height:1.7}
+.fc-badge{display:inline-block;margin-top:12px;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px}
+.hiw{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:52px;position:relative}
+.hiw::before{content:'';position:absolute;top:24px;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.hiw-step{text-align:center;padding:0 12px}
+.hiw-num{width:48px;height:48px;border-radius:50%;border:1.5px solid rgba(108,99,255,.4);background:rgba(108,99,255,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-family:var(--fh);font-size:18px;font-weight:700;color:var(--accent);position:relative;z-index:1}
+.hiw-title{font-weight:600;font-size:14px;margin-bottom:8px}
+.hiw-desc{font-size:12.5px;color:var(--muted);line-height:1.65}
+.pricing-bg{background:var(--sur)}
+.tog-row{display:flex;align-items:center;gap:12px;justify-content:center;margin:14px 0 40px}
+.tog-track{width:44px;height:24px;background:var(--accent);border-radius:12px;position:relative;cursor:pointer;transition:all .2s}
+.tog-thumb{width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.tog-track.on .tog-thumb{transform:translateX(20px)}
+.tog-lbl{font-size:13px;color:var(--muted);cursor:pointer}
+.tog-lbl.active{color:var(--text);font-weight:500}
+.save-chip{background:rgba(0,212,170,.12);color:var(--a2);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid rgba(0,212,170,.2)}
+.pgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;max-width:1180px;margin:0 auto}
+.pc{background:var(--s2);border:1px solid var(--border);border-radius:16px;padding:22px;display:flex;flex-direction:column;position:relative;transition:border-color .2s}
+.pc:hover{border-color:rgba(255,255,255,.18)}
+.pc.hot{border-color:var(--accent);background:rgba(108,99,255,.07)}
+.hot-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:3px 14px;border-radius:20px;white-space:nowrap}
+.pname{font-family:var(--fh);font-size:16px;font-weight:700;margin-bottom:3px}
+.hot .pname{color:var(--accent)}
+.pprice{font-family:var(--fh);font-size:30px;font-weight:800;line-height:1;margin:12px 0 3px}
+.pprice sup{font-size:14px;vertical-align:top;margin-top:5px;font-weight:500;color:var(--muted);font-family:var(--fb)}
+.pprice sub{font-size:12px;color:var(--muted);font-family:var(--fb);font-weight:400}
+.pperiod{font-size:10.5px;color:var(--muted);height:16px;margin-bottom:8px}
+.pdesc{font-size:12px;color:var(--muted);margin-bottom:14px;min-height:32px;line-height:1.55}
+.plimits{background:rgba(108,99,255,.08);border:1px solid rgba(108,99,255,.15);border-radius:7px;padding:6px 10px;font-size:10.5px;color:var(--accent);font-weight:500;text-align:center;margin-bottom:14px}
+.pdiv{height:1px;background:var(--border);margin:12px 0}
+.pfeats{list-style:none;flex:1;margin-bottom:16px}
+.pfeats li{font-size:11.5px;padding:4px 0;display:flex;align-items:flex-start;gap:7px;color:var(--muted);border-bottom:1px solid rgba(255,255,255,.04)}
+.pfeats li.on{color:var(--text)}
+.pfeats li:last-child{border-bottom:none}
+.ck{color:var(--a2);font-size:12px;flex-shrink:0;margin-top:1px}
+.cx{color:var(--muted);opacity:.25;font-size:12px;flex-shrink:0;margin-top:1px}
+.pbtn{width:100%;padding:10px;border-radius:9px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:var(--fb);transition:all .15s;margin-top:auto}
+.pbtn-pri{background:var(--accent);color:#fff}.pbtn-pri:hover{background:#5a52e0}
+.pbtn-sec{background:var(--s3);color:var(--text);border:1px solid var(--border2)}.pbtn-sec:hover{border-color:var(--accent);color:var(--accent)}
+.pnote{text-align:center;font-size:12px;color:var(--muted);margin-top:24px;max-width:1180px;margin-left:auto;margin-right:auto}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px}
+.tcard{background:var(--sur);border:1px solid var(--border);border-radius:16px;padding:24px}
+.tstars{color:var(--amber);font-size:13px;margin-bottom:10px}
+.tbody{font-size:13px;color:var(--dim);line-height:1.75;margin-bottom:14px;font-style:italic}
+.tauthor{font-size:13px;font-weight:600}.tbiz{font-size:11.5px;color:var(--muted)}
+.faq-list{max-width:680px;margin:44px auto 0;display:flex;flex-direction:column;gap:2px}
+.fq{background:var(--sur);border:1px solid var(--border);border-radius:11px;overflow:hidden}
+.fq-q{padding:16px 20px;font-size:14px;font-weight:500;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:color .15s;user-select:none}
+.fq-q:hover{color:var(--accent)}
+.fq-icon{font-size:18px;color:var(--muted);transition:transform .25s;flex-shrink:0;margin-left:12px}
+.fq-a{padding:0 20px;font-size:13.5px;color:var(--muted);max-height:0;overflow:hidden;transition:max-height .32s ease,padding .32s;line-height:1.75}
+.fq.open .fq-a{max-height:200px;padding:0 20px 16px}
+.fq.open .fq-icon{transform:rotate(45deg)}
+.cta-band{margin:0 6% 80px;background:linear-gradient(135deg,rgba(108,99,255,.18),rgba(0,212,170,.08));border:1px solid rgba(108,99,255,.22);border-radius:22px;padding:60px 48px;text-align:center;position:relative;overflow:hidden}
+.cta-band::before{content:'';position:absolute;top:-100px;right:-100px;width:340px;height:340px;background:radial-gradient(ellipse,rgba(108,99,255,.18),transparent 70%)}
+.cta-title{font-family:var(--fh);font-size:clamp(22px,3vw,38px);font-weight:700;margin-bottom:12px}
+.cta-sub{font-size:15px;color:var(--muted);margin-bottom:30px}
+footer{border-top:1px solid var(--border);padding:36px 6%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.footer-logo{font-family:var(--fh);font-size:17px;font-weight:800;color:var(--accent)}
+.footer-links{display:flex;gap:22px;font-size:12.5px;color:var(--muted)}
 .footer-links a:hover{color:var(--text)}
 .footer-copy{font-size:11.5px;color:var(--muted)}
-
-/* ─── RESPONSIVE ─── */
-@media(max-width:900px){
-  .plan-grid{grid-template-columns:1fr 1fr}
-  .feat-grid{grid-template-columns:1fr 1fr}
-  .ps-grid{grid-template-columns:1fr}
-  .hero-stats{grid-template-columns:1fr 1fr}
-  .steps{grid-template-columns:1fr 1fr;gap:20px}
-  .steps::before{display:none}
-  .testi-grid{grid-template-columns:1fr}
-}
-@media(max-width:600px){
-  .plan-grid{grid-template-columns:1fr}
-  .feat-grid{grid-template-columns:1fr}
-  .nav-links{display:none}
-  h1{letter-spacing:-1px}
-  .cta-band{padding:32px 24px}
-}
+@media(max-width:900px){.pgrid,.feat-grid{grid-template-columns:1fr 1fr}.ba-grid,.stats{grid-template-columns:1fr 1fr}.hiw{grid-template-columns:1fr 1fr;gap:28px}.hiw::before{display:none}.tgrid{grid-template-columns:1fr}}
+@media(max-width:620px){.pgrid,.feat-grid,.ba-grid,.stats{grid-template-columns:1fr}.nav-links{display:none}h1{letter-spacing:-1px}.cta-band{padding:36px 24px;margin:0 4% 60px}}
 </style>
 </head>
 <body>
-
-<!-- ── NAV ── -->
 <nav>
-  <div class="nav-logo">
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-      <rect width="28" height="28" rx="7" fill="#6c63ff"/>
-      <text x="14" y="20" font-family="Arial Black" font-size="15" font-weight="900" fill="white" text-anchor="middle">M</text>
-    </svg>
-    <div>
-      <div class="nav-logo-mark">MPilot</div>
-      <div class="nav-logo-sub">AI Growth Engine</div>
-    </div>
+  <div class="logo">
+    <div class="logo-mark">M</div>
+    <div class="logo-name">MPilot</div>
   </div>
   <div class="nav-links">
     <a href="#features">Features</a>
-    <a href="#pricing">Pricing</a>
     <a href="#how">How it works</a>
+    <a href="#pricing">Pricing</a>
     <a href="#faq">FAQ</a>
   </div>
-  <div class="nav-btns">
-    <button class="nav-login" onclick="goToApp('login')">Log In</button>
-    <button class="nav-cta"   onclick="goToApp('signup')">Start Free →</button>
+  <div class="nav-ctas">
+    <button class="btn-outline" onclick="go('login')">Log In</button>
+    <button class="btn-solid"   onclick="go('signup')">Start Free →</button>
   </div>
 </nav>
 
-<!-- ── HERO ── -->
 <section class="hero">
-  <div class="hero-badge"><span class="badge-dot"></span>AI-Powered · Built for Indian SMBs</div>
-  <h1>Turn every walk-in into a<br><em>loyal customer</em> with<br><strong>AI Growth Engine</strong></h1>
-  <p class="hero-sub">WhatsApp automation, Google reviews, QR-to-CRM capture, loyalty rewards — everything your local business needs to grow, in one dashboard.</p>
+  <div class="hero-pill"><div class="pill-dot"></div><span class="pill-text">AI-Powered Growth for Indian Local Businesses</span></div>
+  <h1>Stop losing customers<br>who walk out your door.<br><span class="c1">Bring them back</span> with <span class="c2">AI</span>.</h1>
+  <p class="hero-sub">MPilot captures every walk-in as a WhatsApp contact, sends automated follow-ups, manages Google reviews, and runs loyalty rewards — all from one simple dashboard.</p>
   <div class="hero-btns">
-    <button class="btn-pri" onclick="goToApp('signup')">
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    <button class="btn-pri" onclick="go('signup')">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
       Get Started Free
     </button>
-    <button class="btn-ghost" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
-      See how it works
-    </button>
+    <button class="btn-sec" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See how it works</button>
   </div>
-  <div class="hero-stats">
-    <div class="hstat"><div class="hstat-v">3x</div><div class="hstat-l">More repeat visits with AI loyalty</div></div>
-    <div class="hstat"><div class="hstat-v">4.8★</div><div class="hstat-l">Average Google rating after 90 days</div></div>
-    <div class="hstat"><div class="hstat-v">67%</div><div class="hstat-l">WhatsApp open rate vs 12% email</div></div>
-    <div class="hstat"><div class="hstat-v">₹0</div><div class="hstat-l">Setup fee · Cancel anytime</div></div>
+  <div class="trust-bar">
+    <div class="trust-item">✓ No credit card required</div>
+    <div class="trust-item">✓ Free plan forever</div>
+    <div class="trust-item">✓ Set up in 10 minutes</div>
+    <div class="trust-item">✓ Cancel anytime</div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-v">3×</div><div class="stat-l">More repeat visits with AI loyalty</div></div>
+    <div class="stat"><div class="stat-v">4.8★</div><div class="stat-l">Average Google rating after 90 days</div></div>
+    <div class="stat"><div class="stat-v">67%</div><div class="stat-l">WhatsApp message open rate</div></div>
+    <div class="stat"><div class="stat-v">₹0</div><div class="stat-l">Setup fee, zero contracts</div></div>
   </div>
 </section>
 
-<!-- ── PROBLEM / SOLUTION ── -->
 <section>
-  <div class="sec-wrap">
-    <div class="sec-label">The Problem</div>
-    <div class="sec-title">Local businesses lose 70% of customers<br>they never had a way to reach again</div>
-    <div class="ps-grid">
-      <div class="ps-card prob">
-        <div class="ps-head">❌ Without MPilot</div>
-        <div class="ps-row"><div class="ps-dot"></div><div>Customers visit once, you never get their number</div></div>
-        <div class="ps-row"><div class="ps-dot"></div><div>Spend ₹5,000/mo on pamphlets with zero tracking</div></div>
-        <div class="ps-row"><div class="ps-dot"></div><div>Negative reviews go unanswered, ratings drop</div></div>
-        <div class="ps-row"><div class="ps-dot"></div><div>No way to know who's about to churn</div></div>
-        <div class="ps-row"><div class="ps-dot"></div><div>Staff manually messages customers one by one</div></div>
+  <div class="sec">
+    <div class="sec-lbl">The Problem</div>
+    <div class="sec-title">Most local businesses lose 70% of customers they could have kept</div>
+    <div class="ba-grid">
+      <div class="ba before">
+        <div class="ba-lbl">❌ Without MPilot</div>
+        <div class="ba-row"><div class="ba-dot"></div><div>Customer visits once, you never get their contact details</div></div>
+        <div class="ba-row"><div class="ba-dot"></div><div>Spending on flyers with no way to measure what's working</div></div>
+        <div class="ba-row"><div class="ba-dot"></div><div>Negative reviews sit unanswered, dragging your rating down</div></div>
+        <div class="ba-row"><div class="ba-dot"></div><div>No idea which customers are about to stop coming</div></div>
+        <div class="ba-row"><div class="ba-dot"></div><div>Staff manually messages each customer — slow and inconsistent</div></div>
       </div>
-      <div class="ps-card sol">
-        <div class="ps-head">✓ With MPilot</div>
-        <div class="ps-row"><div class="ps-dot"></div><div>QR scan → WhatsApp opt-in → CRM in 30 seconds</div></div>
-        <div class="ps-row"><div class="ps-dot"></div><div>AI sends campaigns automatically at the right time</div></div>
-        <div class="ps-row"><div class="ps-dot"></div><div>Auto-reply to every Google review with AI</div></div>
-        <div class="ps-row"><div class="ps-dot"></div><div>Churn risk AI flags customers before they leave</div></div>
-        <div class="ps-row"><div class="ps-dot"></div><div>Full WhatsApp automation — runs while you sleep</div></div>
+      <div class="ba after">
+        <div class="ba-lbl">✓ With MPilot</div>
+        <div class="ba-row"><div class="ba-dot"></div><div>QR scan → WhatsApp message → contact saved in 30 seconds</div></div>
+        <div class="ba-row"><div class="ba-dot"></div><div>AI sends the right offer at the right time, automatically</div></div>
+        <div class="ba-row"><div class="ba-dot"></div><div>AI replies to every Google review — positive and negative</div></div>
+        <div class="ba-row"><div class="ba-dot"></div><div>AI flags customers likely to churn and sends a win-back offer</div></div>
+        <div class="ba-row"><div class="ba-dot"></div><div>Campaigns run 24/7 while you focus on serving customers</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── FEATURES ── -->
 <section id="features">
-  <div class="sec-wrap">
-    <div class="sec-label">Features</div>
-    <div class="sec-title">Everything a local business needs<br>to grow with AI</div>
+  <div class="sec">
+    <div class="sec-lbl">Features</div>
+    <div class="sec-title">Everything you need in one place</div>
     <div class="feat-grid">
-      <div class="fcard">
-        <div class="fcard-icon" style="background:rgba(108,99,255,.12)">📱</div>
-        <div class="fcard-title">QR → WhatsApp CRM</div>
-        <div class="fcard-desc">Print a QR code, place it at checkout. Customers scan → send a WhatsApp → captured as a lead automatically. No app download needed.</div>
-        <span class="fcard-tag" style="background:rgba(108,99,255,.1);color:var(--accent)">Free</span>
-      </div>
-      <div class="fcard">
-        <div class="fcard-icon" style="background:rgba(0,212,170,.1)">🤖</div>
-        <div class="fcard-title">AI WhatsApp Bot</div>
-        <div class="fcard-desc">Responds to customer queries 24/7, sends review requests, win-back messages, loyalty rewards — all on autopilot.</div>
-        <span class="fcard-tag" style="background:rgba(0,212,170,.1);color:var(--a2)">Starter+</span>
-      </div>
-      <div class="fcard">
-        <div class="fcard-icon" style="background:rgba(245,158,11,.1)">⭐</div>
-        <div class="fcard-title">Google Review Engine</div>
-        <div class="fcard-desc">AI replies to every Google review. Automatically requests reviews from happy customers. Monitors rating trends.</div>
-        <span class="fcard-tag" style="background:rgba(245,158,11,.1);color:var(--amber)">Free</span>
-      </div>
-      <div class="fcard">
-        <div class="fcard-icon" style="background:rgba(236,72,153,.1)">📊</div>
-        <div class="fcard-title">Loyalty & Points</div>
-        <div class="fcard-desc">Bronze → Silver → Gold → Platinum tiers. Customers earn points per visit. AI sends reward offers exactly when they're most likely to return.</div>
-        <span class="fcard-tag" style="background:rgba(0,212,170,.1);color:var(--a2)">Starter+</span>
-      </div>
-      <div class="fcard">
-        <div class="fcard-icon" style="background:rgba(14,165,233,.1)">🔍</div>
-        <div class="fcard-title">Footfall & Peak Hours AI</div>
-        <div class="fcard-desc">Know your busiest hours, track walk-in trends, and get AI recommendations for staffing and offers during peak times.</div>
-        <span class="fcard-tag" style="background:rgba(14,165,233,.1);color:#0ea5e9">Growth+</span>
-      </div>
-      <div class="fcard">
-        <div class="fcard-icon" style="background:rgba(124,58,237,.1)">🏪</div>
-        <div class="fcard-title">Multi-Branch Management</div>
-        <div class="fcard-desc">Manage multiple locations from one dashboard. Each branch has its own QR, CRM, and analytics. Perfect for chain owners.</div>
-        <span class="fcard-tag" style="background:rgba(124,58,237,.1);color:#7c3aed">Pro+</span>
-      </div>
+      <div class="fc"><div class="fc-icon" style="background:rgba(108,99,255,.12)">📱</div><div class="fc-title">QR to WhatsApp CRM</div><div class="fc-desc">Place your unique QR at checkout. Customers scan and message you — captured as a contact instantly. No app, no forms, no friction.</div><span class="fc-badge" style="background:rgba(108,99,255,.1);color:var(--accent)">Free</span></div>
+      <div class="fc"><div class="fc-icon" style="background:rgba(0,212,170,.1)">🤖</div><div class="fc-title">AI WhatsApp Automation</div><div class="fc-desc">Send personalised offers, win-back messages, birthday greetings, and loyalty rewards — all automated and sent at exactly the right time.</div><span class="fc-badge" style="background:rgba(0,212,170,.1);color:var(--a2)">Starter+</span></div>
+      <div class="fc"><div class="fc-icon" style="background:rgba(245,158,11,.1)">⭐</div><div class="fc-title">Google Review Manager</div><div class="fc-desc">Automatically request reviews from happy customers. AI crafts the perfect reply to every review, keeping your online reputation strong.</div><span class="fc-badge" style="background:rgba(245,158,11,.1);color:var(--amber)">Free</span></div>
+      <div class="fc"><div class="fc-icon" style="background:rgba(236,72,153,.1)">🎁</div><div class="fc-title">Loyalty & Rewards</div><div class="fc-desc">Bronze to Platinum reward tiers. Customers earn points per visit. AI detects when they're likely to churn and sends a win-back offer automatically.</div><span class="fc-badge" style="background:rgba(0,212,170,.1);color:var(--a2)">Starter+</span></div>
+      <div class="fc"><div class="fc-icon" style="background:rgba(14,165,233,.1)">📊</div><div class="fc-title">Footfall Intelligence</div><div class="fc-desc">Know your peak hours, track daily visit trends, and get recommendations to fill slow periods with targeted, well-timed campaigns.</div><span class="fc-badge" style="background:rgba(14,165,233,.1);color:#0ea5e9">Growth+</span></div>
+      <div class="fc"><div class="fc-icon" style="background:rgba(124,58,237,.1)">🏪</div><div class="fc-title">Multi-Branch Dashboard</div><div class="fc-desc">Manage multiple locations from one login. Each branch has its own QR codes, customer list, campaigns, and analytics — all in sync.</div><span class="fc-badge" style="background:rgba(124,58,237,.1);color:#7c3aed">Pro+</span></div>
     </div>
   </div>
 </section>
 
-<!-- ── HOW IT WORKS ── -->
 <section id="how">
-  <div class="sec-wrap">
-    <div class="sec-label">How It Works</div>
-    <div class="sec-title">Up and running in under 10 minutes</div>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-title">Sign up free</div>
-        <div class="step-desc">Create your account and add your business details. No credit card needed.</div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-title">Print your QR code</div>
-        <div class="step-desc">Download your custom QR and place it at counter, table, or window.</div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-title">Customers scan &amp; opt in</div>
-        <div class="step-desc">They WhatsApp you — captured as a contact automatically with zero friction.</div>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-title">AI does the rest</div>
-        <div class="step-desc">Review requests, win-backs, loyalty rewards — automated 24/7 while you focus on your business.</div>
-      </div>
+  <div class="sec ctr">
+    <div class="sec-lbl">How It Works</div>
+    <div class="sec-title">Live in under 10 minutes</div>
+    <div class="sec-sub">No technical knowledge required. Fill in your business details and you're ready to go.</div>
+    <div class="hiw">
+      <div class="hiw-step"><div class="hiw-num">1</div><div class="hiw-title">Create your account</div><div class="hiw-desc">Sign up free, add your business name, category, and phone. Takes 2 minutes.</div></div>
+      <div class="hiw-step"><div class="hiw-num">2</div><div class="hiw-title">Get your QR code</div><div class="hiw-desc">Download and print your unique QR. Place it at your counter, table, or entrance.</div></div>
+      <div class="hiw-step"><div class="hiw-num">3</div><div class="hiw-title">Customers opt in</div><div class="hiw-desc">They scan and send a WhatsApp. Their contact is saved automatically — zero friction.</div></div>
+      <div class="hiw-step"><div class="hiw-num">4</div><div class="hiw-title">AI takes over</div><div class="hiw-desc">Automated messages, review requests, loyalty rewards — all running while you work.</div></div>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════════════════════
-     PRICING SECTION
-════════════════════════════════════════════════════════════════ -->
-<section id="pricing" class="pricing-section">
-  <div class="sec-wrap" style="text-align:center;margin-bottom:0">
-    <div class="sec-label" style="display:inline-block">Pricing</div>
-    <div class="sec-title" style="margin-bottom:10px">Simple, transparent pricing<br>for every stage of growth</div>
-    <div class="sec-sub" style="margin:0 auto 20px">All plans include 1 business · No setup fees · Cancel anytime</div>
-
-    <!-- Annual / Monthly toggle -->
-    <div class="pricing-toggle" id="pricing-toggle-row">
-      <span class="toggle-lbl active" id="lbl-monthly" onclick="setPricingPeriod('monthly')">Monthly</span>
-      <div class="pricing-toggle-track" id="pricing-track" onclick="togglePricingPeriod()">
-        <div class="pricing-toggle-thumb"></div>
-      </div>
-      <span class="toggle-lbl" id="lbl-annual" onclick="setPricingPeriod('annual')">
-        Annual <span class="save-badge">Save 20%</span>
-      </span>
+<section id="pricing" class="pricing-bg">
+  <div class="sec ctr">
+    <div class="sec-lbl">Pricing</div>
+    <div class="sec-title">Simple pricing, no surprises</div>
+    <div class="sec-sub">All plans include 1 business · No setup fees · Cancel anytime</div>
+    <div class="tog-row">
+      <span class="tog-lbl active" id="lbl-m" onclick="setPeriod('monthly')">Monthly</span>
+      <div class="tog-track" id="ttog" onclick="togglePeriod()"><div class="tog-thumb"></div></div>
+      <span class="tog-lbl" id="lbl-a" onclick="setPeriod('annual')">Annual <span class="save-chip">Save 20%</span></span>
     </div>
+    <div class="pgrid" id="pgrid"></div>
+    <p class="pnote">All prices in INR · Secure payments · GST extra · Upgrade or downgrade anytime</p>
   </div>
-
-  <div class="plan-grid" id="landing-plan-grid">
-    <!-- Rendered by JS below -->
-  </div>
-
-  <p class="plan-note" style="margin-top:24px">
-    🔒 Secure payments via Razorpay · All prices in INR + 18% GST · Upgrade or downgrade anytime
-  </p>
 </section>
 
-<!-- ── TESTIMONIALS ── -->
 <section>
-  <div class="sec-wrap">
-    <div class="sec-label">Results</div>
-    <div class="sec-title">Trusted by 500+ local businesses</div>
-    <div class="testi-grid">
-      <div class="tcard">
-        <div class="t-stars">★★★★★</div>
-        <div class="t-body">"In 3 months our Google rating went from 3.8 to 4.6. Customers now book in advance because the AI sends them offers at the right time."</div>
-        <div class="t-author">Priya Menon</div>
-        <div class="t-biz">Bloom Beauty Salon, Bangalore</div>
-      </div>
-      <div class="tcard">
-        <div class="t-stars">★★★★★</div>
-        <div class="t-body">"We used to lose 60% of walk-ins because we had no way to follow up. Now every scan becomes a WhatsApp contact and the bot handles everything."</div>
-        <div class="t-author">Rajesh Kumar</div>
-        <div class="t-biz">FitZone Gym, Hyderabad</div>
-      </div>
-      <div class="tcard">
-        <div class="t-stars">★★★★★</div>
-        <div class="t-body">"Managing 4 branches used to be chaos. MPilot Pro gives me one view for everything. The QR codes alone have added 200+ customers per month."</div>
-        <div class="t-author">Anita Sharma</div>
-        <div class="t-biz">Spice Trail Restaurant Group, Mumbai</div>
-      </div>
+  <div class="sec ctr">
+    <div class="sec-lbl">Results</div>
+    <div class="sec-title">What our customers say</div>
+    <div class="tgrid">
+      <div class="tcard"><div class="tstars">★★★★★</div><div class="tbody">"Our Google rating went from 3.8 to 4.7 in three months. The review automation alone is worth every rupee. Customers actually come back because of the loyalty messages."</div><div class="tauthor">Priya Menon</div><div class="tbiz">Bloom Beauty Salon, Bangalore</div></div>
+      <div class="tcard"><div class="tstars">★★★★★</div><div class="tbody">"We used to lose 60% of walk-ins because we had no way to follow up. Now every scan becomes a contact and customers are coming back with the win-back offers."</div><div class="tauthor">Rajesh Kumar</div><div class="tbiz">FitZone Gym, Hyderabad</div></div>
+      <div class="tcard"><div class="tstars">★★★★★</div><div class="tbody">"Managing 4 branches from one dashboard has saved us 10+ hours a week. The QR codes alone have added over 200 new contacts per month across our locations."</div><div class="tauthor">Anita Sharma</div><div class="tbiz">Spice Trail Restaurants, Mumbai</div></div>
     </div>
   </div>
 </section>
 
-<!-- ── FAQ ── -->
 <section id="faq">
-  <div class="sec-wrap">
-    <div class="sec-label">FAQ</div>
+  <div class="sec ctr">
+    <div class="sec-lbl">FAQ</div>
     <div class="sec-title">Common questions</div>
     <div class="faq-list">
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFAQ(this)">Do I need a WhatsApp Business API account?<span class="faq-icon">+</span></div>
-        <div class="faq-a">MPilot uses ChatMitra to provide a virtual WhatsApp number. You don't need your own WABA. Just connect your ChatMitra API key in Settings and you're live.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFAQ(this)">Can I try before I pay?<span class="faq-icon">+</span></div>
-        <div class="faq-a">Yes — the Free plan is permanent, no credit card required. It includes 1 QR code, up to 100 leads, and Google Business connection. Upgrade when you're ready to scale.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFAQ(this)">How does the QR → WhatsApp capture work?<span class="faq-icon">+</span></div>
-        <div class="faq-a">Your MPilot QR links to a WhatsApp pre-filled message. When a customer scans and sends the message, they're automatically added to your CRM with their name and number. No forms, no apps.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFAQ(this)">Can I manage multiple branches?<span class="faq-icon">+</span></div>
-        <div class="faq-a">Yes, on the Pro plan. The first branch is included; additional branches are ₹499/month each. Each branch has its own QR codes, CRM, analytics, and WhatsApp automation.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFAQ(this)">Is my customer data safe?<span class="faq-icon">+</span></div>
-        <div class="faq-a">All data is encrypted in transit and at rest. We never sell or share customer data. You can export or delete your data at any time.</div>
-      </div>
+      <div class="fq"><div class="fq-q" onclick="tFAQ(this)">Do I need a WhatsApp Business account?<span class="fq-icon">+</span></div><div class="fq-a">No — MPilot connects you to WhatsApp through our managed service. You don't need to apply for any accounts or do any technical setup whatsoever.</div></div>
+      <div class="fq"><div class="fq-q" onclick="tFAQ(this)">Can I start for free?<span class="fq-icon">+</span></div><div class="fq-a">Yes — the Free plan is permanent with no credit card required. It includes 1 QR code, up to 100 contacts, and Google Business connection. Upgrade whenever you're ready.</div></div>
+      <div class="fq"><div class="fq-q" onclick="tFAQ(this)">How does the QR contact capture work?<span class="fq-icon">+</span></div><div class="fq-a">Your MPilot QR code opens a pre-filled WhatsApp message when scanned. When the customer sends it, they're automatically added to your contact list. No forms, no apps needed.</div></div>
+      <div class="fq"><div class="fq-q" onclick="tFAQ(this)">Can I manage multiple branches?<span class="fq-icon">+</span></div><div class="fq-a">Yes — the Pro plan supports multiple locations from one account. Each branch has its own QR codes, customer list, and campaigns. Additional branches are available at a low monthly fee.</div></div>
+      <div class="fq"><div class="fq-q" onclick="tFAQ(this)">Is my customer data safe?<span class="fq-icon">+</span></div><div class="fq-a">All data is encrypted and stored securely. We never sell or share your customer data. You have full ownership and can export or delete it at any time.</div></div>
+      <div class="fq"><div class="fq-q" onclick="tFAQ(this)">What support is available?<span class="fq-icon">+</span></div><div class="fq-a">All plans include email support. Growth and Pro plans get priority support. Agency plan includes a dedicated account manager for onboarding and ongoing help.</div></div>
     </div>
   </div>
 </section>
 
-<!-- ── CTA BAND ── -->
 <div class="cta-band">
-  <div class="cta-band-title">Ready to grow your business with AI?</div>
-  <div class="cta-band-sub">Join 500+ local businesses already using MPilot. Free forever on the basic plan.</div>
-  <button class="btn-pri" onclick="goToApp('signup')" style="font-size:15px;padding:14px 36px">
-    Start Free — No Credit Card
-  </button>
+  <div class="cta-title">Ready to grow your business?</div>
+  <div class="cta-sub">Join hundreds of local businesses already using MPilot to capture, engage, and retain customers.</div>
+  <button class="btn-pri" onclick="go('signup')" style="font-size:15px;padding:15px 38px">Start Free — No Credit Card</button>
 </div>
 
-<!-- ── FOOTER ── -->
 <footer>
   <div class="footer-logo">MPilot</div>
-  <div class="footer-links">
-    <a href="#features">Features</a>
-    <a href="#pricing">Pricing</a>
-    <a href="#faq">FAQ</a>
-    <a href="index.html">Dashboard</a>
-  </div>
+  <div class="footer-links"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></div>
   <div class="footer-copy">© 2025 Clink Online Pvt Ltd · All rights reserved</div>
 </footer>
 
 <script>
-// ─── PLAN DATA (single source of truth — used here + exported to app.js) ───
-const MPILOT_PLANS = [
-  {
-    id: 'free', name: 'Free', monthlyPrice: 0, annualPrice: 0,
-    desc: 'Get started. No credit card.',
-    limits: '100 contacts · 50 WA msgs/mo · 1 QR code',
-    popular: false,
-    features: [
-      { on: true,  text: '1 QR code (WhatsApp capture)' },
-      { on: true,  text: 'Up to 100 contacts' },
-      { on: true,  text: 'Google Business connection' },
-      { on: true,  text: 'Manual review replies' },
-      { on: true,  text: 'Basic CRM' },
-      { on: false, text: 'AI auto-replies' },
-      { on: false, text: 'Bulk WhatsApp campaigns' },
-      { on: false, text: 'Win-back automation' },
-      { on: false, text: 'Footfall AI' },
-    ]
-  },
-  {
-    id: 'starter', name: 'Starter', monthlyPrice: 299, annualPrice: 239,
-    desc: 'Perfect for single-location businesses.',
-    limits: '2,000 contacts · 1,000 WA msgs/mo · 5 QR codes',
-    popular: false,
-    features: [
-      { on: true,  text: '5 QR codes' },
-      { on: true,  text: 'Up to 2,000 contacts' },
-      { on: true,  text: 'AI review replies (Google)' },
-      { on: true,  text: 'Review request automation' },
-      { on: true,  text: 'Win-back campaigns' },
-      { on: true,  text: 'AI content & social posts' },
-      { on: true,  text: '10 campaigns/month' },
-      { on: false, text: 'Footfall AI & peak hours' },
-      { on: false, text: 'Ads Manager' },
-    ]
-  },
-  {
-    id: 'growth', name: 'Growth', monthlyPrice: 799, annualPrice: 639,
-    desc: 'Scale your customer base fast.',
-    limits: '10,000 contacts · 5,000 WA msgs/mo · 20 QR codes',
-    popular: true, badge: 'Most Popular',
-    features: [
-      { on: true, text: '20 QR codes' },
-      { on: true, text: 'Up to 10,000 contacts' },
-      { on: true, text: 'Footfall AI & peak hours' },
-      { on: true, text: 'Ads Manager (Meta + Google)' },
-      { on: true, text: '50 campaigns/month' },
-      { on: true, text: 'Instagram & Facebook posts' },
-      { on: true, text: 'Competitor analysis' },
-      { on: true, text: 'AI Reels scripts' },
-      { on: false, text: 'Multi-branch management' },
-    ]
-  },
-  {
-    id: 'pro', name: 'Pro', monthlyPrice: 1499, annualPrice: 1199,
-    desc: 'Multi-location power for growing chains.',
-    limits: '50,000 contacts · 20,000 WA msgs/mo · 100 QR codes',
-    popular: false,
-    features: [
-      { on: true, text: '100 QR codes' },
-      { on: true, text: 'Up to 50,000 contacts' },
-      { on: true, text: 'Multi-branch management' },
-      { on: true, text: '₹499/mo per extra branch' },
-      { on: true, text: '200 campaigns/month' },
-      { on: true, text: '5 staff logins' },
-      { on: true, text: 'Priority support' },
-      { on: true, text: 'All Growth features' },
-      { on: true, text: 'Custom AI persona' },
-    ]
-  },
-  {
-    id: 'agency', name: 'Agency', monthlyPrice: 2999, annualPrice: 2399,
-    desc: 'Manage 25+ businesses from one account.',
-    limits: 'Unlimited contacts · 20,000 WA msgs/mo',
-    popular: false,
-    features: [
-      { on: true, text: 'Up to 25 businesses' },
-      { on: true, text: 'Unlimited contacts' },
-      { on: true, text: 'White-label reports' },
-      { on: true, text: 'Bulk campaign scheduling' },
-      { on: true, text: 'Agency dashboard' },
-      { on: true, text: '20 staff logins' },
-      { on: true, text: 'Dedicated account manager' },
-      { on: true, text: 'All Pro features' },
-      { on: true, text: 'API access' },
-    ]
-  }
+const PLANS=[
+  {id:'free',name:'Free',mo:0,yr:0,hot:false,desc:'Get started at no cost.',limits:'100 contacts · 50 WA msgs/mo · 1 QR',feats:[{on:true,t:'1 QR code'},{on:true,t:'Up to 100 contacts'},{on:true,t:'Google Business connection'},{on:true,t:'Manual review replies'},{on:true,t:'Basic contact list'},{on:false,t:'AI automated messages'},{on:false,t:'WhatsApp campaigns'},{on:false,t:'Win-back automation'},{on:false,t:'Footfall intelligence'}]},
+  {id:'starter',name:'Starter',mo:299,yr:239,hot:false,desc:'For growing single-location businesses.',limits:'2,000 contacts · 1,000 WA msgs/mo · 5 QR',feats:[{on:true,t:'5 QR codes'},{on:true,t:'Up to 2,000 contacts'},{on:true,t:'AI Google review replies'},{on:true,t:'Automated review requests'},{on:true,t:'Win-back campaigns'},{on:true,t:'AI content for social posts'},{on:true,t:'10 campaigns per month'},{on:false,t:'Footfall intelligence'},{on:false,t:'Multi-branch support'}]},
+  {id:'growth',name:'Growth',mo:799,yr:639,hot:true,badge:'Most Popular',desc:'Scale fast with full AI power.',limits:'10,000 contacts · 5,000 WA msgs/mo · 20 QR',feats:[{on:true,t:'20 QR codes'},{on:true,t:'Up to 10,000 contacts'},{on:true,t:'Footfall intelligence'},{on:true,t:'Social media management'},{on:true,t:'50 campaigns per month'},{on:true,t:'Instagram & Facebook posts'},{on:true,t:'Competitor monitoring'},{on:true,t:'AI content generator'},{on:false,t:'Multi-branch management'}]},
+  {id:'pro',name:'Pro',mo:1499,yr:1199,hot:false,desc:'For multi-location businesses.',limits:'50,000 contacts · 20,000 WA msgs/mo · 100 QR',feats:[{on:true,t:'100 QR codes'},{on:true,t:'Up to 50,000 contacts'},{on:true,t:'Multi-branch management'},{on:true,t:'200 campaigns per month'},{on:true,t:'5 staff logins'},{on:true,t:'Priority support'},{on:true,t:'Custom AI messaging style'},{on:true,t:'All Growth features'},{on:true,t:'₹499/mo per extra branch'}]},
+  {id:'agency',name:'Agency',mo:2999,yr:2399,hot:false,desc:'Manage 25+ businesses.',limits:'Unlimited contacts · 20,000 WA msgs/mo',feats:[{on:true,t:'Up to 25 businesses'},{on:true,t:'Unlimited contacts'},{on:true,t:'White-label reporting'},{on:true,t:'Bulk scheduling'},{on:true,t:'20 staff logins'},{on:true,t:'Dedicated account manager'},{on:true,t:'All Pro features'},{on:true,t:'Priority onboarding'},{on:true,t:'API access'}]}
 ];
-
-let _pricingPeriod = 'monthly';
-
-function togglePricingPeriod() {
-  setPricingPeriod(_pricingPeriod === 'monthly' ? 'annual' : 'monthly');
-}
-function setPricingPeriod(period) {
-  _pricingPeriod = period;
-  const track  = document.getElementById('pricing-track');
-  const lblM   = document.getElementById('lbl-monthly');
-  const lblA   = document.getElementById('lbl-annual');
-  if (track) track.classList.toggle('annual', period === 'annual');
-  if (lblM) lblM.classList.toggle('active', period === 'monthly');
-  if (lblA) lblA.classList.toggle('active', period === 'annual');
-  renderPlanGrid('landing-plan-grid', {
-    period,
-    currentPlan: null,
-    onSelect: (planId, planName) => goToApp('signup')
-  });
-}
-
-/**
- * Render plan cards into a target container.
- * Used by: landing page, upgrade modal, add-branch modal
- * @param {string} containerId
- * @param {object} opts - { period, currentPlan, onSelect }
- */
-function renderPlanGrid(containerId, opts = {}) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  const { period = 'monthly', currentPlan = null, onSelect = null } = opts;
-
-  container.innerHTML = MPILOT_PLANS.map(plan => {
-    const price  = period === 'annual' ? plan.annualPrice : plan.monthlyPrice;
-    const isCurr = currentPlan === plan.id;
-    const isFree = plan.monthlyPrice === 0;
-
-    const btnClass = isCurr ? 'plan-btn-current' :
-                    (plan.popular ? 'plan-btn-primary' : 'plan-btn-secondary');
-    const btnText  = isCurr ? '✓ Current Plan' :
-                    (isFree ? 'Get Started Free' : `Upgrade to ${plan.name}`);
-    const btnClick = isCurr ? '' :
-                    `onclick="(${onSelect ? onSelect.toString() : 'function(id,n){goToApp(\"signup\")}'})('${plan.id}','${plan.name}')"`;
-
-    return `
-    <div class="plan-card ${plan.popular ? 'popular' : ''}">
-      ${plan.badge ? `<div class="plan-hot-badge">${plan.badge}</div>` : ''}
-      <div class="plan-name">${plan.name}</div>
-      <div class="plan-price">
-        ${isFree ? '<span style="font-size:22px;font-weight:700">Free</span>' :
-          `<sup>₹</sup>${price.toLocaleString('en-IN')}<sub>/mo</sub>`}
-      </div>
-      ${!isFree && period === 'annual' ? `<div class="plan-period" style="color:var(--a2)">billed annually · save 20%</div>` : '<div class="plan-period">&nbsp;</div>'}
-      <div class="plan-desc">${plan.desc}</div>
-      <div class="plan-limits-bar">${plan.limits}</div>
-      <div class="plan-divider"></div>
-      <ul class="plan-feats">
-        ${plan.features.map(f =>
-          `<li class="${f.on ? 'on' : ''}">
-            <span class="${f.on ? 'ck' : 'cx'}">${f.on ? '✓' : '✗'}</span>
-            <span>${f.text}</span>
-          </li>`
-        ).join('')}
-      </ul>
-      <button class="plan-btn ${btnClass}" ${btnClick}>${btnText}</button>
+let _p='monthly';
+function renderPlans(){
+  const g=document.getElementById('pgrid');if(!g)return;
+  g.innerHTML=PLANS.map(p=>{
+    const price=_p==='annual'?p.yr:p.mo,free=p.mo===0;
+    return`<div class="pc ${p.hot?'hot':''}">
+      ${p.badge?`<div class="hot-badge">${p.badge}</div>`:''}
+      <div class="pname">${p.name}</div>
+      <div class="pprice">${free?'<span style="font-size:22px;font-weight:700">Free</span>':`<sup>₹</sup>${price.toLocaleString('en-IN')}<sub>/mo</sub>`}</div>
+      <div class="pperiod">${!free&&_p==='annual'?'<span style="color:var(--a2)">billed annually · 20% off</span>':'&nbsp;'}</div>
+      <div class="pdesc">${p.desc}</div>
+      <div class="plimits">${p.limits}</div>
+      <div class="pdiv"></div>
+      <ul class="pfeats">${p.feats.map(f=>`<li class="${f.on?'on':''}"><span class="${f.on?'ck':'cx'}">${f.on?'✓':'✗'}</span><span>${f.t}</span></li>`).join('')}</ul>
+      <button class="pbtn ${p.hot?'pbtn-pri':'pbtn-sec'}" onclick="go('signup')">${free?'Get Started Free':'Start '+p.name}</button>
     </div>`;
   }).join('');
 }
-
-// ─── FAQ toggle ─────────────────────────────────────────────
-function toggleFAQ(el) {
-  const item = el.closest('.faq-item');
-  item.classList.toggle('open');
+function togglePeriod(){setPeriod(_p==='monthly'?'annual':'monthly');}
+function setPeriod(p){
+  _p=p;
+  document.getElementById('ttog').classList.toggle('on',p==='annual');
+  document.getElementById('lbl-m').classList.toggle('active',p==='monthly');
+  document.getElementById('lbl-a').classList.toggle('active',p==='annual');
+  renderPlans();
 }
-
-// ─── Nav buttons → go to app ────────────────────────────────
-function goToApp(tab) {
-  // Store intent so index.html knows which tab to show
-  if (tab) localStorage.setItem('mpilot_auth_intent', tab);
-  window.location.href = 'index.html';
+function tFAQ(el){el.closest('.fq').classList.toggle('open');}
+function go(tab){
+  localStorage.setItem('mpilot_auth_intent',tab||'login');
+  window.location.href='index.html';
 }
-
-// ─── Init ───────────────────────────────────────────────────
-renderPlanGrid('landing-plan-grid', {
-  period: 'monthly',
-  currentPlan: null,
-  onSelect: (id, name) => goToApp('signup')
-});
-
-// Auto-redirect logged-in users to dashboard
-if (localStorage.getItem('mpilot_token') && localStorage.getItem('mpilot_user')) {
+renderPlans();
+// Redirect logged-in users to dashboard
+if(localStorage.getItem('mpilot_token')&&localStorage.getItem('mpilot_user')){
   window.location.replace('index.html');
 }
 </script>
