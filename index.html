@@ -1854,7 +1854,7 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
   </div>
 </div>
 
-id="p-chips" style="display:none"></div>
+<div class="page" id="p-chips" style="display:none"></div>
   <div id="p-svc-sugs" style="display:none"></div>
   <div id="pfp-icon" style="display:none"></div>
   <div id="pfp-name" style="display:none"></div>
@@ -2523,7 +2523,7 @@ function doLogout() {
   ['mpilot_token','mpilot_user','mpilot_biz','mpilot_last_biz'].forEach(k => localStorage.removeItem(k));
   window.location.reload();
 }
-async function doForgotPassword() {
+async async function doForgotPassword() {
   var btn = document.getElementById('fp-btn');
   var err = document.getElementById('fp-err');
   var ok  = document.getElementById('fp-ok');
@@ -2557,7 +2557,7 @@ async function doForgotPassword() {
     if (btn) { btn.textContent='Send Reset Link'; btn.disabled=false; }
   }
 }
-async function doResetPassword() {
+async async function doResetPassword() {
   var btn = document.getElementById('rp-btn');
   var err = document.getElementById('rp-err');
   var ok  = document.getElementById('rp-ok');
@@ -2594,7 +2594,7 @@ async function doResetPassword() {
     if (btn) { btn.textContent='Set New Password'; btn.disabled=false; }
   }
 }
-async function doSignup() {
+async async function doSignup() {
   var btn = document.getElementById('su-btn');
   var err = document.getElementById('su-err');
   if (err) { err.textContent=''; err.style.display='none'; }
@@ -2729,7 +2729,7 @@ function initUserUI() {
 async function req(method, path, body) {
   try {
     const ctrl  = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 10000);
+    const timer = setTimeout(() => ctrl.abort(), 30000);  // 30s — Render free tier cold starts
     const opts  = { method, signal: ctrl.signal, headers: {'Content-Type':'application/json'} };
     const token = localStorage.getItem('mpilot_token');
     if (token) opts.headers['Authorization'] = 'Bearer ' + token;
@@ -2738,18 +2738,21 @@ async function req(method, path, body) {
     clearTimeout(timer);
     const d = await r.json().catch(() => ({}));
     if (!r.ok) {
-      // Silence 401/403 (handled by login flow) and 500 (server errors logged to console)
-      if (r.status !== 401 && r.status !== 403 && r.status !== 500) {
-        toast(d.detail || 'Error ' + r.status, 'err');
+      if (r.status === 401 || r.status === 403) {
+        // Auth errors — handled by login flow
       } else if (r.status === 500) {
-        console.error('[MPilot] Server error on', r.url || '', d);
+        const msg = d.detail || d.message || 'Internal server error';
+        console.error('[MPilot] 500 on', path, msg, d);
+        toast(msg, 'err');
+      } else {
+        toast(d.detail || ('Error ' + r.status), 'err');
       }
-      return {};
+      return { _err: true, _status: r.status, detail: d.detail || '' };
     }
     return d;
   } catch(e) {
-    if (e.name === 'AbortError') toast('Server timeout — check uvicorn is running', 'err');
-    else if (!e.message?.includes('fetch')) toast('Connection error — start uvicorn first', 'err');
+    if (e.name === 'AbortError') toast('Request timed out — Render may be waking up (free tier). Wait 30s and try again.', 'err');
+    else if (!e.message?.includes('fetch')) toast('Connection error — please try again.', 'err');
     return {};
   }
 }
@@ -2843,7 +2846,7 @@ function loadPage(page) {
 
 
 
-async function loadDash() {
+async async function loadDash() {
   if (!BIZ) return;
 
   // Update date
@@ -2982,7 +2985,7 @@ async function loadDash() {
 }
 
 // ─── Revenue ─────────────────────────────────────────────
-async function loadRevenue() {
+async async function loadRevenue() {
   if (!BIZ) return;
   const [stats, camps] = await Promise.all([
     req('GET', `/api/dashboard/stats/${BIZ}`),
@@ -3037,7 +3040,7 @@ async function applySug(id,btn) { btn.textContent='Applying...'; btn.disabled=tr
 async function dismissSug(id,btn) { await req('POST',`/api/ai/suggestions/${id}/dismiss`); btn.closest('.scard').remove(); }
 
 // ─── Channels ─────────────────────────────────────────────
-async function loadChannels() {
+async async function loadChannels() {
   if (!BIZ) return;
   const st = await req('GET', `/api/social/status/${BIZ}`);
   const gbpOk  = st.gbp?.connected === true;
@@ -3088,7 +3091,7 @@ function setMetaState(state) {
   }
 }
 
-async function loadConnectPage() {
+async async function loadConnectPage() {
   if (!BIZ) return;
   const biz = await req('GET', `/api/businesses/${BIZ}`);
   const nm = biz.name || '';
@@ -3168,7 +3171,7 @@ async function connectMeta(btn) {
   }
 }
 
-async function loadGBPLocations() {
+async async function loadGBPLocations() {
   if (!BIZ) return;
   setGBPState('picker');
   document.getElementById('gbp-locations-list').innerHTML = '<div class="empty"><span class="spin"></span> Loading your Google Business locations...</div>';
@@ -3216,13 +3219,13 @@ async function selectGBPLocation(locationId, accountId, el) {
   if (r.status==='connected') { toast('Google Business connected!'); showGBPConnected(r.location||{}); loadDash(); }
 }
 function showGBPPicker() { loadGBPLocations(); }
-async function disconnectGBP() {
+async async function disconnectGBP() {
   if (!BIZ || !confirm('Disconnect Google Business?')) return;
   await req('POST', `/api/social/gbp/disconnect/${BIZ}`);
   toast('Google Business disconnected'); setGBPState('notconnected'); loadDash();
 }
 
-async function loadMetaPages() {
+async async function loadMetaPages() {
   if (!BIZ) return;
   setMetaState('picker');
   document.getElementById('meta-pages-list').innerHTML = '<div class="empty"><span class="spin"></span> Loading your Facebook Pages...</div>';
@@ -3260,7 +3263,7 @@ async function selectMetaPage(pageId, igId, el) {
   if (r.status==='connected') { toast('Facebook & Instagram connected!'); showMetaConnected(r.page||{}); loadDash(); }
 }
 function showMetaPicker() { loadMetaPages(); }
-async function disconnectMeta() {
+async async function disconnectMeta() {
   if (!BIZ || !confirm('Disconnect Facebook and Instagram?')) return;
   await req('POST', `/api/social/meta/disconnect/${BIZ}`);
   toast('Facebook / Instagram disconnected'); setMetaState('notconnected'); loadDash();
@@ -3269,12 +3272,12 @@ async function disconnectMeta() {
 // ─── Social Posts ─────────────────────────────────────────
 function showPostForm() { const e=document.getElementById('post-form'); if(e) e.style.display='block'; }
 function aiForPost() { const ch=document.getElementById('post-ch')?.value||'instagram'; goTo('content'); const el=document.getElementById('ai-ch'); if(el) el.value=ch==='facebook'?'facebook_ad':ch; }
-async function submitPost() {
+async async function submitPost() {
   if (!BIZ) return toast('Select a business first','err');
   const r = await req('POST','/api/social/post',{business_id:BIZ, channel:document.getElementById('post-ch').value, content:document.getElementById('post-content').value, scheduled_at:document.getElementById('post-sched').value||null});
   if (r.post_id) { toast('Post created!'); closeForm('post-form'); loadPosts(); }
 }
-async function loadPosts() {
+async async function loadPosts() {
   if (!BIZ) return;
   const data = await req('GET',`/api/social/posts/${BIZ}`);
   const arr = Array.isArray(data)?data:[];
@@ -3284,18 +3287,18 @@ async function loadPosts() {
 
 // ─── Ads ─────────────────────────────────────────────────
 function showAdForm() { const e=document.getElementById('ad-form'); if(e) e.style.display='block'; }
-async function aiAdCopy() {
+async async function aiAdCopy() {
   if (!BIZ) return;
   const b = await req('GET',`/api/businesses/${BIZ}`);
   const h=document.getElementById('ad-hl'); if(h) h.value=`Visit ${b.name||'Us'} Today!`;
   const bd=document.getElementById('ad-body'); if(bd) bd.value=`Discover the best ${b.category||'service'} near you. Special offer for new customers!`;
 }
-async function submitAd() {
+async async function submitAd() {
   if (!BIZ) return toast('Select a business first','err');
   const r = await req('POST','/api/ai/create-ad',{business_id:BIZ, headline:document.getElementById('ad-hl').value, body:document.getElementById('ad-body').value, budget_daily_inr:parseFloat(document.getElementById('ad-bud').value)||200, radius_km:parseInt(document.getElementById('ad-rad').value)||3, objective:document.getElementById('ad-obj').value});
   if (r.ad_id) { toast('Ad campaign created!'); closeForm('ad-form'); loadAds(); }
 }
-async function loadAds() {
+async async function loadAds() {
   if (!BIZ) return;
   const data = await req('GET',`/api/ai/ads/${BIZ}`);
   const arr = Array.isArray(data)?data:[];
@@ -3304,7 +3307,7 @@ async function loadAds() {
 }
 
 // ─── SEO ─────────────────────────────────────────────────
-async function loadSEO() {
+async async function loadSEO() {
   if (!BIZ) return;
   const biz = await req('GET',`/api/businesses/${BIZ}`);
   const status = await req('GET',`/api/social/status/${BIZ}`);
@@ -3334,7 +3337,7 @@ async function loadSEO() {
   const sa = document.getElementById('seo-actions');
   if (sa) sa.innerHTML = actions.map(a=>`<div style="display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)"><div style="width:3px;border-radius:3px;background:${a.c};flex-shrink:0"></div><div><div style="font-size:12.5px;font-weight:500;margin-bottom:3px">${a.t}</div><div style="font-size:11.5px;color:var(--muted);line-height:1.6">${a.d}</div></div></div>`).join('');
 }
-async function genKeywords() {
+async async function genKeywords() {
   if (!BIZ) return;
   const biz = await req('GET',`/api/businesses/${BIZ}`);
   const cat = biz.category||'retail';
@@ -3359,7 +3362,7 @@ function useKeyword(kw) { goTo('content'); const el=document.getElementById('ai-
 
 // ─── Customers ────────────────────────────────────────────
 function showAddCust() { const e=document.getElementById('add-cust-form'); if(e) e.style.display='block'; }
-async function addCust() {
+async async function addCust() {
   if (!BIZ) return toast('Select a business first','err');
   const r = await req('POST','/api/customers/optin',{business_id:BIZ, phone:document.getElementById('cust-ph').value, name:document.getElementById('cust-nm').value, consent:true});
   if (r.customer_id) { toast('Customer added!'); closeForm('add-cust-form'); loadCusts(''); }
@@ -3380,7 +3383,7 @@ async function loadCusts(tag='') {
 }
 async function addPts(id) { const p=prompt('Points to add:','10'); if(!p) return; await req('POST','/api/customers/points',{customer_id:id,business_id:BIZ,points_delta:parseInt(p),reason:'visit'}); toast('Points added!'); loadCusts(''); }
 async function reqRev(id) { await req('POST',`/api/customers/request-review?business_id=${BIZ}&customer_id=${id}`); toast('Review request sent!'); }
-async function triggerWinBack() {
+async async function triggerWinBack() {
   if (!BIZ) return toast('Select a business first','err');
   const offer = prompt('Win-back offer:','20% OFF your next visit!');
   if (!offer) return;
@@ -3389,7 +3392,7 @@ async function triggerWinBack() {
 }
 
 // ─── Loyalty ─────────────────────────────────────────────
-async function loadLoyalty() {
+async async function loadLoyalty() {
   if (!BIZ) return;
   const custs = await req('GET',`/api/customers/list/${BIZ}`);
   const arr = Array.isArray(custs)?custs:[];
@@ -3408,7 +3411,7 @@ async function sendLoyaltyReward() {
 }
 
 // ─── Footfall ─────────────────────────────────────────────
-async function loadFootfall() {
+async async function loadFootfall() {
   if (!BIZ) return;
   const data = await req('GET',`/api/footfall/insights/${BIZ}`);
   if (!data.summary) return;
@@ -3432,7 +3435,7 @@ async function wbOne(phone,name) { const offer=prompt(`Win-back offer for ${name
 // ─── Campaigns ────────────────────────────────────────────
 function showCampForm() { const e=document.getElementById('camp-form'); if(e) e.style.display='block'; }
 function aiForCampaign() { goTo('content'); }
-async function createAndSend() {
+async async function createAndSend() {
   if (!BIZ) return toast('Select a business first','err');
   const name=document.getElementById('camp-nm').value;
   const msg=document.getElementById('camp-msg').value;
@@ -3444,7 +3447,7 @@ async function createAndSend() {
   }
 }
 function aiToCampaign() { if(!lastAI) return; goTo('campaigns'); showCampForm(); const el=document.getElementById('camp-msg'); if(el) el.value=lastAI; }
-async function loadCamps() {
+async async function loadCamps() {
   if (!BIZ) return;
   const data = await req('GET',`/api/campaigns/list/${BIZ}`);
   const arr = Array.isArray(data)?data:[];
@@ -3452,7 +3455,7 @@ async function loadCamps() {
   if (tb) tb.innerHTML=arr.length?arr.map(c=>`<tr><td>${c.name}</td><td><span class="badge bb">${c.channel}</span></td><td><span class="badge bgy">${c.target_segment||'all'}</span></td><td>${sBadge(c.status)}</td><td>${c.sent_count||0}</td><td>${c.ai_generated?'<span class="badge bam">AI</span>':'—'}</td><td>${fd(c.sent_at||c.created_at)}</td><td>${c.status!=='sent'?`<button class="btn bg xs" onclick="sendCamp('${c.campaign_id}')">Send</button>`:'—'}</td></tr>`).join(''):'<tr><td colspan="8" class="empty">No campaigns yet</td></tr>';
 }
 async function sendCamp(id) { const r=await req('POST',`/api/campaigns/${id}/send`); toast(`Sent to ${r.sent_count} customers!`); loadCamps(); }
-async function loadFestivals() {
+async async function loadFestivals() {
   if (!BIZ) return;
   const data=await req('GET',`/api/campaigns/festival-suggestions/${BIZ}`);
   const arr=Array.isArray(data)?data:[];
@@ -3462,7 +3465,7 @@ async function loadFestivals() {
 function useFest(name,offer) { showCampForm(); const n=document.getElementById('camp-nm'); if(n) n.value=name+' Campaign'; const m=document.getElementById('camp-msg'); if(m) m.value=offer; }
 
 // ─── AI Content ───────────────────────────────────────────
-async function genContent() {
+async async function genContent() {
   if (!BIZ) return toast('Select a business first','err');
   const btn=document.getElementById('ai-gen-btn');
   if (btn) { btn.innerHTML='<span class="spin"></span> Generating...'; btn.disabled=true; }
@@ -3482,11 +3485,11 @@ function copyAI() { navigator.clipboard.writeText(lastAI).then(()=>toast('Copied
 function aiToPost() { if(!lastAI) return; goTo('social'); showPostForm(); const el=document.getElementById('post-content'); if(el) el.value=lastAI; }
 
 // ─── Influencer ───────────────────────────────────────────
-async function loadInfluencer() {
+async async function loadInfluencer() {
   if (!BIZ) return;
   await Promise.all([loadCal(), loadTrends()]);
 }
-async function genReel() {
+async async function genReel() {
   if (!BIZ) return toast('Select a business first','err');
   const btn=document.getElementById('reel-btn');
   if (btn) { btn.innerHTML='<span class="spin"></span> Writing...'; btn.disabled=true; }
@@ -3500,14 +3503,14 @@ async function genReel() {
   const ht=document.getElementById('reel-tags'); if(r.hashtags?.length&&ht){ht.style.display='block';ht.innerHTML=r.hashtags.map(t=>`<span class="ht" style="margin-right:4px">${t}</span>`).join('');}
   toast('Script ready!');
 }
-async function loadCal() {
+async async function loadCal() {
   if (!BIZ) return;
   const data=await req('GET',`/api/influencer/content-calendar/${BIZ}`);
   const arr=Array.isArray(data)?data:[];
   const el=document.getElementById('cal-list');
   if (el) el.innerHTML=arr.length?arr.slice(0,14).map(item=>`<div style="display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:1px solid var(--border)"><div style="min-width:40px;font-size:10px;color:var(--muted);text-align:center">${item.date?.slice(5)||''}<br>${item.day_name?.slice(0,3)||''}</div><div style="flex:1"><div style="font-size:12px">${item.caption}</div><div style="font-size:10px;color:var(--muted)">${item.channel}</div></div><span class="badge ${item.status==='priority'?'bam':'bgy'}" style="font-size:9px">${item.type}</span></div>`).join(''):'<div class="empty">No data</div>';
 }
-async function loadTrends() {
+async async function loadTrends() {
   if (!BIZ) return;
   const data=await req('GET',`/api/influencer/trends/${BIZ}`);
   const arr=Array.isArray(data)?data:[];
@@ -3517,12 +3520,12 @@ async function loadTrends() {
 
 // ─── Reviews ─────────────────────────────────────────────
 function showAddRev() { const e=document.getElementById('add-rev-form'); if(e) e.style.display='block'; }
-async function addRev() {
+async async function addRev() {
   if (!BIZ) return toast('Select a business first','err');
   const r=await req('POST','/api/reviews/',{business_id:BIZ, platform:'google', rating:parseInt(document.getElementById('rev-rt').value), reviewer_name:document.getElementById('rev-nm').value, review_text:document.getElementById('rev-txt').value});
   if (r.alert_id) { toast('Review added!'); closeForm('add-rev-form'); loadRevs(); }
 }
-async function loadRevs() {
+async async function loadRevs() {
   if (!BIZ) return;
   const [stats, data] = await Promise.all([
     req('GET', `/api/reviews/stats/${BIZ}`),
@@ -3618,7 +3621,7 @@ async function regenerateReply(reviewId) {
   if (ta && r.reply) { ta.value=r.reply; toast('New draft generated'); }
 }
 
-async function autoReplyAll() {
+async async function autoReplyAll() {
   if (!BIZ) return toast('Select a business first','err');
   const pending = await req('GET',`/api/reviews/list/${BIZ}?replied=no`);
   const count = Array.isArray(pending)?pending.length:0;
@@ -3629,7 +3632,7 @@ async function autoReplyAll() {
   setTimeout(loadRevs, 2000);
 }
 
-async function requestAllReviews() {
+async async function requestAllReviews() {
   if (!BIZ) return toast('Select a business first','err');
   const r = await req('POST',`/api/reviews/request-all/${BIZ}`);
   toast(`Review requests sent to ${r.eligible||0} opted-in customers ⭐`);
@@ -3639,11 +3642,11 @@ async function aiRevReply(id,rating) {
   if (!r.reply) return;
   if (confirm(`AI Reply:\n\n"${r.reply}"\n\nPost this reply?`)) { await req('POST',`/api/reviews/${id}/reply?business_id=${BIZ}&reply_text=${encodeURIComponent(r.reply)}`); toast('Reply posted!'); loadRevs(); }
 }
-async function syncReviews() { if(!BIZ) return; const r=await req('GET',`/api/social/gbp/reviews/${BIZ}`); toast(`Synced ${r.synced||0} new reviews`); loadRevs(); }
+async async function syncReviews() { if(!BIZ) return; const r=await req('GET',`/api/social/gbp/reviews/${BIZ}`); toast(`Synced ${r.synced||0} new reviews`); loadRevs(); }
 function quickGBPPost() { goTo('social'); const el=document.getElementById('post-ch'); if(el) el.value='gbp'; showPostForm(); }
 
 // ─── Competitors ──────────────────────────────────────────
-async function loadComps() {
+async async function loadComps() {
   if (!BIZ) return;
   const r=await req('GET',`/api/social/competitors/${BIZ}`);
   const ca=document.getElementById('comp-analysis'); const ct=document.getElementById('comp-ai-text');
@@ -3661,7 +3664,7 @@ function showQRForm() {
   const e = document.getElementById('qr-form');
   if (e) e.style.display = 'block';
 }
-async function genQR() {
+async async function genQR() {
   if (!BIZ) return toast('Select a business first — go to Setup page', 'err');
   const btn   = document.querySelector('[onclick="genQR()"]');
   const offer = document.getElementById('qr-offer')?.value?.trim() || 'Scan & Get 20% OFF';
@@ -3680,7 +3683,7 @@ async function genQR() {
     console.error('[QR] Response:', r, 'BIZ:', BIZ);
   }
 }
-async function loadQR() {
+async async function loadQR() {
   if (!BIZ) return;
   const data = await req('GET', `/api/qr/list/${BIZ}`);
   const arr  = Array.isArray(data) ? data : [];
@@ -3723,7 +3726,7 @@ async function deleteQR(qrId) {
 let _analyticsData = null;
 let _charts = {};
 
-async function loadAnalytics() {
+async async function loadAnalytics() {
   if (!BIZ) return;
   const data = await req('GET', `/api/dashboard/analytics/${BIZ}`);
   if (!data || !data.summary) return;
@@ -3891,7 +3894,7 @@ async function loadRevsFilter(type, val) {
   }).join('');
 }
 
-async function aiReplyFromForm() {
+async async function aiReplyFromForm() {
   if (!BIZ) return toast('Select a business first','err');
   const text   = document.getElementById('rev-txt')?.value?.trim();
   const rating = parseInt(document.getElementById('rev-rt')?.value||'5');
@@ -4104,7 +4107,7 @@ const CAT_EMOJI = {salon:'✂️',spa:'🧘',beauty:'💄',barbershop:'💈',
 // ── Business list (cached after load) ────────────────
 let _bizCache = [];
 
-async function loadBizList() {
+async async function loadBizList() {
   const data = await req('GET', '/api/businesses/');
   _bizCache   = Array.isArray(data) ? data : [];
   // Attach lead counts for picker display
@@ -4179,7 +4182,7 @@ function selectBiz(id) {
 
 
 // ── Login flow ────────────────────────────────────────
-async function doLogin() {
+async async function doLogin() {
   const btn = document.getElementById('li-btn');
   const err = document.getElementById('li-err');
   if (err) err.style.display = 'none';
@@ -4312,7 +4315,7 @@ async function _pickBizAndEnter(bizId, bizName, fromPicker) {
 //  AUTOMATION ENGINE
 // ══════════════════════════════════════════════════════
 
-async function loadAutomation() {
+async async function loadAutomation() {
   if (!BIZ) return;
 
   // Load automation status
@@ -4363,7 +4366,7 @@ function _autoIcon(type) {
   return icons[type] || '⚡';
 }
 
-async function runAllAutomations() {
+async async function runAllAutomations() {
   if (!BIZ) return toast('Select a business first','err');
   const btn = document.querySelector('[onclick="runAllAutomations()"]');
   if (btn) { btn.textContent = '⏳ Running…'; btn.disabled = true; }
@@ -4377,28 +4380,28 @@ async function runAllAutomations() {
   toast('All automations triggered ✓');
 }
 
-async function runWinBack() {
+async async function runWinBack() {
   if (!BIZ) return toast('Select a business first','err');
   const r = await req('POST', `/api/customers/winback/${BIZ}`, {offer: 'We miss you! Come back for 20% OFF'});
   toast(r.sent ? `Win-back sent to ${r.sent} customers ✓` : 'No inactive customers found');
   loadAutomation();
 }
 
-async function runReviewRequests() {
+async async function runReviewRequests() {
   if (!BIZ) return toast('Select a business first','err');
   const r = await req('POST', `/api/customers/send-review-requests/${BIZ}`);
   toast(r.sent ? `Review requests sent to ${r.sent} customers ✓` : 'No eligible customers');
   loadAutomation();
 }
 
-async function runLoyaltyRewards() {
+async async function runLoyaltyRewards() {
   if (!BIZ) return toast('Select a business first','err');
   const r = await req('POST', `/api/customers/loyalty-reward/${BIZ}`);
   toast(r.notified ? `Loyalty notifications: ${r.notified} sent ✓` : 'No tier upgrades pending');
   loadAutomation();
 }
 
-async function runSyncReviews() {
+async async function runSyncReviews() {
   if (!BIZ) return toast('Select a business first','err');
   const r = await req('POST', `/api/automation/sync-reviews/${BIZ}`);
   const el = document.getElementById('sync-review-status');
@@ -4409,7 +4412,7 @@ async function runSyncReviews() {
   loadAutomation();
 }
 
-async function runAutoReplyReviews() {
+async async function runAutoReplyReviews() {
   if (!BIZ) return toast('Select a business first','err');
   const r = await req('POST', `/api/reviews/auto-reply-all/${BIZ}`);
   const el = document.getElementById('auto-reply-status');
@@ -4417,7 +4420,7 @@ async function runAutoReplyReviews() {
   toast('Auto-reply queued ✓');
 }
 
-async function runSimulate() {
+async async function runSimulate() {
   const phone = document.getElementById('sim-phone')?.value?.trim() || '919900001111';
   const msg   = document.getElementById('sim-msg')?.value?.trim();
   if (!msg) return toast('Enter a message','err');
@@ -4454,7 +4457,7 @@ async function runSimulate() {
 
 
 // ── WhatsApp Direct Link (optional, from ChatMitra dashboard) ──
-async function saveWADirectLink() {
+async async function saveWADirectLink() {
   if (!BIZ) return toast('Select a business first', 'err');
   const input = document.getElementById('wa-direct-link');
   const raw   = (input?.value || '').trim();
@@ -4631,7 +4634,7 @@ async function selectPlan(plan) {
 }
 
 // Show upgrade prompt when user tries to add a second branch
-async function checkCanAddBranch() {
+async async function checkCanAddBranch() {
   const r = await req('GET', '/api/billing/can-add-branch');
   if (!r.can_add) {
     openPricingModal('multi-branch');
@@ -4688,7 +4691,7 @@ async function connectGBPInline(btn) {
   }
 }
 
-async function _loadGBPLocationsInline() {
+async async function _loadGBPLocationsInline() {
   function sh(id, v) { var e = document.getElementById(id); if (e) e.style.display = v ? 'block' : 'none'; }
   sh('gbp-ch-notconn', false); sh('gbp-ch-picker', true);
   var el = document.getElementById('gbp-ch-locations');
@@ -4745,7 +4748,7 @@ async function connectMetaInline(btn) {
   }
 }
 
-async function _loadMetaPagesInline() {
+async async function _loadMetaPagesInline() {
   function sh(id, v) { var e = document.getElementById(id); if (e) e.style.display = v ? 'block' : 'none'; }
   sh('meta-ch-notconn', false); sh('meta-ch-picker', true);
   var el = document.getElementById('meta-ch-pages');
@@ -4788,7 +4791,7 @@ function _goSetupChannels() {
 
 
 
-async function saveWAConfig() {
+async async function saveWAConfig() {
   if (!BIZ) return toast('Select a business first', 'err');
   const apiKey = document.getElementById('wa-api-key')?.value.trim();
   const phone  = document.getElementById('wa-phone-num')?.value.trim().replace(/\D/g,'');
@@ -4845,7 +4848,7 @@ function copyWebhookUrl() {
   navigator.clipboard.writeText(el.textContent).then(() => toast('Webhook URL copied ✓'));
 }
 
-async function sendWATestMessage() {
+async async async function sendWATestMessage() {
   if (!BIZ) return toast('Select a business first', 'err');
 
   const phone   = (document.getElementById('wa-test-phone')?.value || '').replace(/[^0-9]/g, '');
@@ -4876,7 +4879,7 @@ async function sendWATestMessage() {
 }
 
 
-async function loadWATemplates() {
+async async function loadWATemplates() {
   if (!BIZ) return toast('Select a business first', 'err');
   var btn = document.getElementById('wa-tpl-load-btn');
   if (btn) { btn.textContent = 'Loading\u2026'; btn.disabled = true; }
@@ -4947,7 +4950,7 @@ async function sendWATestMessage() {
 }
 
 
-async function testWABot() {
+async async function testWABot() {
   // Keep for Automation page simulator
   const phone = document.getElementById('sim-phone')?.value?.trim() || '919900001111';
   const msg   = document.getElementById('sim-msg')?.value?.trim();
@@ -5054,7 +5057,7 @@ function _loadAdvancedSettings() {
 //  ADD BUSINESS / BRANCH — with plan gate
 // ══════════════════════════════════════════════════════
 
-async function addNewBusinessQuick() {
+async async async function addNewBusinessQuick() {
   // Plan gate: check if multi-branch is allowed
   const ok = await checkCanAddBranch();
   if (!ok) return;  // pricing modal shown
@@ -5110,7 +5113,7 @@ function _showAddBranchModal() {
   setTimeout(() => document.getElementById('nb-name')?.focus(), 100);
 }
 
-async function _createBranch() {
+async async function _createBranch() {
   const name  = document.getElementById('nb-name')?.value.trim();
   let   phone = document.getElementById('nb-phone')?.value.trim().replace(/\D/g,'');
   const cat   = document.getElementById('nb-cat')?.value || 'other';
@@ -5366,7 +5369,7 @@ function spUpdatePreview() {
   }
 }
 
-async function saveBizProfile() {
+async async function saveBizProfile() {
   spSyncSvcs();
   const btn  = document.getElementById('save-biz-btn');
   const msg  = document.getElementById('sp-save-msg');
@@ -5411,7 +5414,11 @@ async function saveBizProfile() {
 
   if (btn) { btn.textContent = 'Save Profile'; btn.disabled = false; }
 
-  if (r?.business_id) {
+  if (r?.business_id || (r && !r._err && BIZ)) {
+    if (r?.business_id && !BIZ) {
+      BIZ = r.business_id;
+      localStorage.setItem('mpilot_biz', BIZ);
+    }
     const cached = _bizCache.find(b => b.business_id === BIZ);
     if (cached) Object.assign(cached, payload);
     // Flash saved indicator
@@ -5425,8 +5432,9 @@ async function saveBizProfile() {
     if (ts) ts.textContent = (payload.category || '') + (payload.location ? ' · ' + payload.location : '');
     toast('Profile saved ✓');
     await loadBizList();
-  } else {
-    toast('Save failed — try again', 'err');
+  } else if (!r?._err) {
+    // No error was shown — show generic failure
+    toast('Save failed — please try again', 'err');
   }
 }
 
@@ -5439,7 +5447,7 @@ async function saveBizProfile() {
 let _inboxThreads  = [];
 let _activeThread  = null;
 
-async function loadInbox() {
+async async function loadInbox() {
   if (!BIZ) return;
   const ch  = document.getElementById('inbox-ch-filter')?.value || '';
   const q   = document.getElementById('inbox-search')?.value.trim() || '';
@@ -5567,7 +5575,7 @@ async function openInboxThread(threadId) {
   if (inp) inp.value = '';
 }
 
-async function sendInboxReply() {
+async async function sendInboxReply() {
   if (!_activeThread || !BIZ) return;
   var inp  = document.getElementById('inbox-reply-input');
   var stat = document.getElementById('inbox-reply-status');
@@ -5593,7 +5601,7 @@ async function sendInboxReply() {
   }
 }
 
-async function generateAIReply() {
+async async function generateAIReply() {
   if (!_activeThread || !BIZ) return;
   var inp  = document.getElementById('inbox-reply-input');
   if (!inp) return;
@@ -5632,7 +5640,7 @@ async function aiReplyFromInbox(threadId) {
   await generateAIReply();
 }
 
-async function loadSetup() {
+async async async function loadSetup() {
   if (!BIZ) {
     document.getElementById('setup-title').textContent = 'Create Your Business';
     document.getElementById('setup-sub').textContent   = 'Set up your business profile to get started';
