@@ -729,14 +729,7 @@ async function changePassword() {
 // ══════════════════════════════════════════════════════════════════════════════
 
 // ── My Account page routing ─────────────────────────────────────────────────
-// Extend loadPage to handle 'myaccount'
-const _origLoadPage = typeof loadPage === 'function' ? loadPage : null;
-if (_origLoadPage) {
-  window.loadPage = function(page) {
-    if (page === 'myaccount') { loadMyProfile(); return; }
-    _origLoadPage(page);
-  };
-}
+// myaccount routing is handled by loadPage fn map in inline JS
 
 document.addEventListener('DOMContentLoaded', () => {
   // ESC closes any open modal
