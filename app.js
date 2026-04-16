@@ -278,8 +278,16 @@ async function doLogin() {
         ? data.detail
         : (data?.detail?.[0]?.msg || 'Invalid email or password');
       if (err) { err.textContent = msg; err.style.display = 'block'; }
+      // Show clear-session hint after repeated failures
+      if (typeof _loginFailCount !== 'undefined') _loginFailCount++;
+      else window._loginFailCount = (window._loginFailCount || 0) + 1;
+      const hint = document.getElementById('li-clear-hint');
+      if (hint && (window._loginFailCount || 0) >= 2) hint.style.display = 'block';
       return;
     }
+    window._loginFailCount = 0;
+    const hintEl = document.getElementById('li-clear-hint');
+    if (hintEl) hintEl.style.display = 'none';
 
     // Clear previous session's business selection on login (prevents cross-account data bleed)
     localStorage.removeItem('mpilot_biz');

@@ -2365,9 +2365,16 @@ id="p-chips" style="display:none"></div>
     </div>
     <!-- Step 1: Email + Password -->
     <div id="auth-login-form">
+      <div id="li-info" style="display:none;font-size:11px;color:var(--muted);margin-bottom:12px;padding:8px 10px;background:rgba(108,99,255,.06);border-radius:7px;border:1px solid rgba(108,99,255,.15);line-height:1.6">
+        ℹ️ If you recently redeployed on Render, your account data may have been reset. Please <span onclick="switchAuthTab('signup')" style="color:var(--accent);cursor:pointer">sign up again</span> to create a new account.
+      </div>
       <div style="margin-bottom:12px"><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px">Email</label><input id="li-email" type="email" placeholder="your@email.com" class="fi"></div>
       <div style="margin-bottom:14px"><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px">Password</label><input id="li-pw" type="password" placeholder="Your password" class="fi" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <div id="li-err" style="color:var(--a3);font-size:12px;margin-bottom:10px;display:none"></div>
+      <div id="li-clear-hint" style="display:none;font-size:11px;color:var(--muted);margin-bottom:10px;padding:8px 10px;background:rgba(255,107,107,.06);border-radius:7px;border:1px solid rgba(255,107,107,.15)">
+        Still failing? Your session may be outdated.
+        <span onclick="clearSessionAndRetry()" style="color:var(--accent);cursor:pointer;font-weight:500"> Clear session & try again →</span>
+      </div>
       <button id="li-btn" onclick="doLogin()" class="btn bp" style="width:100%;padding:11px;font-size:14px;border-radius:9px;justify-content:center">Login →</button>
       <div style="text-align:center;margin-top:10px;font-size:12px;color:var(--muted)">
         <span onclick="switchAuthTab('forgot')" style="color:var(--accent);cursor:pointer">Forgot password?</span>
@@ -2637,6 +2644,13 @@ async function doSignup() {
   } finally {
     if(btn){btn.textContent='Create Free Account';btn.disabled=false;}
   }
+}
+var _loginFailCount = 0;
+function clearSessionAndRetry() {
+  ['mpilot_token','mpilot_user','mpilot_biz','mpilot_last_biz','mpilot_auth_intent']
+    .forEach(function(k){ localStorage.removeItem(k); });
+  // Reload the page fresh - startup IIFE will redirect to landing
+  window.location.reload();
 }
 async function upgradePlan(planId,planName){
   if(typeof toast==='function') toast('Upgrading to '+planName+'…');
@@ -4182,10 +4196,23 @@ async function doLogin() {
   // FIX: backend returns access_token (FastAPI OAuth2), not token
   const _tok = data.access_token || data.token;
   if (!_tok) {
-    if (err) { err.textContent = data.detail || 'Invalid email or password'; err.style.display = 'block'; }
+    _loginFailCount = (_loginFailCount||0) + 1;
+    var _msg = (data && (typeof data.detail === 'string')) ? data.detail : 'Invalid email or password';
+    if (err) { err.textContent = _msg; err.style.display = 'block'; }
+    // Show "clear session" hint after 2 failures
+    var _hint = document.getElementById('li-clear-hint');
+    if (_hint && _loginFailCount >= 2) _hint.style.display = 'block';
+    var _info = document.getElementById('li-info');
+    if (_info && _loginFailCount >= 3) _info.style.display = 'block';
     return;
   }
+  _loginFailCount = 0;
+  var _hint2 = document.getElementById('li-clear-hint');
+  if (_hint2) _hint2.style.display = 'none';
 
+  // Clear old session before storing new one
+  localStorage.removeItem('mpilot_biz');
+  localStorage.removeItem('mpilot_last_biz');
   localStorage.setItem('mpilot_token', _tok);
   localStorage.setItem('mpilot_user',  JSON.stringify(data));
   USER = data;
@@ -5169,24 +5196,40 @@ function confirmDeleteBiz() {
     }
 
     if (token && hasUser) {
-      // Returning user
+      // Validate token is still good before showing dashboard
+      let tokenValid = false;
+      try {
+        const me = await req('GET', '/api/auth/me');
+        if (me && me.email) {
+          tokenValid = true;
+          // Refresh USER from server
+          USER = me;
+          localStorage.setItem('mpilot_user', JSON.stringify(me));
+        }
+      } catch(e) { /* network error — treat as invalid */ }
+
+      if (!tokenValid) {
+        // Token expired or DB was reset — clear everything and go to landing
+        ['mpilot_token','mpilot_user','mpilot_biz','mpilot_last_biz'].forEach(k => localStorage.removeItem(k));
+        window.location.replace('landing.html');
+        return;
+      }
+
+      // Token is valid — load UI
       initUserUI();
       const arr = await loadBizList();
 
       if (arr.length === 0) {
-        // No businesses yet → create first
         goTo('setup');
         toast('Create your first business to get started 👋');
         return;
       }
 
-      // Has a stored active business → go straight to dashboard
       if (BIZ && arr.find(b => b.business_id === BIZ)) {
         loadDash();
         return;
       }
 
-      // No stored business but has businesses → show picker
       _showLoginBizPicker(arr, USER.name || USER.email);
       return;
     }
