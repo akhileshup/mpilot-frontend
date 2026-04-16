@@ -572,21 +572,19 @@ async function loadMyProfile() {
     if (el) el.textContent = val || '—';
   };
 
-  // Show loading state
-  ['mp-name','mp-email','mp-role','mp-plan','mp-biz','mp-since']
+  // Loading state
+  ['mp-name','mp-name-big','mp-email','mp-email-small','mp-role','mp-plan-label','mp-biz','mp-since']
     .forEach(id => set(id, '…'));
 
-  // Always fetch fresh from backend — localStorage may be stale
+  // Fetch fresh from backend — localStorage can be stale
   let user = {};
   try {
     const fresh = await req('GET', '/api/auth/me');
     if (fresh && fresh.email) {
       user = fresh;
-      // Keep localStorage in sync
       localStorage.setItem('mpilot_user', JSON.stringify(fresh));
       if (typeof USER !== 'undefined') USER = fresh;
     } else {
-      // Fallback to localStorage if fetch failed
       user = JSON.parse(localStorage.getItem('mpilot_user') || '{}');
     }
   } catch(e) {
@@ -596,24 +594,42 @@ async function loadMyProfile() {
   const planLabels = {
     free:    'Free Plan',
     starter: 'Starter — ₹299/month',
-    growth:  'Growth — ₹799/month ⭐',
+    growth:  'Growth — ₹799/month ⭐ Most Popular',
     pro:     'Pro — ₹1,499/month',
     agency:  'Agency — ₹2,999/month',
   };
   const roleLabels = { owner: 'Owner', manager: 'Manager', staff: 'Staff', agency: 'Agency' };
+  const planColors = { free:'var(--muted)', starter:'#4f46e5', growth:'#0ea5e9', pro:'var(--accent)', agency:'var(--amber)' };
 
-  set('mp-name',  user.name  || user.email?.split('@')[0] || '—');
-  set('mp-email', user.email || '—');
-  set('mp-role',  roleLabels[user.role] || (user.role || 'Owner'));
+  const name  = user.name  || user.email?.split('@')[0] || '—';
+  const email = user.email || '—';
+  const role  = roleLabels[user.role] || (user.role || 'Owner');
+  const plan  = user.plan  || 'free';
 
-  const planEl = document.getElementById('mp-plan');
-  if (planEl) {
-    const plan = user.plan || 'free';
-    planEl.textContent = planLabels[plan] || plan;
-    planEl.style.color = plan === 'free' ? 'var(--muted)' : 'var(--accent)';
+  // Avatar initials
+  const avatarEl = document.getElementById('mp-avatar');
+  if (avatarEl) {
+    const initials = name.split(' ').map(w => w[0]?.toUpperCase() || '').slice(0,2).join('') || '?';
+    avatarEl.textContent = initials;
   }
 
-  // Active business — read from currently selected dropdown
+  // Fill all text fields
+  set('mp-name',         name);
+  set('mp-name-big',     name);
+  set('mp-email',        email);
+  set('mp-email-small',  email);
+  set('mp-role',         role);
+  set('mp-since',        '—');   // filled below
+  set('mp-biz',          '—');   // filled below
+
+  // Plan label with colour
+  const planLabelEl = document.getElementById('mp-plan-label');
+  if (planLabelEl) {
+    planLabelEl.textContent = planLabels[plan] || plan;
+    planLabelEl.style.color = planColors[plan] || 'var(--accent)';
+  }
+
+  // Active business name
   const bizId  = localStorage.getItem('mpilot_biz') || (typeof BIZ !== 'undefined' ? BIZ : '');
   const bizSel = document.getElementById('biz-sel');
   let bizName  = '';
@@ -627,7 +643,7 @@ async function loadMyProfile() {
       if (biz?.name) bizName = biz.name;
     } catch(e) {}
   }
-  set('mp-biz', bizName || (bizId ? bizId : '— no business selected —'));
+  set('mp-biz', bizName || (bizId ? bizId : 'No business selected'));
 
   // Member since
   const since = user.created_at || user.plan_since || '';
@@ -636,8 +652,6 @@ async function loadMyProfile() {
       const d = new Date(since);
       set('mp-since', d.toLocaleDateString('en-IN', { year:'numeric', month:'long', day:'numeric' }));
     } catch(e) { set('mp-since', since.slice(0, 10)); }
-  } else {
-    set('mp-since', '—');
   }
 }
 
