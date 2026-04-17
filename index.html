@@ -3700,6 +3700,117 @@ function showQRForm() {
   const e = document.getElementById('qr-form');
   if (e) e.style.display = 'block';
 }
+async function printQR(qrId, offerText, label, imgSrc) {
+  const biz = _bizCache.find(b => b.business_id === BIZ) || {};
+  const bizName = biz.name || 'Our Business';
+
+  const win = window.open('', '_blank', 'width=500,height=700');
+  win.document.write(`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>QR Code — ${bizName}</title>
+<style>
+  @page { size: A5; margin: 0 }
+  * { box-sizing: border-box; margin: 0; padding: 0 }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #fff;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card {
+    width: 100%;
+    max-width: 400px;
+    border: 3px solid #6c63ff;
+    border-radius: 20px;
+    padding: 32px 28px;
+    text-align: center;
+    margin: 20px auto;
+  }
+  .biz-name {
+    font-size: 22px;
+    font-weight: 800;
+    color: #1a1a2e;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+  .offer {
+    font-size: 16px;
+    font-weight: 700;
+    color: #6c63ff;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .subtext {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 22px;
+  }
+  .qr-wrap {
+    background: #fff;
+    border: 2px solid #eee;
+    border-radius: 14px;
+    padding: 16px;
+    display: inline-block;
+    margin-bottom: 22px;
+  }
+  .qr-wrap img { width: 200px; height: 200px; display: block }
+  .scan-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 6px;
+  }
+  .wa-text {
+    font-size: 11px;
+    color: #888;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .wa-icon { font-size: 16px }
+  .footer {
+    margin-top: 20px;
+    font-size: 10px;
+    color: #bbb;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="biz-name">${bizName}</div>
+  <div class="offer">${offerText}</div>
+  <div class="subtext">Scan to connect with us on WhatsApp</div>
+  <div class="qr-wrap">
+    <img src="${imgSrc}" alt="QR Code">
+  </div>
+  <div class="scan-text">📱 Scan with your phone camera</div>
+  <div class="wa-text">
+    <span class="wa-icon">💬</span>
+    Opens WhatsApp instantly — no app needed
+  </div>
+  <div class="footer">Location: ${label} &nbsp;·&nbsp; Powered by MPilot</div>
+</div>
+<scr' + 'ipt>window.onload = function(){ window.print(); }</scr' + 'ipt>
+</body>
+</html>`);
+  win.document.close();
+}
+
+async function deleteQR(qrId) {
+  if (!confirm('Delete this QR code? Scans will stop working.')) return;
+  const r = await req('DELETE', '/api/qr/' + qrId);
+  if (r && (r.status === 'deleted' || r.qr_id)) {
+    toast('QR code deleted');
+    loadQR();
+  } else {
+    toast('Delete failed — try again', 'err');
+  }
+}
+
 async function genQR() {
   if (!BIZ) return toast('Select a business first — go to Setup page', 'err');
   const btn   = document.querySelector('[onclick="genQR()"]');
@@ -3730,29 +3841,24 @@ async function loadQR() {
     return;
   }
   el.innerHTML = arr.map(qr => {
-    // Build the image display — prefer base64, fallback to URL, fallback to placeholder
-    const imgSrc   = qr.image_base64
+    const imgSrc = qr.image_base64
       ? `data:image/png;base64,${qr.image_base64}`
       : (qr.image_path || '');
     const imgBlock = imgSrc
-      ? `<img src="${imgSrc}" alt="QR Code" style="width:160px;height:160px;display:block;margin:0 auto 12px;border-radius:8px;border:1px solid var(--border)">`
-      : `<div style="width:160px;height:160px;margin:0 auto 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--s2);border-radius:8px;border:2px dashed rgba(108,99,255,.3);color:var(--muted);font-size:11px;gap:6px">
-           <div style="font-size:28px">📱</div>
-           <div>QR Image</div>
-           <a href="${qr.image_path||qr.qr_url||''}" target="_blank" style="color:var(--accent);font-size:10px">Open →</a>
-         </div>`;
+      ? `<img src="${imgSrc}" alt="QR Code" style="width:160px;height:160px;display:block;margin:0 auto 10px;border-radius:6px">`
+      : `<div style="width:160px;height:160px;margin:0 auto 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--s2);border-radius:8px;border:2px dashed rgba(108,99,255,.3);color:var(--muted);font-size:11px;gap:6px"><div style="font-size:28px">📱</div><a href="${qr.qr_url||''}" target="_blank" style="color:var(--accent);font-size:10px">Regenerate →</a></div>`;
     return `
     <div class="card" style="text-align:center">
       ${imgBlock}
-      <div style="font-weight:600;font-size:13px;margin-bottom:3px">${qr.offer_text||'QR Code'}</div>
-      <div style="font-size:11px;color:var(--muted);margin-bottom:12px">
-        📍 ${qr.label||'main'} &nbsp;·&nbsp; 
-        <span style="color:var(--a2);font-weight:500">${qr.scan_count||0} scans</span>
+      <div style="font-weight:700;font-size:13px;margin-bottom:3px">${qr.offer_text||'QR Code'}</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:14px">
+        📍 ${qr.label||'main'} &nbsp;·&nbsp; <span style="color:var(--a2);font-weight:600">${qr.scan_count||0} scans</span>
       </div>
-      <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap">
-        ${imgSrc ? `<a href="${imgSrc}" download="qr-${qr.label||'code'}.png" class="btn bs xs">⬇ Download</a>` : ''}
-        <a href="${qr.whatsapp_url}" target="_blank" class="btn bg xs">▶ Test Scan</a>
-        <button class="btn bd xs" onclick="deleteQR('${qr.qr_id}')">✕</button>
+      <div style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap">
+        ${imgSrc ? `<button class="btn bs xs" onclick="printQR('${qr.qr_id}','${(qr.offer_text||'').replace(/'/g,"\'")}','${(qr.label||'main').replace(/'/g,"\'")}','${imgSrc}')">🖨 Print</button>` : ''}
+        ${imgSrc ? `<a href="${imgSrc}" download="qr-${qr.label||'code'}.png" class="btn bs xs">⬇ Save</a>` : ''}
+        <a href="${qr.whatsapp_url}" target="_blank" class="btn bg xs">▶ Test</a>
+        <button class="btn bd xs" onclick="deleteQR('${qr.qr_id}')">✕ Delete</button>
       </div>
     </div>`;
   }).join('');
@@ -4872,7 +4978,7 @@ async function saveWAConfig() {
     }
     // Show webhook URL
     const wuEl = document.getElementById('wa-webhook-url');
-    if (wuEl) wuEl.textContent = window.location.origin + r.webhook_url;
+    if (wuEl) wuEl.textContent = API + r.webhook_url;   // API = backend URL
     // Update cache and show API key saved hint immediately
     const biz = _bizCache.find(b => b.business_id === BIZ);
     if (biz) {
@@ -5777,7 +5883,7 @@ function _loadSetupChannels(resetPanel) {
   if (resetPanel !== false) chGoTo('wa');
 
   var wuEl = document.getElementById('wa-webhook-url');
-  if (wuEl) wuEl.textContent = window.location.origin + '/api/wa/webhook/' + BIZ;
+  if (wuEl) wuEl.textContent = API + '/api/wa/webhook/' + BIZ;   // API = backend URL
 
   req('GET', '/api/businesses/' + BIZ + '/wa-key').then(function(d) {
     if (!d) return;
