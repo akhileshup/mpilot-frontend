@@ -1392,16 +1392,61 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 
 <!-- QR CODES -->
 <div class="page" id="p-qr">
-  <div class="ph"><div><div class="pt">QR Codes</div><div class="ps">One QR per location and offer — all scans tracked per business</div></div><button class="btn bp sm" onclick="showQRForm()">+ New QR Code</button></div>
-  <div class="card mb" id="qr-form" style="display:none">
-    <div class="ct">New QR Code</div>
-    <div class="fr"><div class="fg"><label class="fl">Offer Text</label><input class="fi" id="qr-offer" value="Scan & Get 20% OFF"></div><div class="fg"><label class="fl">Label / Location</label><select class="fsel" id="qr-lbl"><option value="main">Main entrance</option><option value="table">Table</option><option value="door">Door</option><option value="reception">Reception counter</option><option value="packaging">Packaging</option><option value="menu">Menu card</option><option value="bill">Billing counter</option></select></div></div>
-    <div style="display:flex;gap:7px"><button class="btn bp" onclick="genQR()">Generate QR Code</button><button class="btn bs" onclick="closeForm('qr-form')">Cancel</button></div>
+  <div class="ph">
+    <div>
+      <div class="pt">QR Codes</div>
+      <div class="ps">One QR per location — customers scan to WhatsApp opt-in automatically</div>
+    </div>
+    <button class="btn bp sm" onclick="showQRForm()">+ New QR Code</button>
   </div>
-  <div class="grid g3" id="qr-list"><div class="empty"><div class="ei">📱</div>No QR codes yet</div></div>
+
+  <!-- Generate form -->
+  <div class="card" id="qr-form" style="display:none;margin-bottom:16px">
+    <div class="ct">Generate New QR Code</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div class="fg">
+        <label class="fl">Offer Text (shown on QR print)</label>
+        <input class="fi" id="qr-offer" value="Scan &amp; Get 20% OFF" placeholder="e.g. Scan for exclusive offer">
+      </div>
+      <div class="fg">
+        <label class="fl">Location / Label</label>
+        <select class="fsel" id="qr-lbl">
+          <option value="main">Main entrance</option>
+          <option value="counter">Counter / Reception</option>
+          <option value="table">Table</option>
+          <option value="door">Door</option>
+          <option value="menu">Menu card</option>
+          <option value="bill">Billing counter</option>
+          <option value="packaging">Packaging</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn bp" onclick="genQR()">Generate QR Code</button>
+      <button class="btn bs" onclick="closeForm('qr-form')">Cancel</button>
+    </div>
+  </div>
+
+  <!-- How it works banner -->
+  <div style="background:rgba(108,99,255,.07);border:1px solid rgba(108,99,255,.18);border-radius:12px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:14px">
+    <div style="font-size:28px;flex-shrink:0">📱</div>
+    <div style="font-size:12.5px;color:var(--dim);line-height:1.65">
+      <strong style="color:var(--text)">How QR capture works:</strong>
+      Customer scans QR → WhatsApp opens with pre-filled message → They tap Send → 
+      Instantly captured as a contact in your CRM. No app download, no form.
+    </div>
+  </div>
+
+  <!-- QR cards grid -->
+  <div class="grid g3" id="qr-list">
+    <div style="grid-column:1/-1" class="empty">
+      <div class="ei">📱</div>
+      <div>No QR codes yet</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">Click + New QR Code to generate your first one</div>
+    </div>
+  </div>
 </div>
 
-<!-- SETUP -->
 <div class="page" id="p-automation">
   <div class="ph">
     <div><div class="pt">Automation Engine</div><div class="ps">Autonomous AI-powered growth — runs 24/7 without manual effort</div></div>
@@ -3681,22 +3726,36 @@ async function loadQR() {
   const el   = document.getElementById('qr-list');
   if (!el) return;
   if (!arr.length) {
-    el.innerHTML = '<div style="grid-column:1/-1"><div class="empty"><div class="ei">📱</div><div>No QR codes yet</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Click + New QR Code to generate one</div></div></div>';
+    el.innerHTML = '<div style="grid-column:1/-1"><div class="empty"><div class="ei">📱</div><div>No QR codes yet</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Click + New QR Code above to generate your first one</div></div></div>';
     return;
   }
-  el.innerHTML = arr.map(qr => `
-    <div class="card qrcard">
-      ${qr.image_path
-        ? `<img class="qrimg" src="${qr.image_path}" alt="QR" style="width:100%;max-width:160px;margin:0 auto 10px;display:block">`
-        : '<div class="qrimg" style="width:120px;height:120px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;background:var(--s2);border-radius:8px;color:var(--muted);font-size:11px">QR</div>'}
-      <div class="qroffer" style="font-weight:600;font-size:12.5px;text-align:center;margin-bottom:4px">${qr.offer_text}</div>
-      <div class="qrmeta" style="font-size:10px;color:var(--muted);text-align:center;margin-bottom:10px">${qr.label} · ${qr.scan_count} scans</div>
-      <div style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap">
-        ${qr.image_path ? `<a href="${qr.image_path}" download="qr-${qr.label}.png" class="btn bs xs">⬇ Download</a>` : ''}
+  el.innerHTML = arr.map(qr => {
+    // Build the image display — prefer base64, fallback to URL, fallback to placeholder
+    const imgSrc   = qr.image_base64
+      ? `data:image/png;base64,${qr.image_base64}`
+      : (qr.image_path || '');
+    const imgBlock = imgSrc
+      ? `<img src="${imgSrc}" alt="QR Code" style="width:160px;height:160px;display:block;margin:0 auto 12px;border-radius:8px;border:1px solid var(--border)">`
+      : `<div style="width:160px;height:160px;margin:0 auto 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--s2);border-radius:8px;border:2px dashed rgba(108,99,255,.3);color:var(--muted);font-size:11px;gap:6px">
+           <div style="font-size:28px">📱</div>
+           <div>QR Image</div>
+           <a href="${qr.image_path||qr.qr_url||''}" target="_blank" style="color:var(--accent);font-size:10px">Open →</a>
+         </div>`;
+    return `
+    <div class="card" style="text-align:center">
+      ${imgBlock}
+      <div style="font-weight:600;font-size:13px;margin-bottom:3px">${qr.offer_text||'QR Code'}</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:12px">
+        📍 ${qr.label||'main'} &nbsp;·&nbsp; 
+        <span style="color:var(--a2);font-weight:500">${qr.scan_count||0} scans</span>
+      </div>
+      <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap">
+        ${imgSrc ? `<a href="${imgSrc}" download="qr-${qr.label||'code'}.png" class="btn bs xs">⬇ Download</a>` : ''}
         <a href="${qr.whatsapp_url}" target="_blank" class="btn bg xs">▶ Test Scan</a>
         <button class="btn bd xs" onclick="deleteQR('${qr.qr_id}')">✕</button>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 async function deleteQR(qrId) {
