@@ -2276,212 +2276,137 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 <div id="setup-tab-advanced" class="setup-tab-panel" style="display:none">
   <div style="display:flex;flex-direction:column;gap:12px">
 
-    <!-- WhatsApp AI Automations -->
     <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)">
-        <div>
-          <div style="font-size:13.5px;font-weight:600">💬 WhatsApp Automations</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:1px">AI-powered messaging — runs 24/7 without manual effort</div>
-        </div>
-      </div>
+      <div class="ct" style="margin-bottom:14px">WhatsApp Automations</div>
       <div style="display:flex;flex-direction:column;gap:2px">
-
-        <div class="tog-row" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''">
+        <div class="tog-row">
           <div style="flex:1;padding-right:16px">
             <div style="font-size:13px;font-weight:500">AI Auto-reply</div>
-            <div style="font-size:11px;color:var(--muted)">Bot instantly replies to every inbound WhatsApp message using GPT-4 — no delay, 24/7</div>
+            <div style="font-size:11px;color:var(--muted)">Bot replies to every inbound WhatsApp message instantly, 24/7</div>
           </div>
           <label class="tog"><input type="checkbox" id="toggle-ai-reply" onchange="saveAutomationToggle('ai_auto_reply',this.checked)"><span class="tog-sl"></span></label>
         </div>
-
-        <div class="tog-row" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''">
-          <div style="flex:1;padding-right:16px">
-            <div style="font-size:13px;font-weight:500">Follow-up Messages</div>
-            <div style="font-size:11px;color:var(--muted)">Auto-message new leads who haven't responded after 2–6 hours</div>
-          </div>
-          <label class="tog"><input type="checkbox" id="toggle-followup" onchange="saveAutomationToggle('auto_followup',this.checked)"><span class="tog-sl"></span></label>
-        </div>
-
-        <div class="tog-row" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''">
+        <div class="tog-row">
           <div style="flex:1;padding-right:16px">
             <div style="font-size:13px;font-weight:500">Win-back Campaigns</div>
-            <div style="font-size:11px;color:var(--muted)">Send a special offer to customers inactive for 30+ days</div>
+            <div style="font-size:11px;color:var(--muted)">Auto-send offer to customers inactive for 30+ days</div>
           </div>
           <label class="tog"><input type="checkbox" id="toggle-winback" onchange="saveAutomationToggle('auto_winback_enabled',this.checked)"><span class="tog-sl"></span></label>
         </div>
-
+        <div class="tog-row">
+          <div style="flex:1;padding-right:16px">
+            <div style="font-size:13px;font-weight:500">Follow-up Messages</div>
+            <div style="font-size:11px;color:var(--muted)">Auto-message new leads who haven't replied after 4 hours</div>
+          </div>
+          <label class="tog"><input type="checkbox" id="toggle-followup" onchange="saveAutomationToggle('auto_followup',this.checked)"><span class="tog-sl"></span></label>
+        </div>
       </div>
     </div>
 
-    <!-- Review Automation -->
     <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)">
-        <div>
-          <div style="font-size:13.5px;font-weight:600">⭐ Review Automation</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:1px">Grow and manage your Google reputation automatically</div>
-        </div>
-      </div>
+      <div class="ct" style="margin-bottom:14px">Review &amp; Loyalty</div>
       <div style="display:flex;flex-direction:column;gap:2px">
-
-        <div class="tog-row" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''">
+        <div class="tog-row">
           <div style="flex:1;padding-right:16px">
             <div style="font-size:13px;font-weight:500">Request Google Reviews</div>
-            <div style="font-size:11px;color:var(--muted)">Ask opted-in customers for a Google review 24h after their visit via WhatsApp</div>
+            <div style="font-size:11px;color:var(--muted)">WhatsApp review request sent 24h after a visit</div>
           </div>
           <label class="tog"><input type="checkbox" id="toggle-review-req" onchange="saveAutomationToggle('auto_review_request',this.checked)"><span class="tog-sl"></span></label>
         </div>
-
-        <div class="tog-row" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''">
+        <div class="tog-row">
           <div style="flex:1;padding-right:16px">
-            <div style="font-size:13px;font-weight:500">AI Reply to Google Reviews</div>
-            <div style="font-size:11px;color:var(--muted)">Generate and post professional AI replies to new Google reviews automatically</div>
+            <div style="font-size:13px;font-weight:500">AI Reply to Reviews</div>
+            <div style="font-size:11px;color:var(--muted)">Auto-generate and post replies to new Google reviews</div>
           </div>
           <label class="tog"><input type="checkbox" id="toggle-review-reply" onchange="saveAutomationToggle('auto_review_reply',this.checked)"><span class="tog-sl"></span></label>
         </div>
-
+        <div class="tog-row">
+          <div style="flex:1;padding-right:16px">
+            <div style="font-size:13px;font-weight:500">Loyalty Tier Notifications</div>
+            <div style="font-size:11px;color:var(--muted)">WhatsApp message when customer reaches Silver, Gold or Platinum</div>
+          </div>
+          <label class="tog"><input type="checkbox" id="toggle-loyalty" onchange="saveAutomationToggle('auto_loyalty_notify',this.checked)"><span class="tog-sl"></span></label>
+        </div>
       </div>
     </div>
 
-    <!-- Loyalty -->
-    <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)">
-        <div>
-          <div style="font-size:13.5px;font-weight:600">🏆 Loyalty Automation</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:1px">Keep customers engaged and reward loyalty automatically</div>
-        </div>
-      </div>
-      <div class="tog-row" onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background=''">
-        <div style="flex:1;padding-right:16px">
-          <div style="font-size:13px;font-weight:500">Tier Upgrade Notifications</div>
-          <div style="font-size:11px;color:var(--muted)">WhatsApp message when a customer reaches Silver, Gold or Platinum tier</div>
-        </div>
-        <label class="tog"><input type="checkbox" id="toggle-loyalty" onchange="saveAutomationToggle('auto_loyalty_notify',this.checked)"><span class="tog-sl"></span></label>
-      </div>
-    </div>
-
-    <!-- Live stats + Run Now -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div class="card">
-        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Automation Stats</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div style="background:var(--s2);border-radius:8px;padding:10px;text-align:center">
-            <div style="font-family:var(--fh);font-size:20px;font-weight:700;color:var(--a2)" id="adv-cust-count">—</div>
-            <div style="font-size:9px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px">Active</div>
-          </div>
-          <div style="background:var(--s2);border-radius:8px;padding:10px;text-align:center">
-            <div style="font-family:var(--fh);font-size:20px;font-weight:700;color:var(--accent)" id="adv-ai-count">—</div>
-            <div style="font-size:9px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px">AI Replies</div>
-          </div>
-          <div style="background:var(--s2);border-radius:8px;padding:10px;text-align:center">
-            <div style="font-family:var(--fh);font-size:20px;font-weight:700;color:var(--amber)" id="adv-rr-count">—</div>
-            <div style="font-size:9px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px">Rev Requests</div>
-          </div>
-          <div style="background:var(--s2);border-radius:8px;padding:10px;text-align:center">
-            <div style="font-size:11px;font-weight:500;color:var(--muted);margin-top:3px" id="adv-wb-last">—</div>
-            <div style="font-size:9px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px">Win-back</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Run Manually</div>
-        <div style="display:flex;flex-direction:column;gap:7px">
-          <button class="btn bp" onclick="runAllAutomations()" style="width:100%;justify-content:center;padding:10px">
-            ▶ Run All Automations
-          </button>
-          <button class="btn bg" onclick="runWinBack()" style="width:100%;justify-content:center">
-            💌 Run Win-back
-          </button>
-          <button class="btn ba" onclick="runReviewRequests()" style="width:100%;justify-content:center">
-            📨 Send Review Requests
-          </button>
-          <button class="btn bs" onclick="runSyncReviews()" style="width:100%;justify-content:center">
-            ↺ Sync Google Reviews
-          </button>
-        </div>
-      </div>
+    <div style="font-size:11.5px;color:var(--muted);padding:4px 2px">
+      To view stats and run automations manually → go to <span style="color:var(--accent);cursor:pointer" onclick="goTo('automation')">Automations page</span>
     </div>
 
   </div>
 </div>
+
 <div id="setup-tab-kb" class="setup-tab-panel" style="display:none">
   <div style="display:flex;flex-direction:column;gap:14px">
 
-    <!-- Info banner -->
-    <div style="background:rgba(108,99,255,.07);border:1px solid rgba(108,99,255,.18);border-radius:10px;padding:12px 16px;font-size:12.5px;color:var(--dim);line-height:1.6">
-      <strong style="color:var(--text)">AI uses this data to answer customer questions.</strong>
-      Add your services, offers, and FAQs here — the AI will use them in WhatsApp conversations.
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn bp sm" onclick="seedKBFromProfile()">⚡ Seed from Business Profile</button>
-      <button class="btn bs sm" onclick="loadKBTab()">↺ Refresh</button>
-    </div>
-
     <!-- Services -->
     <div class="card">
-      <div class="ct" style="margin-bottom:12px">Services
-        <span style="font-size:10px;font-weight:400;color:var(--muted);margin-left:8px">What you offer</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div>
+          <div class="ct" style="margin-bottom:2px">Services</div>
+          <div style="font-size:11px;color:var(--muted)">The AI tells customers what you offer</div>
+        </div>
+        <button class="btn bp xs" onclick="seedKBFromProfile()" title="Auto-fill from your profile">⚡ Auto-fill</button>
       </div>
       <div id="kb-services-list" style="margin-bottom:12px"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:end">
-        <div><label class="fl">Service name *</label><input class="fi" id="kb-svc-name" placeholder="e.g. Dog Grooming"></div>
-        <div><label class="fl">Description</label><input class="fi" id="kb-svc-desc" placeholder="e.g. Full bath + haircut"></div>
-        <div><label class="fl">Price range</label><input class="fi" id="kb-svc-price" placeholder="e.g. ₹499-₹999"></div>
-        <button class="btn bp xs" onclick="addKBService()" style="margin-bottom:1px">+ Add</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+        <div style="flex:2;min-width:140px"><input class="fi" id="kb-svc-name" placeholder="Service name (e.g. Dog Grooming)"></div>
+        <div style="flex:1;min-width:100px"><input class="fi" id="kb-svc-price" placeholder="Price (e.g. ₹499-₹999)"></div>
+        <button class="btn bp xs" onclick="addKBService()">+ Add</button>
       </div>
     </div>
 
     <!-- Offers -->
     <div class="card">
-      <div class="ct" style="margin-bottom:12px">Active Offers
-        <span style="font-size:10px;font-weight:400;color:var(--muted);margin-left:8px">Shown to customers in AI replies</span>
+      <div style="margin-bottom:12px">
+        <div class="ct" style="margin-bottom:2px">Offers</div>
+        <div style="font-size:11px;color:var(--muted)">The AI mentions these to customers automatically</div>
       </div>
       <div id="kb-offers-list" style="margin-bottom:12px"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:end">
-        <div><label class="fl">Offer title *</label><input class="fi" id="kb-off-title" placeholder="e.g. 20% off first visit"></div>
-        <div><label class="fl">Details</label><input class="fi" id="kb-off-desc" placeholder="e.g. Valid on all grooming"></div>
-        <div>
-          <label class="fl">Trigger</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+        <div style="flex:2;min-width:160px"><input class="fi" id="kb-off-title" placeholder="Offer (e.g. Free nail trim with grooming)"></div>
+        <div style="flex:1;min-width:120px">
           <select class="fsel" id="kb-off-trigger">
             <option value="all">All customers</option>
-            <option value="new_customer">New customers only</option>
-            <option value="repeat">Repeat customers</option>
-            <option value="winback">Win-back (inactive 30d)</option>
-            <option value="vip">VIP customers</option>
+            <option value="new_customer">New customers</option>
+            <option value="repeat">Repeat visitors</option>
+            <option value="winback">Win-back (30d inactive)</option>
+            <option value="vip">VIP only</option>
           </select>
         </div>
-        <button class="btn bp xs" onclick="addKBOffer()" style="margin-bottom:1px">+ Add</button>
+        <button class="btn bp xs" onclick="addKBOffer()">+ Add</button>
       </div>
     </div>
 
     <!-- FAQs -->
     <div class="card">
-      <div class="ct" style="margin-bottom:12px">FAQs
-        <span style="font-size:10px;font-weight:400;color:var(--muted);margin-left:8px">AI answers these exactly as written</span>
+      <div style="margin-bottom:12px">
+        <div class="ct" style="margin-bottom:2px">Q&amp;A</div>
+        <div style="font-size:11px;color:var(--muted)">The AI gives these exact answers when customers ask</div>
       </div>
       <div id="kb-faqs-list" style="margin-bottom:12px"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end">
-        <div><label class="fl">Question *</label><input class="fi" id="kb-faq-q" placeholder="e.g. Do you do home visits?"></div>
-        <div><label class="fl">Answer *</label><input class="fi" id="kb-faq-a" placeholder="e.g. Yes! Available in Horamavu area."></div>
-        <button class="btn bp xs" onclick="addKBFaq()" style="margin-bottom:1px">+ Add</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+        <div style="flex:1;min-width:160px"><input class="fi" id="kb-faq-q" placeholder="Question (e.g. Do you do home visits?)"></div>
+        <div style="flex:2;min-width:180px"><input class="fi" id="kb-faq-a" placeholder="Answer (e.g. Yes! Call 916362883634 to book.)"></div>
+        <button class="btn bp xs" onclick="addKBFaq()">+ Add</button>
       </div>
     </div>
 
-    <!-- Website extract -->
+    <!-- Website extract — collapsed at bottom -->
     <div class="card">
-      <div class="ct" style="margin-bottom:12px">Auto-extract from Website
-        <span style="font-size:10px;font-weight:400;color:var(--muted);margin-left:8px">Optional — if you have a website</span>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:12.5px;font-weight:600">Auto-extract from Website</div>
+          <div id="kb-website-status" style="font-size:11px;color:var(--muted);margin-top:3px">Extract services and FAQs from your website automatically</div>
+        </div>
+        <button class="btn bs xs" onclick="extractWebsiteKB()" id="kb-extract-btn">🌐 Extract</button>
       </div>
-      <div style="font-size:12.5px;color:var(--dim);margin-bottom:12px;line-height:1.6">
-        MPilot will visit your website, extract services, pricing, and FAQs automatically, and add them to your knowledge base.
-        Your website URL is set in the Profile tab.
-      </div>
-      <div id="kb-website-status" style="font-size:12px;color:var(--muted);margin-bottom:10px"></div>
-      <button class="btn bp" onclick="extractWebsiteKB()" id="kb-extract-btn">🌐 Extract from Website</button>
     </div>
 
   </div>
 </div>
+
 
 
 
@@ -4009,8 +3934,8 @@ async function loadKBTab() {
   if (sl) {
     const arr = Array.isArray(svcs) ? svcs : [];
     sl.innerHTML = arr.length ? arr.map(s => `
-      <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)">
-        <div style="flex:1;font-size:12.5px"><strong>${s.name}</strong>${s.description ? ' — ' + s.description : ''}${s.price_range ? ' <span style="color:var(--accent)">' + s.price_range + '</span>' : ''}</div>
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+        <div style="flex:1;font-size:12.5px">${s.name}${s.price_range ? '<span style="color:var(--accent);margin-left:8px;font-size:11.5px">' + s.price_range + '</span>' : ''}</div>
         <button class="btn bd xs" onclick="deleteKBItem('services','${s.service_id}')">✕</button>
       </div>`).join('') : '<div style="font-size:12px;color:var(--muted);padding:6px 0">No services added yet — add them above</div>';
   }
@@ -4020,8 +3945,8 @@ async function loadKBTab() {
   if (ol) {
     const arr = Array.isArray(offers) ? offers : [];
     ol.innerHTML = arr.length ? arr.map(o => `
-      <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)">
-        <div style="flex:1;font-size:12.5px"><strong>${o.title}</strong>${o.description ? ': ' + o.description : ''} <span style="font-size:10px;color:var(--muted)">[${o.trigger_type}]</span></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+        <div style="flex:1;font-size:12.5px">${o.title} <span style="font-size:10.5px;color:var(--muted);margin-left:6px">${o.trigger_type}</span></div>
         <button class="btn bd xs" onclick="deleteKBItem('offers','${o.offer_id}')">✕</button>
       </div>`).join('') : '<div style="font-size:12px;color:var(--muted);padding:6px 0">No offers added yet</div>';
   }
@@ -4047,32 +3972,28 @@ async function loadKBTab() {
 async function addKBService() {
   if (!BIZ) return;
   const name  = document.getElementById('kb-svc-name')?.value?.trim();
-  const desc  = document.getElementById('kb-svc-desc')?.value?.trim();
   const price = document.getElementById('kb-svc-price')?.value?.trim();
-  if (!name) return toast('Service name is required', 'err');
-  const r = await req('POST', `/api/kb/${BIZ}/services`, {name, description:desc, price_range:price});
-  if (r?.service_id) {
+  if (!name) return toast('Enter a service name', 'err');
+  const r = await req('POST', `/api/kb/${BIZ}/services`, {name, price_range:price||''});
+  if (r?.service_id || r?.name) {
     document.getElementById('kb-svc-name').value = '';
-    document.getElementById('kb-svc-desc').value = '';
-    document.getElementById('kb-svc-price').value = '';
+    if (document.getElementById('kb-svc-price')) document.getElementById('kb-svc-price').value = '';
     toast('Service added ✓');
     loadKBTab();
-  } else toast('Failed to add service', 'err');
+  } else toast('Failed to add service — check your connection', 'err');
 }
 
 async function addKBOffer() {
   if (!BIZ) return;
   const title   = document.getElementById('kb-off-title')?.value?.trim();
-  const desc    = document.getElementById('kb-off-desc')?.value?.trim();
-  const trigger = document.getElementById('kb-off-trigger')?.value;
-  if (!title) return toast('Offer title is required', 'err');
-  const r = await req('POST', `/api/kb/${BIZ}/offers`, {title, description:desc, trigger_type:trigger, active:true});
-  if (r?.offer_id) {
+  const trigger = document.getElementById('kb-off-trigger')?.value || 'all';
+  if (!title) return toast('Enter an offer', 'err');
+  const r = await req('POST', `/api/kb/${BIZ}/offers`, {title, description:'', trigger_type:trigger, active:true});
+  if (r?.offer_id || r?.title) {
     document.getElementById('kb-off-title').value = '';
-    document.getElementById('kb-off-desc').value = '';
     toast('Offer added ✓');
     loadKBTab();
-  } else toast('Failed to add offer', 'err');
+  } else toast('Failed to add offer — check deployment', 'err');
 }
 
 async function addKBFaq() {
