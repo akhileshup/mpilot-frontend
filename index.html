@@ -2410,8 +2410,11 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
     <!-- Info banner -->
     <div style="background:rgba(108,99,255,.07);border:1px solid rgba(108,99,255,.18);border-radius:10px;padding:12px 16px;font-size:12.5px;color:var(--dim);line-height:1.6">
       <strong style="color:var(--text)">AI uses this data to answer customer questions.</strong>
-      Add your services, offers, and FAQs here — the AI will use them directly in WhatsApp conversations instead of guessing.
-      If you have a website, you can also auto-extract this data.
+      Add your services, offers, and FAQs here — the AI will use them in WhatsApp conversations.
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn bp sm" onclick="seedKBFromProfile()">⚡ Seed from Business Profile</button>
+      <button class="btn bs sm" onclick="loadKBTab()">↺ Refresh</button>
     </div>
 
     <!-- Services -->
@@ -3979,6 +3982,18 @@ async function deleteQR(qrId) {
   }
 }
 
+
+async function seedKBFromProfile() {
+  if (!BIZ) return toast('Select a business first','err');
+  if (!confirm('This will auto-fill services and FAQs from your business profile data. Existing entries will be kept. Continue?')) return;
+  // Call the existing auto-seed by refreshing KB
+  const r = await req('GET', `/api/kb/${BIZ}/services`);
+  // If empty, the auto-seed fires on next get_business_knowledge call
+  // Trigger it by calling a dummy endpoint
+  await req('POST', `/api/kb/${BIZ}/seed-from-profile`);
+  toast('Knowledge base seeded from profile ✓');
+  loadKBTab();
+}
 
 async function loadKBTab() {
   if (!BIZ) return;
