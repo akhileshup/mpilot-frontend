@@ -3794,10 +3794,12 @@ async function printQR(qrId, offerText, label, imgSrc) {
   </div>
   <div class="footer">Location: ${label} &nbsp;·&nbsp; Powered by MPilot</div>
 </div>
-<scr' + 'ipt>window.onload = function(){ window.print(); }</scr' + 'ipt>
+
 </body>
 </html>`);
   win.document.close();
+  // Auto-print after page loads
+  win.onload = function() { win.print(); };
 }
 
 async function deleteQR(qrId) {
