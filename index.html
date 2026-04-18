@@ -284,6 +284,14 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 
   /* Analytics charts smaller */
   canvas{max-height:140px !important}
+
+  /* Touch-friendly tap targets */
+  .ni{padding:10px 10px;min-height:44px}
+  .btn{min-height:40px}
+  /* Better card spacing on mobile */
+  .card{padding:14px}
+  /* Full-width buttons in action rows */
+  .ph > div:last-child{display:flex;flex-wrap:wrap;gap:7px}
 }
 
 @media (max-width:480px) {
@@ -294,9 +302,17 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
   .sv{font-size:20px}
   .btn.sm{padding:6px 10px;font-size:11.5px}
   .btn.xs{padding:4px 8px;font-size:10.5px}
-
+  .card{padding:13px}
+  .fi,.fsel{font-size:16px} /* prevents iOS zoom */
   /* Auth modal full screen on mobile */
   #auth-modal > div{padding:20px;border-radius:12px}
+  /* Table: horizontal scroll */
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{min-width:600px}
+  /* QR grid 1 col on tiny screens */
+  #qr-list{grid-template-columns:1fr}
+  /* Automation tabs scroll */
+  .auto-tab-btn{font-size:11.5px;padding:8px 12px;white-space:nowrap}
 }
 
 /* ─── SETUP TABS ─── */
@@ -1199,8 +1215,8 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 </div>
 
 <div class="page" id="p-customers">
-  <div class="ph"><div><div class="pt">Customers CRM</div><div class="ps">Full customer lifecycle — leads, visits, loyalty, win-backs</div></div>
-    <div style="display:flex;gap:7px"><button class="btn bd sm" onclick="triggerWinBack()">↩ Win-Back Campaign</button><button class="btn bp sm" onclick="showAddCust()">+ Add Customer</button></div>
+  <div class="ph"><div><div class="pt">Customers CRM</div><div class="ps">Every contact — visits, segments, loyalty status</div></div>
+    <div style="display:flex;gap:7px"><button class="btn bp sm" onclick="showAddCust()">+ Add Customer</button><button class="btn bs sm" onclick="loadCusts('')">↺ Refresh</button></div>
   </div>
   <div class="card mb" id="add-cust-form" style="display:none">
     <div class="ct">Add Customer</div>
@@ -1449,129 +1465,167 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 
 <div class="page" id="p-automation">
   <div class="ph">
-    <div><div class="pt">Automation Engine</div><div class="ps">Autonomous AI-powered growth — runs 24/7 without manual effort</div></div>
+    <div>
+      <div class="pt">Automations</div>
+      <div class="ps">WhatsApp follow-ups, review requests, and loyalty rewards — all in one place</div>
+    </div>
     <div style="display:flex;gap:7px">
       <button class="btn bs sm" onclick="loadAutomation()">↺ Refresh</button>
       <button class="btn bp sm" onclick="runAllAutomations()">▶ Run All Now</button>
     </div>
   </div>
 
-  <!-- Status overview -->
+  <!-- Stats row -->
   <div class="grid g4 mb">
-    <div class="card stat green"><div class="sl">Win-back Sent</div><div class="sv green" id="auto-winback">—</div><div class="sh">Last 30 days</div></div>
-    <div class="card stat blue"><div class="sl">Review Replies</div><div class="sv blue" id="auto-reviews">—</div><div class="sh">Auto-replied</div></div>
-    <div class="card stat amber"><div class="sl">Review Requests</div><div class="sv amber" id="auto-rev-req">—</div><div class="sh">Sent to customers</div></div>
-    <div class="card stat pink"><div class="sl">Campaigns Auto</div><div class="sv pink" id="auto-camps">—</div><div class="sh">Auto-triggered</div></div>
+    <div class="card stat green"><div class="sl">Win-backs Sent</div><div class="sv green" id="auto-winback">—</div><div class="sh">Last 30 days</div></div>
+    <div class="card stat blue"><div class="sl">Review Requests</div><div class="sv blue" id="auto-rev-req">—</div><div class="sh">Sent to customers</div></div>
+    <div class="card stat amber"><div class="sl">Loyalty Rewards</div><div class="sv amber" id="auto-loyalty">—</div><div class="sh">Rewards sent</div></div>
+    <div class="card stat pink"><div class="sl">Auto-replies</div><div class="sv pink" id="auto-replies">—</div><div class="sh">AI replies sent</div></div>
   </div>
 
-  <div class="grid g2 mb">
+  <!-- Tab selector -->
+  <div style="display:flex;gap:6px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:0">
+    <button class="auto-tab-btn active" id="atab-wa"    onclick="switchAutoTab('wa')"      style="padding:8px 16px;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;font-family:var(--fb);font-size:12.5px;font-weight:600;color:var(--muted);border-radius:0">💬 WhatsApp</button>
+    <button class="auto-tab-btn"        id="atab-rev"   onclick="switchAutoTab('rev')"     style="padding:8px 16px;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;font-family:var(--fb);font-size:12.5px;font-weight:600;color:var(--muted);border-radius:0">⭐ Reviews</button>
+    <button class="auto-tab-btn"        id="atab-loy"   onclick="switchAutoTab('loy')"     style="padding:8px 16px;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;font-family:var(--fb);font-size:12.5px;font-weight:600;color:var(--muted);border-radius:0">🏆 Loyalty</button>
+  </div>
 
-    <!-- WhatsApp Automations -->
-    <div class="card">
-      <div class="ct">WhatsApp Automations</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-
-        <div style="padding:12px;background:var(--s2);border-radius:9px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <div>
-              <div style="font-size:13px;font-weight:600">Win-back Campaign</div>
-              <div style="font-size:11px;color:var(--muted)">WhatsApp message to customers inactive 30+ days</div>
-            </div>
-            <button class="btn bg xs" onclick="runWinBack()">▶ Run</button>
-          </div>
-          <div style="font-size:10.5px;color:var(--muted)">Last run: <span id="wb-last-run">Never</span></div>
+  <!-- WhatsApp Automations Tab -->
+  <div id="atab-panel-wa">
+    <div class="grid g2">
+      <div class="card">
+        <div class="ct" style="margin-bottom:14px">Win-back Campaign
+          <span style="font-size:10px;font-weight:400;color:var(--muted);margin-left:8px">Sends once per 30 days</span>
         </div>
-
-        <div style="padding:12px;background:var(--s2);border-radius:9px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <div>
-              <div style="font-size:13px;font-weight:600">Review Requests</div>
-              <div style="font-size:11px;color:var(--muted)">Ask opted-in customers for Google reviews</div>
-            </div>
-            <button class="btn bg xs" onclick="runReviewRequests()">▶ Run</button>
-          </div>
-          <div style="font-size:10.5px;color:var(--muted)">Eligible: <span id="rev-req-eligible">—</span> customers</div>
+        <div style="font-size:12.5px;color:var(--dim);margin-bottom:14px;line-height:1.65">
+          Sends a WhatsApp message to customers who haven't visited in 30+ days. Uses your approved <code style="font-size:11px;background:var(--s2);padding:1px 5px;border-radius:4px">winback_offer</code> template.
         </div>
-
-        <div style="padding:12px;background:var(--s2);border-radius:9px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <div>
-              <div style="font-size:13px;font-weight:600">Loyalty Rewards</div>
-              <div style="font-size:11px;color:var(--muted)">Notify customers reaching new loyalty tiers</div>
-            </div>
-            <button class="btn bg xs" onclick="runLoyaltyRewards()">▶ Run</button>
-          </div>
+        <div style="background:var(--s2);border-radius:8px;padding:10px 13px;margin-bottom:14px;font-size:12px">
+          <span style="color:var(--muted)">Eligible customers:</span> <strong id="wb-eligible">—</strong>
+          &nbsp;·&nbsp; <span style="color:var(--muted)">Last run:</span> <span id="wb-last-run">Never</span>
         </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn bp" onclick="runWinBack()" style="flex:1;justify-content:center;min-width:120px">▶ Run Now</button>
+          <button class="btn bs" onclick="goTo('customers')" style="flex:1;justify-content:center;min-width:120px">👥 View Customers</button>
+        </div>
+      </div>
 
+      <div class="card">
+        <div class="ct" style="margin-bottom:14px">VIP Reward
+          <span style="font-size:10px;font-weight:400;color:var(--muted);margin-left:8px">Visit milestones</span>
+        </div>
+        <div style="font-size:12.5px;color:var(--dim);margin-bottom:14px;line-height:1.65">
+          Automatically sends a special reward to customers who reach visit milestones (10, 20, 30, 50 visits). Uses the <code style="font-size:11px;background:var(--s2);padding:1px 5px;border-radius:4px">vip_reward</code> template.
+        </div>
+        <div style="background:var(--s2);border-radius:8px;padding:10px 13px;margin-bottom:14px;font-size:12px">
+          <span style="color:var(--muted)">VIP customers:</span> <strong id="vip-count">—</strong>
+          &nbsp;·&nbsp; <span style="color:var(--muted)">Rewards sent:</span> <span id="vip-sent">—</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn bp" onclick="sendLoyaltyReward()" style="flex:1;justify-content:center;min-width:120px">▶ Send to VIPs</button>
+          <button class="btn bs" onclick="goTo('loyalty')" style="flex:1;justify-content:center;min-width:120px">🏆 Loyalty Details</button>
+        </div>
       </div>
     </div>
 
-    <!-- Review Automations -->
-    <div class="card">
-      <div class="ct">Review Automations</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-
-        <div style="padding:12px;background:var(--s2);border-radius:9px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <div>
-              <div style="font-size:13px;font-weight:600">Sync Google Reviews</div>
-              <div style="font-size:11px;color:var(--muted)">Fetch latest reviews from Google Business Profile</div>
-            </div>
-            <button class="btn bg xs" onclick="runSyncReviews()">↺ Sync</button>
-          </div>
-          <div style="font-size:10.5px;color:var(--muted)" id="sync-review-status">GBP connection required for live sync</div>
-        </div>
-
-        <div style="padding:12px;background:var(--s2);border-radius:9px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <div>
-              <div style="font-size:13px;font-weight:600">AI Auto-reply Reviews</div>
-              <div style="font-size:11px;color:var(--muted)">Generate and post AI replies to unanswered reviews</div>
-            </div>
-            <button class="btn bg xs" onclick="runAutoReplyReviews()">✦ Run</button>
-          </div>
-          <div style="font-size:10.5px;color:var(--muted)" id="auto-reply-status">Will reply to pending reviews</div>
-        </div>
-
-        <div style="padding:12px;background:var(--s2);border-radius:9px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <div>
-              <div style="font-size:13px;font-weight:600">Low-rating Alert</div>
-              <div style="font-size:11px;color:var(--muted)">Instant WhatsApp alert to owner for 1–2 star reviews</div>
-            </div>
-            <span class="badge bg2">Always ON</span>
-          </div>
-        </div>
-
+    <div class="card" style="margin-top:14px">
+      <div class="ct" style="margin-bottom:14px">WhatsApp Message Log
+        <span style="font-size:10px;font-weight:400;color:var(--muted);margin-left:8px">Last 10 automated messages</span>
       </div>
+      <div id="auto-wa-log"><div class="empty"><div class="ei">📨</div>No automated messages yet</div></div>
     </div>
   </div>
 
-  <!-- Test / Simulate section -->
-  <div class="card mb">
-    <div class="ct">Bot Simulator <span style="font-size:10.5px;font-weight:400;color:var(--muted)">Test the full QR → WhatsApp → AI flow</span></div>
-    <div class="grid g2" style="gap:10px">
-      <div>
-        <div class="fg"><label class="fl">Phone (test customer)</label>
-          <input class="fi" id="sim-phone" value="919900001111" placeholder="919900001111"></div>
-        <div class="fg"><label class="fl">Message</label>
-          <input class="fi" id="sim-msg" placeholder="Hi PetsWoof" value="Hi PetsWoof"></div>
-        <button class="btn bp" onclick="runSimulate()" style="width:100%;justify-content:center">▶ Simulate Bot</button>
-      </div>
-      <div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Bot Response:</div>
-        <div id="sim-response" style="background:var(--s2);border-radius:8px;padding:12px;font-size:12.5px;line-height:1.6;min-height:80px;color:var(--text)">
-          Send a message above to see the bot reply here
+  <!-- Reviews Tab -->
+  <div id="atab-panel-rev" style="display:none">
+    <div class="grid g2">
+      <div class="card">
+        <div class="ct" style="margin-bottom:14px">Review Request Automation
+          <span style="font-size:10px;font-weight:400;color:var(--muted);margin-left:8px">After every visit</span>
         </div>
-        <div id="sim-meta" style="font-size:10px;color:var(--muted);margin-top:6px"></div>
+        <div style="font-size:12.5px;color:var(--dim);margin-bottom:14px;line-height:1.65">
+          Sends a WhatsApp review request to customers after a confirmed visit. Uses the <code style="font-size:11px;background:var(--s2);padding:1px 5px;border-radius:4px">review_request</code> template with a Google review link.
+        </div>
+        <div style="background:var(--s2);border-radius:8px;padding:10px 13px;margin-bottom:14px;font-size:12px">
+          <span style="color:var(--muted)">Eligible (not yet asked):</span> <strong id="rev-eligible">—</strong>
+          &nbsp;·&nbsp; <span style="color:var(--muted)">Sent today:</span> <span id="rev-today">—</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn bp" onclick="runReviewRequests()" style="flex:1;justify-content:center;min-width:120px">▶ Send Requests</button>
+          <button class="btn bs" onclick="goTo('reviews')" style="flex:1;justify-content:center;min-width:120px">⭐ View Reviews</button>
+        </div>
       </div>
+
+      <div class="card">
+        <div class="ct" style="margin-bottom:14px">Google Business Profile
+          <span id="gbp-auto-badge" style="font-size:10px;font-weight:400;color:var(--muted);margin-left:8px">Not connected</span>
+        </div>
+        <div style="font-size:12.5px;color:var(--dim);margin-bottom:14px;line-height:1.65">
+          Connect your Google Business Profile to monitor new reviews, auto-reply with AI, and track your star rating trend over time.
+        </div>
+        <div style="background:var(--s2);border-radius:8px;padding:10px 13px;margin-bottom:14px;font-size:12px">
+          <span style="color:var(--muted)">Avg rating:</span> <strong id="auto-avg-rating">—</strong>
+          &nbsp;·&nbsp; <span style="color:var(--muted)">Auto-replied:</span> <span id="auto-reviews">—</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn bp" onclick="syncReviews()" style="flex:1;justify-content:center;min-width:120px">↺ Sync Reviews</button>
+          <button class="btn bs" onclick="goTo('setup')" style="flex:1;justify-content:center;min-width:120px">⚙ Connect GBP</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="ct" style="margin-bottom:14px">Recent Reviews</div>
+      <div id="auto-rev-list"><div class="empty"><div class="ei">⭐</div>No reviews synced yet — connect Google Business Profile in Setup → Channels</div></div>
     </div>
   </div>
 
-  <!-- Automation log -->
-  <div class="card">
-    <div class="ct">Recent Automation Activity</div>
-    <div id="auto-log"><div class="empty"><div class="ei">⚡</div>No automation activity yet — click Run All Now to start</div></div>
+  <!-- Loyalty Tab -->
+  <div id="atab-panel-loy" style="display:none">
+    <div class="grid g4 mb">
+      <div class="card stat amber"><div class="sl">Points Issued</div><div class="sv amber" id="aly-pts">—</div></div>
+      <div class="card stat green"><div class="sl">Bronze</div><div class="sv green" id="aly-bronze">—</div></div>
+      <div class="card stat blue"><div class="sl">Silver / Gold</div><div class="sv blue" id="aly-silver">—</div></div>
+      <div class="card stat pink"><div class="sl">Platinum VIPs</div><div class="sv pink" id="aly-plat">—</div></div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <div class="ct" style="margin-bottom:14px">Tier Rules</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:12.5px">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--s2);border-radius:8px">
+            <span>🥉 Bronze</span><span style="color:var(--muted)">1–4 visits</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--s2);border-radius:8px">
+            <span>🥈 Silver</span><span style="color:var(--muted)">5–9 visits</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--s2);border-radius:8px">
+            <span>🥇 Gold</span><span style="color:var(--muted)">10–19 visits</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(108,99,255,.08);border-radius:8px;border:1px solid rgba(108,99,255,.2)">
+            <span>💎 Platinum VIP</span><span style="color:var(--accent);font-weight:600">20+ visits</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ct" style="margin-bottom:14px">Send Loyalty Reward</div>
+        <div style="font-size:12.5px;color:var(--dim);margin-bottom:14px;line-height:1.65">
+          Send a personalised VIP reward to your top customers. Uses the <code style="font-size:11px;background:var(--s2);padding:1px 5px;border-radius:4px">vip_reward</code> WhatsApp template.
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div>
+            <label class="fl">Reward message</label>
+            <input class="fi" id="ly-reward-text" placeholder="e.g. Free grooming session on your next visit!">
+          </div>
+          <button class="btn bp" onclick="sendLoyaltyReward()" style="justify-content:center">🏆 Send to All VIPs</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="ct" style="margin-bottom:14px">Tier Breakdown</div>
+      <div id="aly-tiers"><div class="empty"><div class="ei">🏆</div>No loyalty data yet</div></div>
+    </div>
   </div>
 </div>
 
@@ -3441,9 +3495,42 @@ async function loadLoyalty() {
   if (tb) tb.innerHTML = [{tier:'Platinum',pts:'1000+',count:counts.platinum,color:'#a8d8ff'},{tier:'Gold',pts:'500+',count:counts.gold,color:'var(--amber)'},{tier:'Silver',pts:'200+',count:counts.silver,color:'#aaa'},{tier:'Bronze',pts:'0+',count:counts.bronze,color:'#cd7f32'}].map(t=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:9px"><div style="width:10px;height:10px;border-radius:50%;background:${t.color}"></div><div><div style="font-size:12.5px;font-weight:500;color:${t.color}">${t.tier}</div><div style="font-size:10px;color:var(--muted)">${t.pts} points</div></div></div><span style="font-family:var(--fh);font-size:18px;font-weight:700;color:${t.color}">${t.count}</span></div>`).join('');
 }
 async function sendLoyaltyReward() {
-  if (!BIZ) return toast('Select a business first','err');
-  toast('Loyalty reward campaign — go to Campaigns to send a VIP segment message');
-  goTo('campaigns');
+  if (!BIZ) return toast('Select a business first', 'err');
+  const rewardEl = document.getElementById('ly-reward-text');
+  const reward   = rewardEl?.value?.trim() || 'a special VIP reward just for you';
+  const custs    = await req('GET', `/api/customers/list/${BIZ}`);
+  const vips     = (Array.isArray(custs)?custs:[])
+    .filter(c => c.opted_in && !c.opted_out &&
+                 ((c.tier||c.tag)==='platinum' || (c.visits_count||0)>=20));
+  if (!vips.length) return toast('No VIP customers eligible yet', 'err');
+  if (!confirm(`Send VIP reward to ${vips.length} customers?\n\nReward: "${reward}"`)) return;
+  let sent = 0, failed = 0;
+  for (const c of vips) {
+    const r = await req('POST', `/api/customers/${BIZ}/send-vip`, {
+      phone: c.phone, name: c.name||'', reward
+    });
+    if (r?.status === 'sent' || r?.status === 'ok') sent++;
+    else failed++;
+  }
+  toast(`VIP rewards sent: ${sent}${failed?' · Failed: '+failed:''} ✓`);
+  loadAutomation();
+}
+
+async function sendVIPReward(phone, name) {
+  if (!BIZ) return;
+  const rewardEl = document.getElementById('ly-reward-text');
+  const reward   = rewardEl?.value?.trim() || 'a special VIP reward just for you';
+  const r = await req('POST', `/api/customers/${BIZ}/send-vip`, {phone, name, reward});
+  if (r?.status === 'sent' || r?.status === 'ok') toast(`Reward sent to ${name||phone} ✓`);
+  else toast('Send failed — try again', 'err');
+}
+
+async function runReviewRequests() {
+  if (!BIZ) return toast('Select a business first', 'err');
+  const r = await req('POST', `/api/automation/run-reviews/${BIZ}`);
+  if (r?.sent >= 0) toast(`Review requests sent: ${r.sent} ✓`);
+  else toast('Review requests queued ✓');
+  loadAutoReviews();
 }
 
 // ─── Footfall ─────────────────────────────────────────────
@@ -4473,49 +4560,120 @@ async function _pickBizAndEnter(bizId, bizName, fromPicker) {
 //  AUTOMATION ENGINE
 // ══════════════════════════════════════════════════════
 
+function switchAutoTab(tab) {
+  ['wa','rev','loy'].forEach(t => {
+    const btn   = document.getElementById('atab-' + t);
+    const panel = document.getElementById('atab-panel-' + t);
+    const active = t === tab;
+    if (btn) {
+      btn.style.borderBottom = active ? '2px solid var(--accent)' : '2px solid transparent';
+      btn.style.color        = active ? 'var(--accent)' : 'var(--muted)';
+    }
+    if (panel) panel.style.display = active ? 'block' : 'none';
+  });
+  if (tab === 'rev') loadAutoReviews();
+  if (tab === 'loy') loadAutoLoyalty();
+}
+
+async function loadAutoReviews() {
+  const revs = await req('GET', `/api/reviews/stats/${BIZ}`);
+  const set  = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v??'—'; };
+  set('auto-avg-rating', (revs?.avg_rating || '—'));
+  set('auto-reviews',    (revs?.replied || 0));
+  const custs = await req('GET', `/api/customers/list/${BIZ}`);
+  const arr = Array.isArray(custs) ? custs : [];
+  set('rev-eligible', arr.filter(c => c.opted_in && !c.review_requested).length);
+  set('rev-today', revs?.reviews_today || 0);
+  // Load recent reviews
+  const rlist = document.getElementById('auto-rev-list');
+  if (!rlist) return;
+  const reviews = await req('GET', `/api/reviews/${BIZ}`);
+  const rarr = Array.isArray(reviews) ? reviews : (reviews?.reviews || []);
+  if (!rarr.length) {
+    rlist.innerHTML = '<div class="empty"><div class="ei">⭐</div>No reviews yet — connect Google Business Profile in Setup → Channels</div>';
+    return;
+  }
+  rlist.innerHTML = rarr.slice(0,5).map(r => `
+    <div style="padding:12px;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start">
+      <div style="flex-shrink:0;font-size:20px">${'⭐'.repeat(Math.min(5,r.rating||0))}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12.5px;font-weight:600;margin-bottom:3px">${r.reviewer_name||'Anonymous'}</div>
+        <div style="font-size:12px;color:var(--dim);line-height:1.5;word-break:break-word">${r.text||r.comment||'No comment'}</div>
+        <div style="font-size:10.5px;color:var(--muted);margin-top:4px">${r.date||r.created_at?.slice(0,10)||''}</div>
+      </div>
+    </div>`).join('');
+}
+
+async function loadAutoLoyalty() {
+  const custs = await req('GET', `/api/customers/list/${BIZ}`);
+  const arr = Array.isArray(custs) ? custs : [];
+  const set = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v??'—'; };
+  set('aly-pts',    arr.reduce((s,c)=>s+(c.points||0),0));
+  set('aly-bronze', arr.filter(c=>(c.tier||c.tag)==='bronze'||(c.visits_count||0)<5).length);
+  set('aly-silver', arr.filter(c=>['silver','gold'].includes(c.tier||c.tag)).length);
+  set('aly-plat',   arr.filter(c=>(c.tier||c.tag)==='platinum'||(c.visits_count||0)>=20).length);
+  const tierEl = document.getElementById('aly-tiers');
+  if (!tierEl) return;
+  const vips = arr.filter(c=>(c.tier||c.tag)==='platinum'||(c.visits_count||0)>=20);
+  if (!vips.length) {
+    tierEl.innerHTML = '<div class="empty"><div class="ei">🏆</div>No VIP customers yet</div>';
+    return;
+  }
+  tierEl.innerHTML = `<div style="font-size:12px;color:var(--muted);margin-bottom:10px">${vips.length} Platinum VIP customers</div>` +
+    vips.slice(0,8).map(c=>`
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-size:12.5px;font-weight:600">${c.name||c.phone}</div>
+          <div style="font-size:11px;color:var(--muted)">${c.visits_count||0} visits · ${c.points||0} pts</div>
+        </div>
+        <button class="btn bp xs" onclick="sendVIPReward('${c.phone}','${(c.name||'').replace(/'/g,'')}')">Send Reward</button>
+      </div>`).join('');
+}
+
 async function loadAutomation() {
   if (!BIZ) return;
+  const custs = await req('GET', `/api/customers/list/${BIZ}`);
+  const arr   = Array.isArray(custs) ? custs : [];
+  const set   = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v??'—'; };
 
-  // Load automation status
-  const status = await req('GET', `/api/automation/status/${BIZ}`);
-  const custs  = await req('GET', `/api/customers/list/${BIZ}`);
-  const revs   = await req('GET', `/api/reviews/stats/${BIZ}`);
-
-  const arr = Array.isArray(custs) ? custs : [];
-  const eligible = arr.filter(c => c.opted_in && !c.review_requested).length;
   const inactive = arr.filter(c => {
     if (!c.last_visit) return false;
-    const days = (Date.now() - new Date(c.last_visit)) / 86400000;
-    return days > 30;
+    return (Date.now() - new Date(c.last_visit)) / 86400000 > 30;
   }).length;
+  const vipCount = arr.filter(c=>(c.tier||c.tag)==='platinum'||(c.visits_count||0)>=20).length;
 
-  const set = (id, v) => { const e=document.getElementById(id); if(e) e.textContent=v??'—'; };
-  set('auto-winback',  inactive + ' eligible');
-  set('auto-reviews',  revs.replied || 0);
-  set('auto-rev-req',  eligible + ' eligible');
-  set('auto-camps',    status.campaigns_sent || 0);
-  set('rev-req-eligible', eligible);
+  set('auto-winback',  inactive);
+  set('auto-loyalty',  vipCount);
+  set('wb-eligible',   inactive);
+  set('vip-count',     vipCount);
+  set('aly-pts',       arr.reduce((s,c)=>s+(c.points||0),0));
+  set('aly-bronze',    arr.filter(c=>(c.visits_count||0)<5).length);
+  set('aly-silver',    arr.filter(c=>{const v=c.visits_count||0;return v>=5&&v<20;}).length);
+  set('aly-plat',      vipCount);
 
-  // Last run
-  if (status.last_winback_run) {
-    const d = new Date(status.last_winback_run);
-    const el = document.getElementById('wb-last-run');
-    if (el) el.textContent = d.toLocaleDateString('en-IN', {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  // Load recent WA log
+  const log = document.getElementById('auto-wa-log');
+  if (log) {
+    const msgs = await req('GET', `/api/wa/messages/${BIZ}`);
+    const automated = (Array.isArray(msgs)?msgs:[])
+      .filter(m=>m.direction==='outbound'&&m.msg_type==='template')
+      .slice(-8).reverse();
+    if (!automated.length) {
+      log.innerHTML = '<div class="empty"><div class="ei">📨</div>No automated messages sent yet</div>';
+    } else {
+      log.innerHTML = automated.map(m=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+          <div style="width:32px;height:32px;border-radius:50%;background:rgba(108,99,255,.1);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">💬</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12.5px;font-weight:600">${m.phone}</div>
+            <div style="font-size:11px;color:var(--muted)">${m.template_name||m.content?.slice(0,50)||'—'}</div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);flex-shrink:0">${m.sent_at?.slice(0,10)||''}</div>
+        </div>`).join('');
+    }
   }
-
-  // Build activity log
-  const log = document.getElementById('auto-log');
-  if (log && status.recent_activity?.length) {
-    log.innerHTML = status.recent_activity.slice(0,10).map(a => `
-      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
-        <span style="font-size:16px">${_autoIcon(a.type)}</span>
-        <div style="flex:1">
-          <div style="font-size:12.5px">${a.message}</div>
-          <div style="font-size:10px;color:var(--muted)">${a.timestamp ? new Date(a.timestamp).toLocaleString('en-IN') : ''}</div>
-        </div>
-        <span class="badge ${a.success ? 'bg2' : 'br'}">${a.success ? 'Done' : 'Failed'}</span>
-      </div>`).join('');
-  }
+  // Auto-init first tab
+  switchAutoTab('wa');
 }
 
 function _autoIcon(type) {
