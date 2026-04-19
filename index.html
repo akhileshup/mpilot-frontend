@@ -2224,75 +2224,71 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 
 <div id="setup-tab-kb" class="setup-tab-panel" style="display:none">
 
-  <!-- KB health bar — loads automatically -->
   <div id="kb-health-bar" style="margin-bottom:16px"></div>
 
   <div style="display:flex;flex-direction:column;gap:12px">
 
-    <!-- ── Services ─────────────────────────────────────────────── -->
-    <div class="card" style="border-left:3px solid var(--accent);border-radius:0 var(--r) var(--r) 0">
+    <div class="card" style="border-left:3px solid var(--accent);padding-left:14px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
         <div>
-          <div style="font-size:13px;font-weight:600;color:var(--text)">Services</div>
+          <div style="font-size:13px;font-weight:600">Services</div>
           <div style="font-size:11px;color:var(--muted);margin-top:2px">What you offer — AI tells customers this</div>
         </div>
-        <button class="btn bp xs" onclick="seedKBFromProfile()" title="Auto-fill from business profile">⚡ Auto-fill</button>
+        <button class="btn bp xs" onclick="seedKBFromProfile()">⚡ Auto-fill</button>
       </div>
-      <div id="kb-services-list" style="margin-bottom:10px;min-height:20px"></div>
+      <div id="kb-services-list" style="margin-bottom:10px"></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input class="fi" id="kb-svc-name" placeholder="Service name (e.g. Dog Grooming)" style="flex:2;min-width:140px">
-        <input class="fi" id="kb-svc-price" placeholder="Price (e.g. ₹499–₹999)" style="flex:1;min-width:100px">
-        <button class="btn bp xs" onclick="addKBService()" style="white-space:nowrap">+ Add</button>
+        <input class="fi" id="kb-svc-name"  placeholder="Service name" style="flex:2;min-width:130px">
+        <input class="fi" id="kb-svc-price" placeholder="Price e.g. ₹499–₹999" style="flex:1;min-width:110px">
+        <button class="btn bp xs" onclick="addKBService()">+ Add</button>
       </div>
     </div>
 
-    <!-- ── Offers ─────────────────────────────────────────────────── -->
-    <div class="card" style="border-left:3px solid var(--a2);border-radius:0 var(--r) var(--r) 0">
+    <div class="card" style="border-left:3px solid var(--a2);padding-left:14px">
       <div style="margin-bottom:10px">
-        <div style="font-size:13px;font-weight:600;color:var(--text)">Offers</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px">AI mentions these to the right customer at the right time</div>
+        <div style="font-size:13px;font-weight:600">Offers</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">AI shows the right offer to the right customer</div>
       </div>
-      <div id="kb-offers-list" style="margin-bottom:10px;min-height:20px"></div>
+      <div id="kb-offers-list" style="margin-bottom:10px"></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input class="fi" id="kb-off-title" placeholder="Offer text (e.g. Free nail trim with grooming)" style="flex:2;min-width:160px">
-        <select class="fsel" id="kb-off-trigger" style="flex:1;min-width:130px">
+        <input class="fi" id="kb-off-title" placeholder="Offer e.g. Free nail trim with grooming" style="flex:2;min-width:160px">
+        <select class="fsel" id="kb-off-trigger" style="flex:1;min-width:120px">
           <option value="all">All customers</option>
           <option value="new_customer">New customers</option>
           <option value="repeat">Repeat visitors</option>
-          <option value="winback">Win-back (30d inactive)</option>
+          <option value="winback">Win-back (30d+)</option>
           <option value="vip">VIP only</option>
         </select>
-        <button class="btn bp xs" onclick="addKBOffer()" style="white-space:nowrap">+ Add</button>
+        <button class="btn bp xs" onclick="addKBOffer()">+ Add</button>
       </div>
     </div>
 
-    <!-- ── Q&A ───────────────────────────────────────────────────── -->
-    <div class="card" style="border-left:3px solid var(--amber);border-radius:0 var(--r) var(--r) 0">
+    <div class="card" style="border-left:3px solid var(--amber);padding-left:14px">
       <div style="margin-bottom:10px">
-        <div style="font-size:13px;font-weight:600;color:var(--text)">Q&amp;A</div>
+        <div style="font-size:13px;font-weight:600">Q&amp;A</div>
         <div style="font-size:11px;color:var(--muted);margin-top:2px">AI gives these exact answers when customers ask</div>
       </div>
-      <div id="kb-faqs-list" style="margin-bottom:10px;min-height:20px"></div>
+      <div id="kb-faqs-list" style="margin-bottom:10px"></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input class="fi" id="kb-faq-q" placeholder="Question (e.g. Do you do home visits?)" style="flex:1;min-width:160px">
-        <input class="fi" id="kb-faq-a" placeholder="Answer (e.g. Yes! Call 9163... to book.)" style="flex:2;min-width:180px">
-        <button class="btn bp xs" onclick="addKBFaq()" style="white-space:nowrap">+ Add</button>
+        <input class="fi" id="kb-faq-q" placeholder="Question e.g. Do you do home visits?" style="flex:1;min-width:155px">
+        <input class="fi" id="kb-faq-a" placeholder="Answer e.g. Yes! Call 9163... to book." style="flex:2;min-width:175px">
+        <button class="btn bp xs" onclick="addKBFaq()">+ Add</button>
       </div>
     </div>
 
-    <!-- ── Website extract ────────────────────────────────────────── -->
-    <div class="card" style="border-left:3px solid var(--border);border-radius:0 var(--r) var(--r) 0">
+    <div class="card" style="border-left:3px solid var(--border);padding-left:14px">
       <div style="display:flex;align-items:center;justify-content:space-between">
-        <div style="flex:1;min-width:0">
-          <div style="font-size:13px;font-weight:600;color:var(--text)">Auto-extract from website</div>
+        <div style="min-width:0;flex:1">
+          <div style="font-size:13px;font-weight:600">Auto-extract from website</div>
           <div id="kb-website-status" style="font-size:11px;color:var(--muted);margin-top:3px">Fetches services and FAQs from your website automatically</div>
         </div>
-        <button class="btn bs xs" onclick="extractWebsiteKB()" id="kb-extract-btn" style="margin-left:12px;white-space:nowrap">↺ Extract</button>
+        <button class="btn bs xs" onclick="extractWebsiteKB()" id="kb-extract-btn" style="margin-left:12px;flex-shrink:0">↺ Extract</button>
       </div>
     </div>
 
   </div>
 </div>
+
 
 </div>
 
@@ -3908,26 +3904,42 @@ async function loadKBHealth() {
   if (!BIZ) return;
   const r = await req('GET', `/api/ke/${BIZ}/health`);
   const bar = document.getElementById('kb-health-bar');
-  if (!bar || !r?.score) return;
-  const grade = r.grade;
-  const pct   = r.score;
-  const col   = grade==='A'?'var(--a2)':grade==='B'?'var(--accent)':grade==='C'?'var(--amber)':'var(--a3)';
-  const miss  = (r.missing||[]).map(m=>m.replace(/_/g,' ')).join(' · ');
+  if (!bar || !r) return;
+
+  const pct    = r.score || 0;
+  const grade  = r.grade || 'D';
+  const colMap = {A:'var(--a2)', B:'var(--accent)', C:'var(--amber)', D:'var(--a3)'};
+  const col    = colMap[grade] || 'var(--a3)';
+  const labels = r.missing_labels || (r.missing||[]).map(m => m.replace(/_/g,' '));
+  const done   = pct >= 100;
+
+  let checksHtml = '';
+  if (labels.length && !done) {
+    checksHtml = labels.map(l => `
+      <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted)">
+        <span style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px">✕</span>
+        ${l}
+      </div>`).join('');
+  }
+
   bar.innerHTML = `
-    <div style="background:var(--s2);border-radius:9px;padding:12px 14px;display:flex;align-items:center;gap:14px">
-      <div style="width:40px;height:40px;border-radius:50%;background:${col};display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <span style="font-size:16px;font-weight:600;color:#fff">${grade}</span>
-      </div>
-      <div style="flex:1;min-width:0">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
-          <div style="flex:1;height:5px;background:var(--border);border-radius:3px">
-            <div style="height:100%;width:${pct}%;background:${col};border-radius:3px;transition:width .5s"></div>
-          </div>
-          <span style="font-size:11px;color:var(--muted);flex-shrink:0">${pct}% complete</span>
+    <div style="background:var(--s2);border-radius:10px;padding:14px 16px;margin-bottom:2px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:${labels.length?'12px':'0'}">
+        <div style="width:44px;height:44px;border-radius:50%;background:${col};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <span style="font-size:17px;font-weight:600;color:#fff">${grade}</span>
         </div>
-        <div style="font-size:11.5px;color:var(--muted)">${r.services} services · ${r.offers} offers · ${r.faqs} FAQs</div>
-        ${miss?`<div style="font-size:11px;color:var(--muted);margin-top:2px">Add: ${miss}</div>`:''}
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+            <div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden">
+              <div style="height:100%;width:${pct}%;background:${col};border-radius:3px;transition:width .6s ease"></div>
+            </div>
+            <span style="font-size:12px;font-weight:500;color:${col};flex-shrink:0">${pct}%</span>
+          </div>
+          <div style="font-size:12px;color:var(--muted)">${r.services||0} services · ${r.offers||0} offers · ${r.faqs||0} Q&A</div>
+        </div>
       </div>
+      ${checksHtml ? `<div style="display:flex;flex-direction:column;gap:5px;padding-top:10px;border-top:1px solid var(--border)">${checksHtml}</div>` : ''}
+      ${done ? '<div style="font-size:12px;color:var(--a2);margin-top:8px;font-weight:500">✓ AI knowledge base is complete</div>' : ''}
     </div>`;
 }
 
@@ -3956,40 +3968,48 @@ async function loadKBTab() {
   const sl = document.getElementById('kb-services-list');
   if (sl) {
     const arr = Array.isArray(svcs) ? svcs : [];
-    sl.innerHTML = arr.length ? arr.map(s => `
-      <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
-        <div style="flex:1;font-size:12.5px;color:var(--text)">${s.name}${s.price_range?` <span style="font-size:11px;color:var(--accent);font-weight:500">${s.price_range}</span>`:''}</div>
-        <button class="btn bd xs" onclick="deleteKBItem('services','${s.service_id}')" style="opacity:.6">✕</button>
-      </div>`).join('')
-    : `<div style="font-size:12px;color:var(--muted);padding:8px 0;font-style:italic">No services yet — type a name above and click + Add, or use ⚡ Auto-fill</div>`;
+    sl.innerHTML = arr.length
+      ? arr.map(s => `
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+          <div style="flex:1;min-width:0">
+            <span style="font-size:12.5px">${s.name}</span>
+            ${s.price_range
+              ? `<span style="font-size:11px;color:var(--accent);margin-left:8px;font-weight:500">${s.price_range}</span>`
+              : `<span style="font-size:10.5px;color:var(--muted);margin-left:8px;cursor:pointer" onclick="addPriceToService('${s.service_id}','${s.name.replace(/'/g,'')}')">[add price]</span>`}
+          </div>
+          <button class="btn bd xs" onclick="deleteKBItem('services','${s.service_id}')" style="opacity:.5">✕</button>
+        </div>`).join('')
+      : '<div style="font-size:12px;color:var(--muted);padding:8px 0;font-style:italic">No services yet — type a name and click + Add, or use ⚡ Auto-fill</div>';
   }
 
   const ol = document.getElementById('kb-offers-list');
   if (ol) {
     const arr = Array.isArray(offers) ? offers : [];
     const labels = {all:'All',new_customer:'New',repeat:'Repeat',winback:'Win-back',vip:'VIP'};
-    ol.innerHTML = arr.length ? arr.map(o => `
-      <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
-        <div style="flex:1;font-size:12.5px;color:var(--text)">${o.title}
-          <span style="font-size:10px;color:var(--muted);margin-left:6px;background:var(--s2);padding:1px 6px;border-radius:10px">${labels[o.trigger_type]||o.trigger_type}</span>
-        </div>
-        <button class="btn bd xs" onclick="deleteKBItem('offers','${o.offer_id}')" style="opacity:.6">✕</button>
-      </div>`).join('')
-    : `<div style="font-size:12px;color:var(--muted);padding:8px 0;font-style:italic">No offers yet — add a promo above</div>`;
+    ol.innerHTML = arr.length
+      ? arr.map(o => `
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+          <div style="flex:1;font-size:12.5px">${o.title}
+            <span style="font-size:10px;background:var(--s2);color:var(--muted);padding:1px 7px;border-radius:10px;margin-left:6px">${labels[o.trigger_type]||o.trigger_type}</span>
+          </div>
+          <button class="btn bd xs" onclick="deleteKBItem('offers','${o.offer_id}')" style="opacity:.5">✕</button>
+        </div>`).join('')
+      : '<div style="font-size:12px;color:var(--muted);padding:8px 0;font-style:italic">No offers yet — add a promo above</div>';
   }
 
   const fl = document.getElementById('kb-faqs-list');
   if (fl) {
     const arr = Array.isArray(faqs) ? faqs : [];
-    fl.innerHTML = arr.length ? arr.map(f => `
-      <div style="display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">
-        <div style="flex:1;font-size:12.5px">
-          <div style="color:var(--text);margin-bottom:2px">${f.question}</div>
-          <div style="color:var(--muted);font-size:11.5px">${f.answer}</div>
-        </div>
-        <button class="btn bd xs" onclick="deleteKBItem('faqs','${f.faq_id}')" style="opacity:.6;margin-top:2px">✕</button>
-      </div>`).join('')
-    : `<div style="font-size:12px;color:var(--muted);padding:8px 0;font-style:italic">No Q&A yet — common questions like hours, home visits, booking</div>`;
+    fl.innerHTML = arr.length
+      ? arr.map(f => `
+        <div style="display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12.5px;font-weight:500;margin-bottom:2px">${f.question}</div>
+            <div style="font-size:12px;color:var(--muted);word-break:break-word">${f.answer}</div>
+          </div>
+          <button class="btn bd xs" onclick="deleteKBItem('faqs','${f.faq_id}')" style="opacity:.5;margin-top:1px">✕</button>
+        </div>`).join('')
+      : '<div style="font-size:12px;color:var(--muted);padding:8px 0;font-style:italic">No Q&A yet — add common questions like hours, home visits, booking</div>';
   }
 
   const ws = document.getElementById('kb-website-status');
@@ -4001,6 +4021,14 @@ async function loadKBTab() {
       ws.textContent = 'Not extracted yet — click ↺ Extract to fetch from your website';
     }
   }
+}
+
+async function addPriceToService(serviceId, serviceName) {
+  const price = prompt(`Add price range for "${serviceName}":\ne.g. ₹499–₹999`);
+  if (!price) return;
+  const r = await req('PUT', `/api/kb/${BIZ}/services/${serviceId}`, {price_range: price.trim()});
+  if (r?.service_id || r?.name) { toast('Price added ✓'); loadKBTab(); }
+  else toast('Update failed', 'err');
 }
 
 async function addKBService() {
