@@ -1838,123 +1838,8 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
   
 
 </div>
-</div>
-<div class="page" id="p-myaccount">
-  <div class="ph">
-    <div>
-      <div class="pt">My Account</div>
-      <div class="ps">Your personal profile and account security</div>
-    </div>
-  </div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:960px">
-
-    <!-- ── LEFT: Personal Information (read-only) ── -->
-    <div class="card">
-      <div class="ct" style="margin-bottom:18px">
-        <span>Personal Information</span>
-        <span style="font-size:10px;color:var(--muted);background:var(--s2);padding:3px 9px;border-radius:6px;font-weight:400;border:1px solid var(--border)">Read only</span>
-      </div>
-
-      <!-- Avatar + Name Row -->
-      <div style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--s2);border-radius:10px;border:1px solid var(--border);margin-bottom:16px">
-        <div id="mp-avatar" style="width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#4f46e5);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:19px;font-weight:700;color:#fff;flex-shrink:0">?</div>
-        <div>
-          <div id="mp-name-big" style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px">—</div>
-          <div id="mp-email-small" style="font-size:12px;color:var(--muted)">—</div>
-        </div>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:11px">
-        <div>
-          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Full Name</div>
-          <div id="mp-name" style="font-size:13.5px;font-weight:500;color:var(--text);padding:9px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div>
-        </div>
-        <div>
-          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Email Address</div>
-          <div id="mp-email" style="font-size:13.5px;font-weight:500;color:var(--text);padding:9px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          <div>
-            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Role</div>
-            <div id="mp-role" style="font-size:13.5px;font-weight:500;color:var(--text);padding:9px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div>
-          </div>
-          <div>
-            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Member Since</div>
-            <div id="mp-since" style="font-size:12px;color:var(--muted);padding:9px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div>
-          </div>
-        </div>
-        <div>
-          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Current Plan</div>
-          <div id="mp-plan" style="font-size:13.5px;font-weight:600;padding:9px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-            <span id="mp-plan-label">—</span>
-            <button onclick="doUpgrade()" style="font-size:11px;padding:4px 10px;border-radius:6px;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--fb);font-weight:500">Upgrade</button>
-          </div>
-        </div>
-        <div>
-          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Active Business</div>
-          <div id="mp-biz" style="font-size:13.5px;font-weight:500;color:var(--text);padding:9px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── RIGHT: Change Password + Session ── -->
-    <div style="display:flex;flex-direction:column;gap:14px">
-
-      <div class="card">
-        <div class="ct" style="margin-bottom:16px">Change Password</div>
-        <div style="display:flex;flex-direction:column;gap:11px">
-          <div>
-            <label class="fl">Current Password</label>
-            <input id="cp-current" type="password" class="fi" placeholder="Enter your current password">
-          </div>
-          <div>
-            <label class="fl">New Password</label>
-            <input id="cp-new" type="password" class="fi" placeholder="At least 6 characters">
-          </div>
-          <div>
-            <label class="fl">Confirm New Password</label>
-            <input id="cp-confirm" type="password" class="fi" placeholder="Repeat new password"
-                   onkeydown="if(event.key==='Enter')changePassword()">
-          </div>
-          <div id="cp-err" style="color:var(--a3);font-size:12px;display:none;padding:9px 12px;background:rgba(255,107,107,.08);border-radius:7px;border:1px solid rgba(255,107,107,.2);line-height:1.5"></div>
-          <div id="cp-ok"  style="color:var(--a2);font-size:12px;display:none;padding:9px 12px;background:rgba(0,212,170,.08);border-radius:7px;border:1px solid rgba(0,212,170,.2);line-height:1.5"></div>
-          <button id="cp-btn" onclick="changePassword()" class="btn bp" style="justify-content:center;padding:10px;font-size:13.5px;font-weight:600">
-            Update Password
-          </button>
-        </div>
-      </div>
-
-      <!-- Session / Logout -->
-      <div class="card" style="border-color:rgba(255,107,107,.18)">
-        <div class="ct" style="color:var(--a3);margin-bottom:10px">Session</div>
-        <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px;line-height:1.65">
-          Signing out will clear your session on this device and redirect you to the home page.
-        </div>
-        <button onclick="doLogout()" class="btn bd" style="justify-content:center;width:100%;padding:10px;font-size:13px">
-          Sign Out of MPilot
-        </button>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<div class="page" id="p-chips" style="display:none"></div>
-  <div id="p-svc-sugs" style="display:none"></div>
-  <div id="pfp-icon" style="display:none"></div>
-  <div id="pfp-name" style="display:none"></div>
-  <div id="pfp-tag"  style="display:none"></div>
-  <div id="pfp-rows" style="display:none"></div>
-  <div id="pSaveStatus" style="display:none"></div>
-
-
-  
-</div>
-
-
-  <!-- ── TAB: Channels ─────────────────────────────── -->
-  <div id="setup-tab-channels" class="setup-tab-panel" style="display:none">
+<div id="setup-tab-channels" class="setup-tab-panel" style="display:none">
 
 <div style="display:grid;grid-template-columns:220px 1fr;gap:0;border:1px solid var(--border);border-radius:14px;overflow:hidden;min-height:520px">
 
@@ -2406,20 +2291,125 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 
   </div>
 </div>
-
-
-
-
-
-</div>
-</div>
-
 </div>
 
 
+<div class="page" id="p-myaccount">
+  <div class="ph">
+    <div>
+      <div class="pt">My Account</div>
+      <div class="ps">Your personal profile and account security</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:960px">
+
+    <!-- ── LEFT: Personal Information (read-only) ── -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:18px">
+        <span>Personal Information</span>
+        <span style="font-size:10px;color:var(--muted);background:var(--s2);padding:3px 9px;border-radius:6px;font-weight:400;border:1px solid var(--border)">Read only</span>
+      </div>
+
+      <!-- Avatar + Name Row -->
+      <div style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--s2);border-radius:10px;border:1px solid var(--border);margin-bottom:16px">
+        <div id="mp-avatar" style="width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#4f46e5);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:19px;font-weight:700;color:#fff;flex-shrink:0">?</div>
+        <div>
+          <div id="mp-name-big" style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px">—</div>
+          <div id="mp-email-small" style="font-size:12px;color:var(--muted)">—</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Full Name</div>
+          <div id="mp-name" style="font-size:13.5px;font-weight:500;color:var(--text);padding:9px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Email Address</div>
+          <div id="mp-email" style="font-size:13.5px;font-weight:500;color:var(--text);padding:9px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Role</div>
+            <div id="mp-role" style="font-size:13.5px;font-weight:500;color:var(--text);padding:9px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Member Since</div>
+            <div id="mp-since" style="font-size:12px;color:var(--muted);padding:9px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Current Plan</div>
+          <div id="mp-plan" style="font-size:13.5px;font-weight:600;padding:9px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+            <span id="mp-plan-label">—</span>
+            <button onclick="doUpgrade()" style="font-size:11px;padding:4px 10px;border-radius:6px;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--fb);font-weight:500">Upgrade</button>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Active Business</div>
+          <div id="mp-biz" style="font-size:13.5px;font-weight:500;color:var(--text);padding:9px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT: Change Password + Session ── -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+
+      <div class="card">
+        <div class="ct" style="margin-bottom:16px">Change Password</div>
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <div>
+            <label class="fl">Current Password</label>
+            <input id="cp-current" type="password" class="fi" placeholder="Enter your current password">
+          </div>
+          <div>
+            <label class="fl">New Password</label>
+            <input id="cp-new" type="password" class="fi" placeholder="At least 6 characters">
+          </div>
+          <div>
+            <label class="fl">Confirm New Password</label>
+            <input id="cp-confirm" type="password" class="fi" placeholder="Repeat new password"
+                   onkeydown="if(event.key==='Enter')changePassword()">
+          </div>
+          <div id="cp-err" style="color:var(--a3);font-size:12px;display:none;padding:9px 12px;background:rgba(255,107,107,.08);border-radius:7px;border:1px solid rgba(255,107,107,.2);line-height:1.5"></div>
+          <div id="cp-ok"  style="color:var(--a2);font-size:12px;display:none;padding:9px 12px;background:rgba(0,212,170,.08);border-radius:7px;border:1px solid rgba(0,212,170,.2);line-height:1.5"></div>
+          <button id="cp-btn" onclick="changePassword()" class="btn bp" style="justify-content:center;padding:10px;font-size:13.5px;font-weight:600">
+            Update Password
+          </button>
+        </div>
+      </div>
+
+      <!-- Session / Logout -->
+      <div class="card" style="border-color:rgba(255,107,107,.18)">
+        <div class="ct" style="color:var(--a3);margin-bottom:10px">Session</div>
+        <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px;line-height:1.65">
+          Signing out will clear your session on this device and redirect you to the home page.
+        </div>
+        <button onclick="doLogout()" class="btn bd" style="justify-content:center;width:100%;padding:10px;font-size:13px">
+          Sign Out of MPilot
+        </button>
+      </div>
+
+    </div>
+  </div>
 </div>
 
-</main>
+<div class="page" id="p-chips" style="display:none"></div>
+  <div id="p-svc-sugs" style="display:none"></div>
+  <div id="pfp-icon" style="display:none"></div>
+  <div id="pfp-name" style="display:none"></div>
+  <div id="pfp-tag"  style="display:none"></div>
+  <div id="pfp-rows" style="display:none"></div>
+  <div id="pSaveStatus" style="display:none"></div>
+
+
+  
+</div>
+
+
+  <!-- ── TAB: Channels ─────────────────────────────── -->
+  </main>
 
 <div class="toastwrap" id="toasts"></div>
 
@@ -2886,6 +2876,8 @@ function closeForm(id) { const e = document.getElementById(id); if(e) e.style.di
 // ─── Navigation ───────────────────────────────────────────
 function goTo(page) {
   closeMobileNav();
+  // Always hide setup tab panels when navigating — they may be outside p-setup
+  document.querySelectorAll('.setup-tab-panel').forEach(p => p.style.display = 'none');
   document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
   document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
   const ni = document.querySelector(`.ni[data-p="${page}"]`);
@@ -5712,9 +5704,12 @@ function switchSetupTab(tab) {
   document.querySelectorAll('.setup-tab').forEach(b => {
     b.classList.toggle('on', b.dataset.tab === tab);
   });
+  // Force all panels hidden first, then show only the active one
   document.querySelectorAll('.setup-tab-panel').forEach(p => {
-    p.style.display = p.id === 'setup-tab-' + tab ? 'block' : 'none';
+    p.style.display = 'none';
   });
+  const activePanel = document.getElementById('setup-tab-' + tab);
+  if (activePanel) activePanel.style.display = 'block';
   if (tab === 'qr')        loadSetupQRList();
   if (tab === 'channels')  _loadSetupChannels();
   if (tab === 'advanced')  _loadAdvancedSettings();
