@@ -32,7 +32,7 @@ a{text-decoration:none;color:inherit}
 .ni{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:12.5px;font-weight:500;color:var(--muted);transition:all .12s;margin-bottom:1px;user-select:none}
 .ni:hover{background:var(--s2);color:var(--text)}
 .ni.on{background:rgba(108,99,255,.14);color:var(--accent)}
-.ni-child{padding-left:28px;font-size:12px;color:var(--dim);position:relative}
+.ni-child{padding-left:28px;font-size:12px;color:var(--muted);position:relative}
 .ni-child:hover{color:var(--text)}
 .ni-child.on{color:var(--accent);background:rgba(108,99,255,.1)}
 .ni-child::before{content:"";position:absolute;left:16px;top:50%;transform:translateY(-50%);
@@ -1447,7 +1447,7 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
   <!-- How it works banner -->
   <div style="background:rgba(108,99,255,.07);border:1px solid rgba(108,99,255,.18);border-radius:12px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:14px">
     <div style="font-size:28px;flex-shrink:0">📱</div>
-    <div style="font-size:12.5px;color:var(--dim);line-height:1.65">
+    <div style="font-size:12.5px;color:var(--muted);line-height:1.65">
       <strong style="color:var(--text)">How QR capture works:</strong>
       Customer scans QR → WhatsApp opens with pre-filled message → They tap Send → 
       Instantly captured as a contact in your CRM. No app download, no form.
@@ -1498,7 +1498,7 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
         <div class="ct" style="margin-bottom:14px">Win-back Campaign
           <span style="font-size:10px;font-weight:400;color:var(--muted);margin-left:8px">Sends once per 30 days</span>
         </div>
-        <div style="font-size:12.5px;color:var(--dim);margin-bottom:14px;line-height:1.65">
+        <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px;line-height:1.65">
           Sends a WhatsApp message to customers who haven't visited in 30+ days. Uses your approved <code style="font-size:11px;background:var(--s2);padding:1px 5px;border-radius:4px">winback_offer</code> template.
         </div>
         <div style="background:var(--s2);border-radius:8px;padding:10px 13px;margin-bottom:14px;font-size:12px">
@@ -1515,7 +1515,7 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
         <div class="ct" style="margin-bottom:14px">VIP Reward
           <span style="font-size:10px;font-weight:400;color:var(--muted);margin-left:8px">Visit milestones</span>
         </div>
-        <div style="font-size:12.5px;color:var(--dim);margin-bottom:14px;line-height:1.65">
+        <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px;line-height:1.65">
           Automatically sends a special reward to customers who reach visit milestones (10, 20, 30, 50 visits). Uses the <code style="font-size:11px;background:var(--s2);padding:1px 5px;border-radius:4px">vip_reward</code> template.
         </div>
         <div style="background:var(--s2);border-radius:8px;padding:10px 13px;margin-bottom:14px;font-size:12px">
@@ -1544,7 +1544,7 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
         <div class="ct" style="margin-bottom:14px">Review Request Automation
           <span style="font-size:10px;font-weight:400;color:var(--muted);margin-left:8px">After every visit</span>
         </div>
-        <div style="font-size:12.5px;color:var(--dim);margin-bottom:14px;line-height:1.65">
+        <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px;line-height:1.65">
           Sends a WhatsApp review request to customers after a confirmed visit. Uses the <code style="font-size:11px;background:var(--s2);padding:1px 5px;border-radius:4px">review_request</code> template with a Google review link.
         </div>
         <div style="background:var(--s2);border-radius:8px;padding:10px 13px;margin-bottom:14px;font-size:12px">
@@ -1561,7 +1561,7 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
         <div class="ct" style="margin-bottom:14px">Google Business Profile
           <span id="gbp-auto-badge" style="font-size:10px;font-weight:400;color:var(--muted);margin-left:8px">Not connected</span>
         </div>
-        <div style="font-size:12.5px;color:var(--dim);margin-bottom:14px;line-height:1.65">
+        <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px;line-height:1.65">
           Connect your Google Business Profile to monitor new reviews, auto-reply with AI, and track your star rating trend over time.
         </div>
         <div style="background:var(--s2);border-radius:8px;padding:10px 13px;margin-bottom:14px;font-size:12px">
@@ -1610,7 +1610,7 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 
       <div class="card">
         <div class="ct" style="margin-bottom:14px">Send Loyalty Reward</div>
-        <div style="font-size:12.5px;color:var(--dim);margin-bottom:14px;line-height:1.65">
+        <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px;line-height:1.65">
           Send a personalised VIP reward to your top customers. Uses the <code style="font-size:11px;background:var(--s2);padding:1px 5px;border-radius:4px">vip_reward</code> WhatsApp template.
         </div>
         <div style="display:flex;flex-direction:column;gap:10px">
@@ -2223,74 +2223,77 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 </div>
 
 <div id="setup-tab-kb" class="setup-tab-panel" style="display:none">
-  <div style="display:flex;flex-direction:column;gap:14px">
 
-    <!-- Services -->
-    <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+  <!-- KB health bar — loads automatically -->
+  <div id="kb-health-bar" style="margin-bottom:16px"></div>
+
+  <div style="display:flex;flex-direction:column;gap:12px">
+
+    <!-- ── Services ─────────────────────────────────────────────── -->
+    <div class="card" style="border-left:3px solid var(--accent);border-radius:0 var(--r) var(--r) 0">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
         <div>
-          <div class="ct" style="margin-bottom:2px">Services</div>
-          <div style="font-size:11px;color:var(--muted)">The AI tells customers what you offer</div>
+          <div style="font-size:13px;font-weight:600;color:var(--text)">Services</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">What you offer — AI tells customers this</div>
         </div>
-        <button class="btn bp xs" onclick="seedKBFromProfile()" title="Auto-fill from your profile">⚡ Auto-fill</button>
+        <button class="btn bp xs" onclick="seedKBFromProfile()" title="Auto-fill from business profile">⚡ Auto-fill</button>
       </div>
-      <div id="kb-services-list" style="margin-bottom:12px"></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
-        <div style="flex:2;min-width:140px"><input class="fi" id="kb-svc-name" placeholder="Service name (e.g. Dog Grooming)"></div>
-        <div style="flex:1;min-width:100px"><input class="fi" id="kb-svc-price" placeholder="Price (e.g. ₹499-₹999)"></div>
-        <button class="btn bp xs" onclick="addKBService()">+ Add</button>
-      </div>
-    </div>
-
-    <!-- Offers -->
-    <div class="card">
-      <div style="margin-bottom:12px">
-        <div class="ct" style="margin-bottom:2px">Offers</div>
-        <div style="font-size:11px;color:var(--muted)">The AI mentions these to customers automatically</div>
-      </div>
-      <div id="kb-offers-list" style="margin-bottom:12px"></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
-        <div style="flex:2;min-width:160px"><input class="fi" id="kb-off-title" placeholder="Offer (e.g. Free nail trim with grooming)"></div>
-        <div style="flex:1;min-width:120px">
-          <select class="fsel" id="kb-off-trigger">
-            <option value="all">All customers</option>
-            <option value="new_customer">New customers</option>
-            <option value="repeat">Repeat visitors</option>
-            <option value="winback">Win-back (30d inactive)</option>
-            <option value="vip">VIP only</option>
-          </select>
-        </div>
-        <button class="btn bp xs" onclick="addKBOffer()">+ Add</button>
+      <div id="kb-services-list" style="margin-bottom:10px;min-height:20px"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input class="fi" id="kb-svc-name" placeholder="Service name (e.g. Dog Grooming)" style="flex:2;min-width:140px">
+        <input class="fi" id="kb-svc-price" placeholder="Price (e.g. ₹499–₹999)" style="flex:1;min-width:100px">
+        <button class="btn bp xs" onclick="addKBService()" style="white-space:nowrap">+ Add</button>
       </div>
     </div>
 
-    <!-- FAQs -->
-    <div class="card">
-      <div style="margin-bottom:12px">
-        <div class="ct" style="margin-bottom:2px">Q&amp;A</div>
-        <div style="font-size:11px;color:var(--muted)">The AI gives these exact answers when customers ask</div>
+    <!-- ── Offers ─────────────────────────────────────────────────── -->
+    <div class="card" style="border-left:3px solid var(--a2);border-radius:0 var(--r) var(--r) 0">
+      <div style="margin-bottom:10px">
+        <div style="font-size:13px;font-weight:600;color:var(--text)">Offers</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">AI mentions these to the right customer at the right time</div>
       </div>
-      <div id="kb-faqs-list" style="margin-bottom:12px"></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
-        <div style="flex:1;min-width:160px"><input class="fi" id="kb-faq-q" placeholder="Question (e.g. Do you do home visits?)"></div>
-        <div style="flex:2;min-width:180px"><input class="fi" id="kb-faq-a" placeholder="Answer (e.g. Yes! Call 916362883634 to book.)"></div>
-        <button class="btn bp xs" onclick="addKBFaq()">+ Add</button>
+      <div id="kb-offers-list" style="margin-bottom:10px;min-height:20px"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input class="fi" id="kb-off-title" placeholder="Offer text (e.g. Free nail trim with grooming)" style="flex:2;min-width:160px">
+        <select class="fsel" id="kb-off-trigger" style="flex:1;min-width:130px">
+          <option value="all">All customers</option>
+          <option value="new_customer">New customers</option>
+          <option value="repeat">Repeat visitors</option>
+          <option value="winback">Win-back (30d inactive)</option>
+          <option value="vip">VIP only</option>
+        </select>
+        <button class="btn bp xs" onclick="addKBOffer()" style="white-space:nowrap">+ Add</button>
       </div>
     </div>
 
-    <!-- Website extract — collapsed at bottom -->
-    <div class="card">
+    <!-- ── Q&A ───────────────────────────────────────────────────── -->
+    <div class="card" style="border-left:3px solid var(--amber);border-radius:0 var(--r) var(--r) 0">
+      <div style="margin-bottom:10px">
+        <div style="font-size:13px;font-weight:600;color:var(--text)">Q&amp;A</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">AI gives these exact answers when customers ask</div>
+      </div>
+      <div id="kb-faqs-list" style="margin-bottom:10px;min-height:20px"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input class="fi" id="kb-faq-q" placeholder="Question (e.g. Do you do home visits?)" style="flex:1;min-width:160px">
+        <input class="fi" id="kb-faq-a" placeholder="Answer (e.g. Yes! Call 9163... to book.)" style="flex:2;min-width:180px">
+        <button class="btn bp xs" onclick="addKBFaq()" style="white-space:nowrap">+ Add</button>
+      </div>
+    </div>
+
+    <!-- ── Website extract ────────────────────────────────────────── -->
+    <div class="card" style="border-left:3px solid var(--border);border-radius:0 var(--r) var(--r) 0">
       <div style="display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <div style="font-size:12.5px;font-weight:600">Auto-extract from Website</div>
-          <div id="kb-website-status" style="font-size:11px;color:var(--muted);margin-top:3px">Extract services and FAQs from your website automatically</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;color:var(--text)">Auto-extract from website</div>
+          <div id="kb-website-status" style="font-size:11px;color:var(--muted);margin-top:3px">Fetches services and FAQs from your website automatically</div>
         </div>
-        <button class="btn bs xs" onclick="extractWebsiteKB()" id="kb-extract-btn">🌐 Extract</button>
+        <button class="btn bs xs" onclick="extractWebsiteKB()" id="kb-extract-btn" style="margin-left:12px;white-space:nowrap">↺ Extract</button>
       </div>
     </div>
 
   </div>
 </div>
+
 </div>
 
 
@@ -3900,6 +3903,34 @@ async function deleteQR(qrId) {
 }
 
 
+
+async function loadKBHealth() {
+  if (!BIZ) return;
+  const r = await req('GET', `/api/ke/${BIZ}/health`);
+  const bar = document.getElementById('kb-health-bar');
+  if (!bar || !r?.score) return;
+  const grade = r.grade;
+  const pct   = r.score;
+  const col   = grade==='A'?'var(--a2)':grade==='B'?'var(--accent)':grade==='C'?'var(--amber)':'var(--a3)';
+  const miss  = (r.missing||[]).map(m=>m.replace(/_/g,' ')).join(' · ');
+  bar.innerHTML = `
+    <div style="background:var(--s2);border-radius:9px;padding:12px 14px;display:flex;align-items:center;gap:14px">
+      <div style="width:40px;height:40px;border-radius:50%;background:${col};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <span style="font-size:16px;font-weight:600;color:#fff">${grade}</span>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+          <div style="flex:1;height:5px;background:var(--border);border-radius:3px">
+            <div style="height:100%;width:${pct}%;background:${col};border-radius:3px;transition:width .5s"></div>
+          </div>
+          <span style="font-size:11px;color:var(--muted);flex-shrink:0">${pct}% complete</span>
+        </div>
+        <div style="font-size:11.5px;color:var(--muted)">${r.services} services · ${r.offers} offers · ${r.faqs} FAQs</div>
+        ${miss?`<div style="font-size:11px;color:var(--muted);margin-top:2px">Add: ${miss}</div>`:''}
+      </div>
+    </div>`;
+}
+
 async function seedKBFromProfile() {
   if (!BIZ) return toast('Select a business first','err');
   if (!confirm('This will auto-fill services and FAQs from your business profile data. Existing entries will be kept. Continue?')) return;
@@ -3914,6 +3945,7 @@ async function seedKBFromProfile() {
 
 async function loadKBTab() {
   if (!BIZ) return;
+  loadKBHealth();
   const [svcs, offers, faqs, wcache] = await Promise.all([
     req('GET', `/api/kb/${BIZ}/services`),
     req('GET', `/api/kb/${BIZ}/offers`),
@@ -3921,47 +3953,53 @@ async function loadKBTab() {
     req('GET', `/api/kb/${BIZ}/website-cache`),
   ]);
 
-  // Render services
   const sl = document.getElementById('kb-services-list');
   if (sl) {
     const arr = Array.isArray(svcs) ? svcs : [];
     sl.innerHTML = arr.length ? arr.map(s => `
       <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
-        <div style="flex:1;font-size:12.5px">${s.name}${s.price_range ? '<span style="color:var(--accent);margin-left:8px;font-size:11.5px">' + s.price_range + '</span>' : ''}</div>
-        <button class="btn bd xs" onclick="deleteKBItem('services','${s.service_id}')">✕</button>
-      </div>`).join('') : '<div style="font-size:12px;color:var(--muted);padding:6px 0">No services added yet — add them above</div>';
+        <div style="flex:1;font-size:12.5px;color:var(--text)">${s.name}${s.price_range?` <span style="font-size:11px;color:var(--accent);font-weight:500">${s.price_range}</span>`:''}</div>
+        <button class="btn bd xs" onclick="deleteKBItem('services','${s.service_id}')" style="opacity:.6">✕</button>
+      </div>`).join('')
+    : `<div style="font-size:12px;color:var(--muted);padding:8px 0;font-style:italic">No services yet — type a name above and click + Add, or use ⚡ Auto-fill</div>`;
   }
 
-  // Render offers
   const ol = document.getElementById('kb-offers-list');
   if (ol) {
     const arr = Array.isArray(offers) ? offers : [];
+    const labels = {all:'All',new_customer:'New',repeat:'Repeat',winback:'Win-back',vip:'VIP'};
     ol.innerHTML = arr.length ? arr.map(o => `
       <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
-        <div style="flex:1;font-size:12.5px">${o.title} <span style="font-size:10.5px;color:var(--muted);margin-left:6px">${o.trigger_type}</span></div>
-        <button class="btn bd xs" onclick="deleteKBItem('offers','${o.offer_id}')">✕</button>
-      </div>`).join('') : '<div style="font-size:12px;color:var(--muted);padding:6px 0">No offers added yet</div>';
+        <div style="flex:1;font-size:12.5px;color:var(--text)">${o.title}
+          <span style="font-size:10px;color:var(--muted);margin-left:6px;background:var(--s2);padding:1px 6px;border-radius:10px">${labels[o.trigger_type]||o.trigger_type}</span>
+        </div>
+        <button class="btn bd xs" onclick="deleteKBItem('offers','${o.offer_id}')" style="opacity:.6">✕</button>
+      </div>`).join('')
+    : `<div style="font-size:12px;color:var(--muted);padding:8px 0;font-style:italic">No offers yet — add a promo above</div>`;
   }
 
-  // Render FAQs
   const fl = document.getElementById('kb-faqs-list');
   if (fl) {
     const arr = Array.isArray(faqs) ? faqs : [];
     fl.innerHTML = arr.length ? arr.map(f => `
-      <div style="display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)">
-        <div style="flex:1;font-size:12.5px"><strong>Q:</strong> ${f.question}<br><span style="color:var(--dim)"><strong>A:</strong> ${f.answer}</span></div>
-        <button class="btn bd xs" onclick="deleteKBItem('faqs','${f.faq_id}')">✕</button>
-      </div>`).join('') : '<div style="font-size:12px;color:var(--muted);padding:6px 0">No FAQs added yet</div>';
+      <div style="display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">
+        <div style="flex:1;font-size:12.5px">
+          <div style="color:var(--text);margin-bottom:2px">${f.question}</div>
+          <div style="color:var(--muted);font-size:11.5px">${f.answer}</div>
+        </div>
+        <button class="btn bd xs" onclick="deleteKBItem('faqs','${f.faq_id}')" style="opacity:.6;margin-top:2px">✕</button>
+      </div>`).join('')
+    : `<div style="font-size:12px;color:var(--muted);padding:8px 0;font-style:italic">No Q&A yet — common questions like hours, home visits, booking</div>`;
   }
 
-  // Website cache status
   const ws = document.getElementById('kb-website-status');
-  if (ws && wcache && wcache.status === 'ok') {
-    const total = wcache.total_services || wcache.services_count || 0;
-    ws.innerHTML = `<span style="color:var(--a2)">✓ Last extracted: ${wcache.last_fetched?.slice(0,10)} — ${total} total services in AI knowledge base</span>`;
-  } else if (ws && wcache && wcache.status === 'no_cache') {
-    const total = wcache.total_services || 0;
-    if (total > 0) ws.innerHTML = `<span style="color:var(--muted)">${total} services in AI knowledge base — click Extract to sync from website</span>`;
+  if (ws) {
+    if (wcache?.status === 'ok') {
+      const total = wcache.total_services || wcache.services_count || 0;
+      ws.innerHTML = `<span style="color:var(--a2)">✓ Last extracted: ${wcache.last_fetched?.slice(0,10)} — ${total} services in knowledge base</span>`;
+    } else if (wcache?.status === 'no_cache') {
+      ws.textContent = 'Not extracted yet — click ↺ Extract to fetch from your website';
+    }
   }
 }
 
@@ -4728,7 +4766,7 @@ async function loadAutoReviews() {
       <div style="flex-shrink:0;font-size:20px">${'⭐'.repeat(Math.min(5,r.rating||0))}</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:12.5px;font-weight:600;margin-bottom:3px">${r.reviewer_name||'Anonymous'}</div>
-        <div style="font-size:12px;color:var(--dim);line-height:1.5;word-break:break-word">${r.text||r.comment||'No comment'}</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.5;word-break:break-word">${r.text||r.comment||'No comment'}</div>
         <div style="font-size:10.5px;color:var(--muted);margin-top:4px">${r.date||r.created_at?.slice(0,10)||''}</div>
       </div>
     </div>`).join('');
