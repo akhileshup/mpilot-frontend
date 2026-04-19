@@ -3965,7 +3965,11 @@ async function loadKBTab() {
   // Website cache status
   const ws = document.getElementById('kb-website-status');
   if (ws && wcache && wcache.status === 'ok') {
-    ws.innerHTML = `<span style="color:var(--a2)">✓ Last extracted: ${wcache.last_fetched?.slice(0,10)} — ${wcache.services_count} services, ${wcache.faqs_count} FAQs found</span>`;
+    const total = wcache.total_services || wcache.services_count || 0;
+    ws.innerHTML = `<span style="color:var(--a2)">✓ Last extracted: ${wcache.last_fetched?.slice(0,10)} — ${total} total services in AI knowledge base</span>`;
+  } else if (ws && wcache && wcache.status === 'no_cache') {
+    const total = wcache.total_services || 0;
+    if (total > 0) ws.innerHTML = `<span style="color:var(--muted)">${total} services in AI knowledge base — click Extract to sync from website</span>`;
   }
 }
 
