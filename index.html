@@ -517,6 +517,47 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 .plan-btn-primary{background:var(--accent);color:#fff}.plan-btn-primary:hover{background:#5a52e0}
 .plan-btn-secondary{background:var(--s3);color:var(--text);border:1px solid var(--border)}.plan-btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
 .plan-btn-current{background:rgba(0,212,170,.1);color:var(--a2);border:1px solid rgba(0,212,170,.2);cursor:default}
+.kb-section{border-radius:var(--r);border:1px solid var(--border);overflow:hidden}
+.kb-section-head{padding:14px 16px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.kb-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.kb-sec-title{font-size:13px;font-weight:600;color:var(--text)}
+.kb-sec-hint{font-size:11px;color:var(--muted);margin-top:2px}
+.kb-body{padding:14px 16px}
+.kb-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
+.kb-item:last-of-type{border-bottom:none;padding-bottom:0}
+.kb-item-faq{align-items:flex-start}
+.kb-item-name{font-size:12.5px;color:var(--text);flex:1;min-width:0}
+.kb-price-pill{font-size:11px;font-weight:500;padding:2px 8px;border-radius:6px;background:rgba(108,99,255,.15);color:#a09aff;white-space:nowrap;flex-shrink:0}
+.kb-seg-pill{font-size:10.5px;padding:2px 8px;border-radius:20px;background:rgba(0,212,170,.12);color:#00d4aa;white-space:nowrap;flex-shrink:0}
+.kb-add-price{font-size:10.5px;color:var(--muted);cursor:pointer;padding:2px 7px;border-radius:5px;border:1px dashed var(--border2);white-space:nowrap;background:none;flex-shrink:0}
+.kb-add-price:hover{border-color:#6c63ff;color:#a09aff}
+.kb-del{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:none;cursor:pointer;font-size:11px;color:var(--muted);flex-shrink:0}
+.kb-del:hover{border-color:#ff6b6b;color:#ff6b6b;background:rgba(255,107,107,.1)}
+.kb-faq-q{font-size:12.5px;font-weight:500;color:var(--text);margin-bottom:2px}
+.kb-faq-a{font-size:12px;color:var(--muted);word-break:break-word}
+.kb-add-row{display:flex;gap:8px;flex-wrap:wrap;padding-top:11px;margin-top:11px;border-top:1px solid var(--border)}
+.kb-add-row input{height:34px;border-radius:8px;border:1px solid var(--border2);background:var(--s2);padding:0 10px;font-size:12.5px;color:var(--text);outline:none}
+.kb-add-row input:focus{border-color:#6c63ff;box-shadow:0 0 0 2px rgba(108,99,255,.15)}
+.kb-add-row input::placeholder{color:var(--muted)}
+.kb-add-btn{height:34px;padding:0 14px;border-radius:8px;border:1px solid rgba(108,99,255,.4);background:rgba(108,99,255,.12);color:#a09aff;font-size:12.5px;font-weight:500;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.kb-add-btn:hover{background:rgba(108,99,255,.22)}
+.kb-links-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kb-link-field{display:flex;flex-direction:column;gap:5px}
+.kb-link-label{font-size:11.5px;font-weight:500;color:var(--muted)}
+.kb-link-input{height:34px;border-radius:8px;border:1px solid var(--border2);background:var(--s2);padding:0 10px;font-size:12px;color:var(--text);outline:none;width:100%}
+.kb-link-input:focus{border-color:#378add;box-shadow:0 0 0 2px rgba(55,138,221,.15)}
+.kb-req-badge{font-size:9.5px;padding:1px 5px;border-radius:10px;background:rgba(0,212,170,.12);color:#00d4aa;margin-left:4px}
+.kb-opt-badge{font-size:9.5px;padding:1px 5px;border-radius:10px;background:var(--s3);color:var(--muted);margin-left:4px}
+.kb-tool-row{display:flex;gap:8px;align-items:center;padding:10px 16px;background:var(--s3);border-top:1px solid var(--border)}
+.kb-tool-btn{flex:1;height:30px;border-radius:7px;border:1px solid var(--border2);background:var(--s2);font-size:11px;cursor:pointer;color:var(--muted)}
+.kb-tool-btn:hover{color:var(--text);background:var(--s3)}
+.kb-save-links-btn{display:block;width:100%;height:34px;border-radius:8px;border:1px solid rgba(55,138,221,.35);background:rgba(55,138,221,.1);color:#7ab8e8;font-size:12.5px;font-weight:500;cursor:pointer;margin-top:12px}
+.kb-save-links-btn:hover{background:rgba(55,138,221,.18)}
+.kb-health-wrap{background:var(--s2);border-radius:10px;padding:13px 16px;display:flex;align-items:center;gap:14px}
+.kb-health-circle{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600;color:#fff;flex-shrink:0}
+.kb-health-track{flex:1;height:6px;background:var(--border2);border-radius:3px;overflow:hidden;margin-bottom:4px}
+.kb-health-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.kb-health-miss{font-size:11px;color:var(--amber);margin-top:3px}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
@@ -1477,6 +1518,7 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
   </div>
 
   <!-- Stats row -->
+  <div id="auto-sched-stats" style="margin-bottom:12px;padding:10px 14px;background:var(--s2);border-radius:8px"></div>
   <div class="grid g4 mb">
     <div class="card stat green"><div class="sl">Win-backs Sent</div><div class="sv green" id="auto-winback">—</div><div class="sh">Last 30 days</div></div>
     <div class="card stat blue"><div class="sl">Review Requests</div><div class="sv blue" id="auto-rev-req">—</div><div class="sh">Sent to customers</div></div>
@@ -2223,66 +2265,99 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 </div>
 
 <div id="setup-tab-kb" class="setup-tab-panel" style="display:none">
-
-  <div id="kb-health-bar" style="margin-bottom:16px"></div>
-
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div>
+      <div style="font-size:15px;font-weight:600;color:var(--text)">AI Knowledge</div>
+      <div style="font-size:11.5px;color:var(--muted);margin-top:3px">Fill this once — your AI bot handles WhatsApp replies automatically</div>
+    </div>
+    <button class="btn bs xs" style="font-size:12px;padding:6px 14px" onclick="seedKBFromProfile()">⚡ Auto-fill</button>
+  </div>
+  <div id="kb-health-bar" style="margin-bottom:14px"></div>
   <div style="display:flex;flex-direction:column;gap:12px">
 
-    <div class="card" style="border-left:3px solid var(--accent);padding-left:14px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <div>
-          <div style="font-size:13px;font-weight:600">Services</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px">What you offer — AI tells customers this</div>
+    <div class="kb-section">
+      <div class="kb-section-head">
+        <div class="kb-dot" style="background:#7F77DD"></div>
+        <div><div class="kb-sec-title">Services</div><div class="kb-sec-hint">What you offer — AI answers pricing &amp; booking questions from this</div></div>
+      </div>
+      <div class="kb-body">
+        <div id="kb-services-list"></div>
+        <div class="kb-add-row">
+          <input id="kb-svc-name" placeholder="Service name (e.g. Dog Grooming)" style="flex:2;min-width:130px">
+          <input id="kb-svc-price" placeholder="Price (e.g. ₹499–₹999)" style="flex:1;min-width:100px">
+          <button class="kb-add-btn" onclick="addKBService()">+ Add</button>
         </div>
-        <button class="btn bp xs" onclick="seedKBFromProfile()">⚡ Auto-fill</button>
-      </div>
-      <div id="kb-services-list" style="margin-bottom:10px"></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input class="fi" id="kb-svc-name"  placeholder="Service name" style="flex:2;min-width:130px">
-        <input class="fi" id="kb-svc-price" placeholder="Price e.g. ₹499–₹999" style="flex:1;min-width:110px">
-        <button class="btn bp xs" onclick="addKBService()">+ Add</button>
       </div>
     </div>
 
-    <div class="card" style="border-left:3px solid var(--a2);padding-left:14px">
-      <div style="margin-bottom:10px">
-        <div style="font-size:13px;font-weight:600">Offers</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px">AI shows the right offer to the right customer</div>
+    <div class="kb-section">
+      <div class="kb-section-head">
+        <div class="kb-dot" style="background:#00d4aa"></div>
+        <div><div class="kb-sec-title">Offers</div><div class="kb-sec-hint">AI mentions these automatically — especially to new &amp; returning customers</div></div>
       </div>
-      <div id="kb-offers-list" style="margin-bottom:10px"></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input class="fi" id="kb-off-title" placeholder="Offer e.g. Free nail trim with grooming" style="flex:2;min-width:160px">
-        <select class="fsel" id="kb-off-trigger" style="flex:1;min-width:120px">
-          <option value="all">All customers</option>
-          <option value="new_customer">New customers</option>
-          <option value="repeat">Repeat visitors</option>
-          <option value="winback">Win-back (30d+)</option>
-          <option value="vip">VIP only</option>
-        </select>
-        <button class="btn bp xs" onclick="addKBOffer()">+ Add</button>
-      </div>
-    </div>
-
-    <div class="card" style="border-left:3px solid var(--amber);padding-left:14px">
-      <div style="margin-bottom:10px">
-        <div style="font-size:13px;font-weight:600">Q&amp;A</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px">AI gives these exact answers when customers ask</div>
-      </div>
-      <div id="kb-faqs-list" style="margin-bottom:10px"></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input class="fi" id="kb-faq-q" placeholder="Question e.g. Do you do home visits?" style="flex:1;min-width:155px">
-        <input class="fi" id="kb-faq-a" placeholder="Answer e.g. Yes! Call 9163... to book." style="flex:2;min-width:175px">
-        <button class="btn bp xs" onclick="addKBFaq()">+ Add</button>
-      </div>
-    </div>
-
-    <div class="card" style="border-left:3px solid var(--border);padding-left:14px">
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <div style="min-width:0;flex:1">
-          <div style="font-size:13px;font-weight:600">Auto-extract from website</div>
-          <div id="kb-website-status" style="font-size:11px;color:var(--muted);margin-top:3px">Fetches services and FAQs from your website automatically</div>
+      <div class="kb-body">
+        <div id="kb-offers-list"></div>
+        <div class="kb-add-row">
+          <input id="kb-off-title" placeholder="Offer (e.g. Free nail trim with grooming)" style="flex:2;min-width:155px">
+          <select id="kb-off-trigger" style="flex:1;min-width:118px" class="fsel">
+            <option value="all">All customers</option>
+            <option value="new_customer">New customers</option>
+            <option value="repeat">Repeat visitors</option>
+            <option value="winback">Win-back (30d+)</option>
+            <option value="vip">VIP only</option>
+          </select>
+          <button class="kb-add-btn" onclick="addKBOffer()">+ Add</button>
         </div>
-        <button class="btn bs xs" onclick="extractWebsiteKB()" id="kb-extract-btn" style="margin-left:12px;flex-shrink:0">↺ Extract</button>
+      </div>
+    </div>
+
+    <div class="kb-section">
+      <div class="kb-section-head">
+        <div class="kb-dot" style="background:#f59e0b"></div>
+        <div><div class="kb-sec-title">Q&amp;A</div><div class="kb-sec-hint">AI gives these exact answers — add anything customers ask repeatedly</div></div>
+      </div>
+      <div class="kb-body">
+        <div id="kb-faqs-list"></div>
+        <div class="kb-add-row" style="flex-direction:column;gap:8px">
+          <input id="kb-faq-q" placeholder="Question (e.g. Do you offer home service?)" style="width:100%">
+          <div style="display:flex;gap:8px;width:100%">
+            <input id="kb-faq-a" placeholder="Answer (e.g. Yes! Call 916362883634 to book.)" style="flex:1">
+            <button class="kb-add-btn" onclick="addKBFaq()">+ Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="kb-section">
+      <div class="kb-section-head">
+        <div class="kb-dot" style="background:#378add"></div>
+        <div><div class="kb-sec-title">Quick links</div><div class="kb-sec-hint">AI uses ONLY these links — never invents or guesses URLs</div></div>
+      </div>
+      <div class="kb-body">
+        <div class="kb-links-grid">
+          <div class="kb-link-field">
+            <label class="kb-link-label">Phone / WhatsApp <span class="kb-req-badge">required</span></label>
+            <input class="kb-link-input" id="kbl-phone" placeholder="916362883634">
+          </div>
+          <div class="kb-link-field">
+            <label class="kb-link-label">Location map URL <span class="kb-req-badge">required</span></label>
+            <input class="kb-link-input" id="kbl-maps" placeholder="https://maps.app.goo.gl/...">
+          </div>
+          <div class="kb-link-field">
+            <label class="kb-link-label">Booking URL <span class="kb-opt-badge">optional</span></label>
+            <input class="kb-link-input" id="kbl-booking" placeholder="Online booking page URL">
+          </div>
+          <div class="kb-link-field">
+            <label class="kb-link-label">Website <span class="kb-opt-badge">optional</span></label>
+            <input class="kb-link-input" id="kbl-website" placeholder="https://yourbusiness.com">
+          </div>
+        </div>
+        <button class="kb-save-links-btn" id="kbl-save-btn" onclick="saveKBLinks()">Save links</button>
+      </div>
+      <div class="kb-tool-row">
+        <button class="kb-tool-btn" onclick="extractWebsiteKB()" id="kb-extract-btn">↺ Extract from website</button>
+        <button class="kb-tool-btn" onclick="toast('PDF upload coming soon','info')">↑ Upload menu / PDF</button>
+        <div id="kb-website-status" style="font-size:10.5px;color:var(--muted);display:flex;align-items:center"></div>
       </div>
     </div>
 
@@ -3904,196 +3979,164 @@ async function loadKBHealth() {
   if (!BIZ) return;
   const r = await req('GET', `/api/ke/${BIZ}/health`);
   const bar = document.getElementById('kb-health-bar');
-  if (!bar || !r) return;
-
-  const pct    = r.score || 0;
-  const grade  = r.grade || 'D';
-  const colMap = {A:'var(--a2)', B:'var(--accent)', C:'var(--amber)', D:'var(--a3)'};
-  const col    = colMap[grade] || 'var(--a3)';
-  const labels = r.missing_labels || (r.missing||[]).map(m => m.replace(/_/g,' '));
-  const done   = pct >= 100;
-
-  let checksHtml = '';
-  if (labels.length && !done) {
-    checksHtml = labels.map(l => `
-      <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted)">
-        <span style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px">✕</span>
-        ${l}
-      </div>`).join('');
-  }
-
-  bar.innerHTML = `
-    <div style="background:var(--s2);border-radius:10px;padding:14px 16px;margin-bottom:2px">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:${labels.length?'12px':'0'}">
-        <div style="width:44px;height:44px;border-radius:50%;background:${col};display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <span style="font-size:17px;font-weight:600;color:#fff">${grade}</span>
-        </div>
-        <div style="flex:1;min-width:0">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
-            <div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden">
-              <div style="height:100%;width:${pct}%;background:${col};border-radius:3px;transition:width .6s ease"></div>
-            </div>
-            <span style="font-size:12px;font-weight:500;color:${col};flex-shrink:0">${pct}%</span>
-          </div>
-          <div style="font-size:12px;color:var(--muted)">${r.services||0} services · ${r.offers||0} offers · ${r.faqs||0} Q&A</div>
-        </div>
+  if (!bar||!r) return;
+  const pct=r.score||0, grade=r.grade||'D';
+  const cmap={A:'#00d4aa',B:'#6c63ff',C:'#f59e0b',D:'#ff6b6b'};
+  const col=cmap[grade]||'#ff6b6b';
+  const miss=(r.missing_labels||r.missing||[]).map(m=>m.replace(/_/g,' '));
+  const subs=`${r.services||0} services · ${r.offers||0} offers · ${r.faqs||0} Q&A`;
+  bar.innerHTML=`<div class="kb-health-wrap">
+    <div class="kb-health-circle" style="background:${col}">${grade}</div>
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+        <div class="kb-health-track"><div class="kb-health-fill" style="width:${pct}%;background:${col}"></div></div>
+        <span style="font-size:12px;font-weight:500;color:${col};flex-shrink:0">${pct}%</span>
       </div>
-      ${checksHtml ? `<div style="display:flex;flex-direction:column;gap:5px;padding-top:10px;border-top:1px solid var(--border)">${checksHtml}</div>` : ''}
-      ${done ? '<div style="font-size:12px;color:var(--a2);margin-top:8px;font-weight:500">✓ AI knowledge base is complete</div>' : ''}
-    </div>`;
+      <div style="font-size:11.5px;color:var(--muted)">${subs}</div>
+      ${miss.length?`<div class="kb-health-miss">Add: ${miss.slice(0,2).join(' · ')}</div>`:''}
+    </div>
+  </div>`;
+}
+
+async function addKBServicePrice(serviceId,name) {
+  const price=prompt(`Price for "${name}":
+e.g. ₹499–₹999`);
+  if (!price?.trim()) return;
+  const r=await req('PUT',`/api/kb/${BIZ}/services/${serviceId}`,{price_range:price.trim()});
+  if (r?.service_id||r?.name){toast('Price saved ✓');loadKBTab();loadKBHealth();}
+  else toast('Update failed','err');
+}
+
+async function saveKBLinks() {
+  const btn=document.getElementById('kbl-save-btn');
+  const phone=document.getElementById('kbl-phone')?.value?.trim();
+  const maps=document.getElementById('kbl-maps')?.value?.trim();
+  const booking=document.getElementById('kbl-booking')?.value?.trim();
+  const website=document.getElementById('kbl-website')?.value?.trim();
+  const payload={};
+  if(phone) payload.phone=phone;
+  if(maps)  payload.maps_url=maps;
+  if(booking) payload.ai_booking_url=booking;
+  if(website) payload.website=website;
+  if(!Object.keys(payload).length) return;
+  const r=await req('PUT',`/api/businesses/${BIZ}`,payload);
+  if(r?.business_id||r?.name){
+    if(btn){btn.textContent='✓ Saved';setTimeout(()=>btn.textContent='Save links',2000);}
+    toast('Links saved ✓');loadKBHealth();
+  } else toast('Save failed','err');
 }
 
 async function seedKBFromProfile() {
-  if (!BIZ) return toast('Select a business first','err');
-  if (!confirm('This will auto-fill services and FAQs from your business profile data. Existing entries will be kept. Continue?')) return;
-  // Call the existing auto-seed by refreshing KB
-  const r = await req('GET', `/api/kb/${BIZ}/services`);
-  // If empty, the auto-seed fires on next get_business_knowledge call
-  // Trigger it by calling a dummy endpoint
-  await req('POST', `/api/kb/${BIZ}/seed-from-profile`);
-  toast('Knowledge base seeded from profile ✓');
-  loadKBTab();
+  const r=await req('POST',`/api/kb/${BIZ}/seed-from-profile`);
+  if(r?.seeded_services>=0){toast(`Auto-filled: ${r.seeded_services||0} services added ✓`);loadKBTab();loadKBHealth();}
+  else toast('Auto-fill failed','err');
 }
 
 async function loadKBTab() {
   if (!BIZ) return;
   loadKBHealth();
-  const [svcs, offers, faqs, wcache] = await Promise.all([
-    req('GET', `/api/kb/${BIZ}/services`),
-    req('GET', `/api/kb/${BIZ}/offers`),
-    req('GET', `/api/kb/${BIZ}/faqs`),
-    req('GET', `/api/kb/${BIZ}/website-cache`),
+  const [svcs,offers,faqs,wcache,biz] = await Promise.all([
+    req('GET',`/api/kb/${BIZ}/services`),
+    req('GET',`/api/kb/${BIZ}/offers`),
+    req('GET',`/api/kb/${BIZ}/faqs`),
+    req('GET',`/api/kb/${BIZ}/website-cache`),
+    req('GET',`/api/businesses/${BIZ}`),
   ]);
-
-  const sl = document.getElementById('kb-services-list');
+  const sl=document.getElementById('kb-services-list');
   if (sl) {
-    const arr = Array.isArray(svcs) ? svcs : [];
-    sl.innerHTML = arr.length
-      ? arr.map(s => `
-        <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
-          <div style="flex:1;min-width:0">
-            <span style="font-size:12.5px">${s.name}</span>
-            ${s.price_range
-              ? `<span style="font-size:11px;color:var(--accent);margin-left:8px;font-weight:500">${s.price_range}</span>`
-              : `<span style="font-size:10.5px;color:var(--muted);margin-left:8px;cursor:pointer" onclick="addPriceToService('${s.service_id}','${s.name.replace(/'/g,'')}')">[add price]</span>`}
-          </div>
-          <button class="btn bd xs" onclick="deleteKBItem('services','${s.service_id}')" style="opacity:.5">✕</button>
-        </div>`).join('')
-      : '<div style="font-size:12px;color:var(--muted);padding:8px 0;font-style:italic">No services yet — type a name and click + Add, or use ⚡ Auto-fill</div>';
+    const arr=Array.isArray(svcs)?svcs:[];
+    sl.innerHTML=arr.length?arr.map(s=>`<div class="kb-item">
+      <div class="kb-item-name">${s.name}</div>
+      ${s.price_range?`<div class="kb-price-pill">${s.price_range}</div>`:`<button class="kb-add-price" onclick="addKBServicePrice('${s.service_id}','${(s.name||'').replace(/'/g,'')}')">+ price</button>`}
+      <button class="kb-del" onclick="deleteKBItem('services','${s.service_id}')">✕</button>
+    </div>`).join(''):`<div style="font-size:12px;color:var(--muted);padding:8px 0;font-style:italic">No services yet — add above or use ⚡ Auto-fill</div>`;
   }
-
-  const ol = document.getElementById('kb-offers-list');
+  const ol=document.getElementById('kb-offers-list');
   if (ol) {
-    const arr = Array.isArray(offers) ? offers : [];
-    const labels = {all:'All',new_customer:'New',repeat:'Repeat',winback:'Win-back',vip:'VIP'};
-    ol.innerHTML = arr.length
-      ? arr.map(o => `
-        <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
-          <div style="flex:1;font-size:12.5px">${o.title}
-            <span style="font-size:10px;background:var(--s2);color:var(--muted);padding:1px 7px;border-radius:10px;margin-left:6px">${labels[o.trigger_type]||o.trigger_type}</span>
-          </div>
-          <button class="btn bd xs" onclick="deleteKBItem('offers','${o.offer_id}')" style="opacity:.5">✕</button>
-        </div>`).join('')
-      : '<div style="font-size:12px;color:var(--muted);padding:8px 0;font-style:italic">No offers yet — add a promo above</div>';
+    const arr=Array.isArray(offers)?offers:[];
+    const TL={all:'All',new_customer:'New',repeat:'Repeat',winback:'Win-back',vip:'VIP'};
+    ol.innerHTML=arr.length?arr.map(o=>`<div class="kb-item">
+      <div class="kb-item-name">${o.title}</div>
+      <div class="kb-seg-pill">${TL[o.trigger_type]||o.trigger_type||'All'}</div>
+      <button class="kb-del" onclick="deleteKBItem('offers','${o.offer_id}')">✕</button>
+    </div>`).join(''):`<div style="font-size:12px;color:var(--muted);padding:8px 0;font-style:italic">No offers yet</div>`;
   }
-
-  const fl = document.getElementById('kb-faqs-list');
+  const fl=document.getElementById('kb-faqs-list');
   if (fl) {
-    const arr = Array.isArray(faqs) ? faqs : [];
-    fl.innerHTML = arr.length
-      ? arr.map(f => `
-        <div style="display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">
-          <div style="flex:1;min-width:0">
-            <div style="font-size:12.5px;font-weight:500;margin-bottom:2px">${f.question}</div>
-            <div style="font-size:12px;color:var(--muted);word-break:break-word">${f.answer}</div>
-          </div>
-          <button class="btn bd xs" onclick="deleteKBItem('faqs','${f.faq_id}')" style="opacity:.5;margin-top:1px">✕</button>
-        </div>`).join('')
-      : '<div style="font-size:12px;color:var(--muted);padding:8px 0;font-style:italic">No Q&A yet — add common questions like hours, home visits, booking</div>';
+    const arr=Array.isArray(faqs)?faqs:[];
+    fl.innerHTML=arr.length?arr.map(f=>`<div class="kb-item kb-item-faq">
+      <div style="flex:1;min-width:0">
+        <div class="kb-faq-q">${f.question}</div>
+        <div class="kb-faq-a">${f.answer}</div>
+      </div>
+      <button class="kb-del" onclick="deleteKBItem('faqs','${f.faq_id}')" style="margin-top:1px">✕</button>
+    </div>`).join(''):`<div style="font-size:12px;color:var(--muted);padding:8px 0;font-style:italic">No Q&A yet — add common questions like hours, booking, pricing</div>`;
   }
-
-  const ws = document.getElementById('kb-website-status');
-  if (ws) {
-    if (wcache?.status === 'ok') {
-      const total = wcache.total_services || wcache.services_count || 0;
-      ws.innerHTML = `<span style="color:var(--a2)">✓ Last extracted: ${wcache.last_fetched?.slice(0,10)} — ${total} services in knowledge base</span>`;
-    } else if (wcache?.status === 'no_cache') {
-      ws.textContent = 'Not extracted yet — click ↺ Extract to fetch from your website';
-    }
+  if (biz) {
+    const set=(id,v)=>{const e=document.getElementById(id);if(e&&v)e.value=v;};
+    set('kbl-phone', biz.phone||biz.wa_phone_number||'');
+    set('kbl-maps',  biz.maps_url||biz.ai_maps_url||'');
+    set('kbl-booking',biz.ai_booking_url||biz.booking_url||'');
+    set('kbl-website',biz.website||'');
+  }
+  const ws=document.getElementById('kb-website-status');
+  if (ws&&wcache?.status==='ok') {
+    const total=wcache.total_services||wcache.services_count||0;
+    ws.innerHTML=`<span style="color:var(--a2)">✓ ${wcache.last_fetched?.slice(0,10)} · ${total} services</span>`;
   }
 }
 
-async function addPriceToService(serviceId, serviceName) {
-  const price = prompt(`Add price range for "${serviceName}":\ne.g. ₹499–₹999`);
-  if (!price) return;
-  const r = await req('PUT', `/api/kb/${BIZ}/services/${serviceId}`, {price_range: price.trim()});
-  if (r?.service_id || r?.name) { toast('Price added ✓'); loadKBTab(); }
-  else toast('Update failed', 'err');
-}
+async function addPriceToService(sid,name){addKBServicePrice(sid,name);}
 
 async function addKBService() {
-  if (!BIZ) return;
-  const name  = document.getElementById('kb-svc-name')?.value?.trim();
-  const price = document.getElementById('kb-svc-price')?.value?.trim();
-  if (!name) return toast('Enter a service name', 'err');
-  const r = await req('POST', `/api/kb/${BIZ}/services`, {name, price_range:price||''});
-  if (r?.service_id || r?.name) {
-    document.getElementById('kb-svc-name').value = '';
-    if (document.getElementById('kb-svc-price')) document.getElementById('kb-svc-price').value = '';
-    toast('Service added ✓');
-    loadKBTab();
-  } else toast('Failed to add service — check your connection', 'err');
+  const name=document.getElementById('kb-svc-name')?.value?.trim();
+  const price=document.getElementById('kb-svc-price')?.value?.trim();
+  if (!name){document.getElementById('kb-svc-name')?.focus();return;}
+  const r=await req('POST',`/api/kb/${BIZ}/services`,{name,price_range:price||'',active:true});
+  if (r?.service_id||r?.name){
+    document.getElementById('kb-svc-name').value='';
+    document.getElementById('kb-svc-price').value='';
+    loadKBTab();loadKBHealth();
+  } else toast('Failed to add service','err');
 }
 
 async function addKBOffer() {
-  if (!BIZ) return;
-  const title   = document.getElementById('kb-off-title')?.value?.trim();
-  const trigger = document.getElementById('kb-off-trigger')?.value || 'all';
-  if (!title) return toast('Enter an offer', 'err');
-  const r = await req('POST', `/api/kb/${BIZ}/offers`, {title, description:'', trigger_type:trigger, active:true});
-  if (r?.offer_id || r?.title) {
-    document.getElementById('kb-off-title').value = '';
-    toast('Offer added ✓');
-    loadKBTab();
-  } else toast('Failed to add offer — check deployment', 'err');
+  const title=document.getElementById('kb-off-title')?.value?.trim();
+  const trigger=document.getElementById('kb-off-trigger')?.value||'all';
+  if (!title){document.getElementById('kb-off-title')?.focus();return;}
+  const r=await req('POST',`/api/kb/${BIZ}/offers`,{title,trigger_type:trigger,active:true});
+  if (r?.offer_id||r?.title){
+    document.getElementById('kb-off-title').value='';
+    loadKBTab();loadKBHealth();
+  } else toast('Failed to add offer','err');
 }
 
 async function addKBFaq() {
-  if (!BIZ) return;
-  const q = document.getElementById('kb-faq-q')?.value?.trim();
-  const a = document.getElementById('kb-faq-a')?.value?.trim();
-  if (!q || !a) return toast('Question and answer are required', 'err');
-  const r = await req('POST', `/api/kb/${BIZ}/faqs`, {question:q, answer:a});
-  if (r?.faq_id) {
-    document.getElementById('kb-faq-q').value = '';
-    document.getElementById('kb-faq-a').value = '';
-    toast('FAQ added ✓');
-    loadKBTab();
-  } else toast('Failed to add FAQ', 'err');
+  const q=document.getElementById('kb-faq-q')?.value?.trim();
+  const a=document.getElementById('kb-faq-a')?.value?.trim();
+  if (!q){document.getElementById('kb-faq-q')?.focus();return;}
+  if (!a){document.getElementById('kb-faq-a')?.focus();return;}
+  const r=await req('POST',`/api/kb/${BIZ}/faqs`,{question:q,answer:a,active:true});
+  if (r?.faq_id||r?.question){
+    document.getElementById('kb-faq-q').value='';
+    document.getElementById('kb-faq-a').value='';
+    loadKBTab();loadKBHealth();
+  } else toast('Failed to add Q&A','err');
 }
 
-async function deleteKBItem(type, id) {
-  if (!BIZ) return;
-  const idField = {services:'service_id', offers:'offer_id', faqs:'faq_id'}[type];
-  const r = await req('DELETE', `/api/kb/${BIZ}/${type}/${id}`);
-  if (r?.status === 'deleted') { toast('Deleted ✓'); loadKBTab(); }
-  else toast('Delete failed', 'err');
+async function deleteKBItem(type,id) {
+  await req('DELETE',`/api/kb/${BIZ}/${type}/${id}`);
+  loadKBTab();loadKBHealth();
 }
 
 async function extractWebsiteKB() {
-  if (!BIZ) return;
-  const btn = document.getElementById('kb-extract-btn');
-  if (btn) { btn.textContent = '⏳ Extracting...'; btn.disabled = true; }
-  const r = await req('POST', `/api/kb/${BIZ}/refresh-website`);
-  if (btn) { btn.textContent = '🌐 Extract from Website'; btn.disabled = false; }
-  if (r?.status === 'ok') {
-    toast(`Extracted ${r.services} services, ${r.faqs} FAQs from website ✓`);
-    loadKBTab();
-  } else if (r?.reason === 'no_url_or_no_openai') {
-    toast('Add your website URL in the Profile tab first', 'err');
-  } else {
-    toast('Extraction failed — check if website is accessible', 'err');
-  }
+  const btn=document.getElementById('kb-extract-btn');
+  if(btn) btn.textContent='↺ Extracting...';
+  const r=await req('POST',`/api/kb/${BIZ}/refresh-website`);
+  if(btn) btn.textContent='↺ Extract from website';
+  if(r?.status==='ok'){toast(`Extracted: ${r.services||0} services ✓`);loadKBTab();loadKBHealth();}
+  else if(r?.status==='skipped') toast('Add your website URL in Quick Links first','err');
+  else toast('Add website URL in Quick Links first','err');
 }
 
 async function genQR() {
@@ -4828,47 +4871,33 @@ async function loadAutoLoyalty() {
 
 async function loadAutomation() {
   if (!BIZ) return;
-  const custs = await req('GET', `/api/customers/list/${BIZ}`);
-  const arr   = Array.isArray(custs) ? custs : [];
-  const set   = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v??'—'; };
+  const [status, custs, revs, sched] = await Promise.all([
+    req('GET', `/api/automation/status/${BIZ}`),
+    req('GET', `/api/customers/list/${BIZ}`),
+    req('GET', `/api/reviews/stats/${BIZ}`),
+    req('GET', `/api/scheduler/status/${BIZ}`),
+  ]);
+  const arr = Array.isArray(custs) ? custs : [];
+  const set = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v??'—'; };
 
-  const inactive = arr.filter(c => {
-    if (!c.last_visit) return false;
-    return (Date.now() - new Date(c.last_visit)) / 86400000 > 30;
-  }).length;
-  const vipCount = arr.filter(c=>(c.tier||c.tag)==='platinum'||(c.visits_count||0)>=20).length;
+  set('auto-winback',   (sched?.inactive_15d || 0) + ' eligible');
+  set('auto-loyalty',   arr.filter(c=>c.tier==='platinum'||(c.visits_count||0)>=20).length);
+  set('auto-rev-req',   sched?.need_review || 0);
+  set('auto-replies',   revs?.total || 0);
+  set('wb-eligible',    sched?.inactive_15d || 0);
+  set('vip-count',      arr.filter(c=>(c.visits_count||0)>=20).length);
 
-  set('auto-winback',  inactive);
-  set('auto-loyalty',  vipCount);
-  set('wb-eligible',   inactive);
-  set('vip-count',     vipCount);
-  set('aly-pts',       arr.reduce((s,c)=>s+(c.points||0),0));
-  set('aly-bronze',    arr.filter(c=>(c.visits_count||0)<5).length);
-  set('aly-silver',    arr.filter(c=>{const v=c.visits_count||0;return v>=5&&v<20;}).length);
-  set('aly-plat',      vipCount);
-
-  // Load recent WA log
-  const log = document.getElementById('auto-wa-log');
-  if (log) {
-    const msgs = await req('GET', `/api/wa/messages/${BIZ}`);
-    const automated = (Array.isArray(msgs)?msgs:[])
-      .filter(m=>m.direction==='outbound'&&m.msg_type==='template')
-      .slice(-8).reverse();
-    if (!automated.length) {
-      log.innerHTML = '<div class="empty"><div class="ei">📨</div>No automated messages sent yet</div>';
-    } else {
-      log.innerHTML = automated.map(m=>`
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
-          <div style="width:32px;height:32px;border-radius:50%;background:rgba(108,99,255,.1);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">💬</div>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:12.5px;font-weight:600">${m.phone}</div>
-            <div style="font-size:11px;color:var(--muted)">${m.template_name||m.content?.slice(0,50)||'—'}</div>
-          </div>
-          <div style="font-size:11px;color:var(--muted);flex-shrink:0">${m.sent_at?.slice(0,10)||''}</div>
-        </div>`).join('');
-    }
+  // Show scheduler stats
+  const schedEl = document.getElementById('auto-sched-stats');
+  if (schedEl && sched) {
+    schedEl.innerHTML = `
+      <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)">
+        <span>🔴 Churn risk: <strong>${sched.inactive_30d||0}</strong></span>
+        <span>🟡 Win-back: <strong>${sched.inactive_15d||0}</strong></span>
+        <span>🟢 Soft nudge: <strong>${sched.inactive_7d||0}</strong></span>
+        <span>⭐ Need review: <strong>${sched.need_review||0}</strong></span>
+      </div>`;
   }
-  // Auto-init first tab
   switchAutoTab('wa');
 }
 
@@ -4880,16 +4909,12 @@ function _autoIcon(type) {
 
 async function runAllAutomations() {
   if (!BIZ) return toast('Select a business first','err');
-  const btn = document.querySelector('[onclick="runAllAutomations()"]');
-  if (btn) { btn.textContent = '⏳ Running…'; btn.disabled = true; }
-  const [r1, r2, r3] = await Promise.all([
-    req('POST', `/api/wa/run-retention/${BIZ}`),
-    req('POST', `/api/automation/whatsapp-run/${BIZ}`),
-    req('POST', `/api/automation/followup/${BIZ}`),
-  ]);
-  if (btn) { btn.textContent = '▶ Run All Now'; btn.disabled = false; }
-  setTimeout(loadAutomation, 1500);
-  toast('All automations triggered ✓');
+  if (!confirm('Run all automations now? This will send messages to eligible customers.')) return;
+  const r = await req('POST', `/api/wa/run-retention/${BIZ}`);
+  if (r?.win_back_sent >= 0 || r?.status === 'queued') {
+    toast(`Automations running in background ✓`);
+    setTimeout(() => loadAutomation(), 3000);
+  } else toast('Run failed', 'err');
 }
 
 async function runWinBack() {
