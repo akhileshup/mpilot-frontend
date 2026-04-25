@@ -883,6 +883,20 @@ function spAddChipVal(v) {}
 function spLoadSugs() {}
 function spLoadSugsFor() {}
 
+
+// -- Profile tab helpers --
+function spToggle(bodyId,chevId){var b=document.getElementById(bodyId),c=document.getElementById(chevId);if(!b)return;var h=b.classList.toggle('pcard-body--hidden');if(c)c.style.transform=h?'rotate(-90deg)':'rotate(0deg)';}
+function spSetTog(btn,hidId,grpId){var g=document.getElementById(grpId);if(g)g.querySelectorAll('.tog-btn').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');var h=document.getElementById(hidId);if(h)h.value=btn.dataset.val;}
+function spLoadTog(grpId,hidId,val){var g=document.getElementById(grpId),h=document.getElementById(hidId);if(h)h.value=val||'';if(!g||!val)return;g.querySelectorAll('.tog-btn').forEach(function(b){b.classList.toggle('on',b.dataset.val===val);});}
+function spLiveUpdate(){var n=document.getElementById('s-nm')?.value.trim()||'';var t=document.getElementById('setup-title');if(t&&n)t.textContent=n+' -- Setup';spUpdateLinks();}
+function spUpdateLocSub(){var a=document.getElementById('s-addr')?.value.trim()||'';var e=document.getElementById('loc-sub');if(e)e.textContent=a?a.slice(0,45)+'...':'Address, map link, working hours';}
+function spUpdateLinks(){var ph=document.getElementById('s-ph')?.value.trim()||'',mp=document.getElementById('s-maps')?.value.trim()||'',bk=document.getElementById('s-booking-url')?.value.trim()||'',nm=document.getElementById('s-nm')?.value.trim()||'',g=document.getElementById('smart-links-grid');if(!g)return;var items=[{l:nm?'[B] '+nm:'Name - fill above',s:!!nm},{l:ph?'[P] +91'+ph:'Phone - fill above',s:!!ph},{l:mp?'[M] Map set':'Map URL - fill location',s:!!mp},{l:bk?'[L] Booking URL':'Booking URL - optional',s:!!bk}];g.innerHTML=items.map(function(it){return'<span class="slink '+(it.s?'slink-set':'slink-miss')+'"><span class="slink-dot"></span>'+it.l+'</span>';}).join('');}
+async function spAutoFill(){if(!BIZ){toast('Save Name + Phone first','err');return;}var btn=document.getElementById('qs-ai-btn');if(btn){btn.textContent='Filling...';btn.disabled=true;}var r=await req('POST','/api/kb/'+BIZ+'/seed-from-profile');if(btn){btn.textContent='Auto Setup with AI';btn.disabled=false;}if(r&&r.seeded_services>=0){toast('Auto-filled: '+(r.seeded_services||0)+' items added');['bid-ai-badge','loc-ai-badge','web-ai-badge'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='';});var s=document.getElementById('qs-ai-success');if(s)s.style.display='';if(typeof loadKBTab==='function')loadKBTab();if(typeof loadKBHealth==='function')loadKBHealth();}else{toast('Save profile first','err');}}
+function spUpdatePreview(){spUpdateLinks();}
+function spSyncSvcs(){}
+function spAddChipVal(){}
+function spLoadSugs(){}
+
 </script>
 </head>
 <body>
@@ -2013,202 +2027,182 @@ function spLoadSugsFor() {}
   </div>
 
   <!-- ── TAB: Profile ──────────────────────────────── -->
-  <div id="setup-tab-profile" class="setup-tab-panel" style="display:none">
+  <div id="setup-tab-profile" class="setup-tab-panel">
 
-  <!-- Quick Setup Banner -->
-  <div class="qs-banner">
-    <div class="qs-icon">⚡</div>
-    <div>
-      <div class="qs-title">Quick Setup — 2 minutes</div>
-      <div class="qs-sub">Fill Name + Phone → AI handles the rest automatically</div>
+  <div style="background:linear-gradient(135deg,rgba(99,102,241,.12),rgba(99,102,241,.04));border:1px solid rgba(99,102,241,.22);border-radius:var(--r);padding:16px 18px;margin-bottom:16px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <div style="width:38px;height:38px;border-radius:9px;background:rgba(99,102,241,.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">&#9889;</div>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text)">Setup your business in 2 minutes</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Name + Phone is all you need &#8212; AI handles the rest</div>
+      </div>
     </div>
-    <button class="qs-btn" onclick="spAutoFill()">✨ Auto-fill with AI</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label class="pl">Business Name <span style="color:var(--red)">*</span></label>
+        <input class="pi" id="s-nm" placeholder="e.g. PetsWoof Horamavu" oninput="spLiveUpdate()">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label class="pl">Phone / WhatsApp <span style="color:var(--red)">*</span></label>
+        <input class="pi" id="s-ph" placeholder="9XXXXXXXXX" type="tel" oninput="spUpdateLinks()">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label class="pl">Category</label>
+        <select class="psel" id="s-cat">
+          <option value="petcare">&#128062; Pet Care</option>
+          <option value="salon">&#9986;&#65039; Salon</option>
+          <option value="spa">&#129688; Spa</option>
+          <option value="restaurant">&#127829;&#65039; Restaurant</option>
+          <option value="cafe">&#9749; Cafe</option>
+          <option value="gym">&#127947;&#65039; Gym</option>
+          <option value="clinic">&#129514; Clinic</option>
+          <option value="retail">&#128717;&#65039; Retail</option>
+          <option value="boutique">&#128153;&#65039; Boutique</option>
+          <option value="pharmacy">&#128138; Pharmacy</option>
+          <option value="education">&#128218; Education</option>
+          <option value="other">&#128204; Other</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+      <div style="font-size:11px;color:var(--muted)">&#10022; AI will auto-fill address, hours, services &amp; links</div>
+      <button id="qs-ai-btn" onclick="spAutoFill()" style="height:34px;padding:0 16px;border-radius:8px;background:var(--accent);color:#fff;border:none;font-size:12.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(99,102,241,.4);font-family:var(--fb);white-space:nowrap;flex-shrink:0">&#10024; Auto Setup with AI</button>
+    </div>
+    <div id="qs-ai-success" style="display:none;margin-top:10px;padding:8px 12px;border-radius:7px;background:var(--green-bg);border:1px solid rgba(16,185,129,.2);font-size:11.5px;color:var(--green)">&#10024; AI filled your profile. Review &amp; edit if needed.</div>
   </div>
 
-  <!-- Card 1: Business Identity (always visible, minimal) -->
   <div class="pcard">
-    <div class="pcard-head">
-      <div class="pcard-icon" style="background:rgba(99,102,241,.15)">🏪</div>
-      <div><div class="pcard-title">Business Identity</div><div class="pcard-sub">Core info — used in every AI reply</div></div>
+    <div class="pcard-head" onclick="spToggle('bid-body','bid-chev')" style="cursor:pointer">
+      <div class="pcard-icon" style="background:rgba(99,102,241,.15)">&#127983;</div>
+      <div style="flex:1;min-width:0">
+        <div class="pcard-title">Business Identity <span id="bid-ai-badge" class="sp-ai-badge" style="display:none">&#10024; AI filled</span></div>
+        <div class="pcard-sub">Core info &#8212; shown in every AI reply</div>
+      </div>
+      <span class="pcard-chev" id="bid-chev">&#9660;</span>
     </div>
-    <div class="pcard-body">
+    <div class="pcard-body" id="bid-body">
       <div class="prow">
-        <div class="pf fw">
-          <label class="pl">Business Name <span style="color:var(--red)">*</span></label>
-          <input class="pi" id="s-nm" placeholder="e.g. PetsWoof Horamavu" oninput="spLivePreview()">
-        </div>
-        <div class="pf">
-          <label class="pl">Category</label>
-          <select class="psel" id="s-cat" onchange="spLivePreview()">
-            <option value="petcare">🐾 Pet Care</option>
-            <option value="salon">✂️ Salon / Beauty</option>
-            <option value="spa">🧘 Spa &amp; Wellness</option>
-            <option value="restaurant">🍽️ Restaurant</option>
-            <option value="cafe">☕ Cafe / Bakery</option>
-            <option value="gym">🏋️ Gym / Fitness</option>
-            <option value="clinic">🩺 Clinic / Medical</option>
-            <option value="retail">🛍️ Retail / Shop</option>
-            <option value="boutique">👗 Boutique</option>
-            <option value="pharmacy">💊 Pharmacy</option>
-            <option value="education">📚 Education</option>
-            <option value="other">📌 Other</option>
-          </select>
-        </div>
+        <div class="pf wide"><label class="pl">Tagline</label><input class="pi" id="s-tagline" placeholder="e.g. Your pet's home away from home"></div>
+        <div class="pf"><label class="pl">GST Number</label><input class="pi" id="s-gst" placeholder="22AAAAA0000A1Z5"></div>
       </div>
       <div class="prow">
-        <div class="pf">
-          <label class="pl">Phone / WhatsApp <span style="color:var(--red)">*</span></label>
-          <input class="pi" id="s-ph" placeholder="9XXXXXXXXX" oninput="spLivePreview()">
-        </div>
-        <div class="pf">
-          <label class="pl">Tagline</label>
-          <input class="pi" id="s-tagline" placeholder="e.g. Pet care you can trust">
-        </div>
+        <div class="pf"><label class="pl">Description</label><input class="pi" id="s-desc" placeholder="Brief description of your business"></div>
       </div>
     </div>
   </div>
 
-  <!-- Card 2: Location (collapsible) -->
-  <div class="pcard pcard-toggle" id="pcard-location">
-    <div class="pcard-head" onclick="spToggleCard('pcard-location')">
-      <div class="pcard-icon" style="background:rgba(16,185,129,.15)">📍</div>
-      <div><div class="pcard-title">Location &amp; Hours</div><div class="pcard-sub" id="loc-preview">Add address, map link, working hours</div></div>
-    </div>
-    <div class="pcard-body">
-      <div class="prow">
-        <div class="pf fw">
-          <label class="pl">Full Address</label>
-          <input class="pi" id="s-addr" placeholder="e.g. 15/16 Palm Arcade, Horamavu" oninput="spUpdateLocPreview()">
-        </div>
-        <div class="pf">
-          <label class="pl">City</label>
-          <input class="pi" id="s-loc" placeholder="Bangalore">
-        </div>
-      </div>
-      <div class="prow">
-        <div class="pf fw">
-          <label class="pl">Google Maps URL</label>
-          <input class="pi" id="s-maps" placeholder="https://maps.app.goo.gl/...">
-        </div>
-        <div class="pf">
-          <label class="pl">Working Hours</label>
-          <input class="pi" id="s-hours" placeholder="Mon–Sun 10am–8pm">
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Card 3: Online Presence (collapsible) -->
-  <div class="pcard pcard-toggle collapsed" id="pcard-online">
-    <div class="pcard-head" onclick="spToggleCard('pcard-online')">
-      <div class="pcard-icon" style="background:rgba(59,130,246,.15)">🌐</div>
-      <div><div class="pcard-title">Online Presence</div><div class="pcard-sub">Website, Instagram, Facebook</div></div>
-    </div>
-    <div class="pcard-body" style="display:none">
-      <div class="prow">
-        <div class="pf">
-          <label class="pl">Website</label>
-          <input class="pi" id="s-web" placeholder="https://yourwebsite.com">
-        </div>
-        <div class="pf">
-          <label class="pl">Instagram</label>
-          <input class="pi" id="s-instagram" placeholder="@yourhandle">
-        </div>
-      </div>
-      <div class="prow">
-        <div class="pf">
-          <label class="pl">Facebook</label>
-          <input class="pi" id="s-facebook" placeholder="https://facebook.com/yourpage">
-        </div>
-        <div class="pf">
-          <label class="pl">GST Number</label>
-          <input class="pi" id="s-gst" placeholder="22AAAAA0000A1Z5">
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Card 4: AI Settings (inline toggles) -->
   <div class="pcard">
-    <div class="pcard-head">
-      <div class="pcard-icon" style="background:rgba(245,158,11,.15)">🤖</div>
-      <div><div class="pcard-title">AI Settings</div><div class="pcard-sub">How your AI handles bookings</div></div>
+    <div class="pcard-head" onclick="spToggle('loc-body','loc-chev')" style="cursor:pointer">
+      <div class="pcard-icon" style="background:rgba(16,185,129,.15)">&#128205;</div>
+      <div style="flex:1;min-width:0">
+        <div class="pcard-title">Location &amp; Hours <span id="loc-ai-badge" class="sp-ai-badge" style="display:none">&#10024; AI filled</span></div>
+        <div class="pcard-sub" id="loc-sub">Address, map link, working hours</div>
+      </div>
+      <span class="pcard-chev" id="loc-chev">&#9660;</span>
     </div>
-    <div class="pcard-body">
+    <div class="pcard-body" id="loc-body">
+      <div class="prow">
+        <div class="pf wide"><label class="pl">Full Address</label><input class="pi" id="s-addr" placeholder="e.g. 15 Palm Arcade, Horamavu" oninput="spUpdateLocSub()"></div>
+        <div class="pf"><label class="pl">City</label><input class="pi" id="s-loc" placeholder="Bangalore"></div>
+      </div>
+      <div class="prow">
+        <div class="pf wide"><label class="pl">Google Maps URL</label><input class="pi" id="s-maps" placeholder="https://maps.app.goo.gl/..." oninput="spUpdateLinks()"></div>
+        <div class="pf"><label class="pl">PIN Code</label><input class="pi" id="s-pin" placeholder="560043"></div>
+      </div>
+      <div class="prow"><div class="pf"><label class="pl">Working Hours</label><input class="pi" id="s-hours" placeholder="Mon-Sun 10am-8pm"></div></div>
+    </div>
+  </div>
+
+  <div class="pcard">
+    <div class="pcard-head" onclick="spToggle('ai-body','ai-chev')" style="cursor:pointer">
+      <div class="pcard-icon" style="background:rgba(245,158,11,.15)">&#129302;</div>
+      <div style="flex:1;min-width:0">
+        <div class="pcard-title">AI Settings</div>
+        <div class="pcard-sub">How your WhatsApp bot handles customers</div>
+      </div>
+      <span class="pcard-chev" id="ai-chev">&#9660;</span>
+    </div>
+    <div class="pcard-body" id="ai-body">
       <div class="prow">
         <div class="pf">
           <label class="pl">Booking Mode</label>
-          <div class="tog-group" id="bm-group">
-            <button class="tog-opt active" data-val="both"    onclick="spSetTog('bm-group',this,'s-booking-mode')">Both</button>
-            <button class="tog-opt"        data-val="url"     onclick="spSetTog('bm-group',this,'s-booking-mode')">URL Only</button>
-            <button class="tog-opt"        data-val="whatsapp"onclick="spSetTog('bm-group',this,'s-booking-mode')">WhatsApp</button>
+          <div class="tog-grp" id="bm-grp">
+            <button class="tog-btn on" data-val="both"     onclick="spSetTog(this,'s-booking-mode','bm-grp')">Both</button>
+            <button class="tog-btn"    data-val="url"      onclick="spSetTog(this,'s-booking-mode','bm-grp')">URL Only</button>
+            <button class="tog-btn"    data-val="whatsapp" onclick="spSetTog(this,'s-booking-mode','bm-grp')">WhatsApp</button>
           </div>
           <input type="hidden" id="s-booking-mode" value="both">
         </div>
         <div class="pf">
           <label class="pl">Primary Goal</label>
-          <div class="tog-group" id="pg-group">
-            <button class="tog-opt active" data-val="bookings" onclick="spSetTog('pg-group',this,'s-primary-goal')">Bookings</button>
-            <button class="tog-opt"        data-val="walkins"  onclick="spSetTog('pg-group',this,'s-primary-goal')">Walk-ins</button>
-            <button class="tog-opt"        data-val="leads"    onclick="spSetTog('pg-group',this,'s-primary-goal')">Leads</button>
+          <div class="tog-grp" id="pg-grp">
+            <button class="tog-btn on"  data-val="bookings" onclick="spSetTog(this,'s-primary-goal','pg-grp')">Bookings</button>
+            <button class="tog-btn"     data-val="walkins"  onclick="spSetTog(this,'s-primary-goal','pg-grp')">Walk-ins</button>
+            <button class="tog-btn"     data-val="leads"    onclick="spSetTog(this,'s-primary-goal','pg-grp')">Leads</button>
           </div>
           <input type="hidden" id="s-primary-goal" value="bookings">
         </div>
       </div>
       <div class="prow">
-        <div class="pf">
-          <label class="pl">Booking URL <span style="color:var(--muted);font-size:9px">(optional)</span></label>
-          <input class="pi" id="s-booking-url" placeholder="https://yourbusiness.com/book">
-        </div>
-        <div class="pf">
-          <label class="pl">Review Link <span style="color:var(--muted);font-size:9px">(optional)</span></label>
-          <input class="pi" id="s-review-url" placeholder="https://g.page/yourbusiness/review">
-        </div>
+        <div class="pf"><label class="pl">Booking URL <span style="font-size:9px;font-weight:400;color:var(--dim)">(optional)</span></label><input class="pi" id="s-booking-url" placeholder="https://yourbusiness.com/book" oninput="spUpdateLinks()"></div>
+        <div class="pf"><label class="pl">Review Link <span style="font-size:9px;font-weight:400;color:var(--dim)">(optional)</span></label><input class="pi" id="s-review-url" placeholder="https://g.page/yourbusiness/review"></div>
       </div>
     </div>
   </div>
 
-  <!-- Smart Links Summary -->
   <div class="pcard">
-    <div class="pcard-head">
-      <div class="pcard-icon" style="background:rgba(236,72,153,.15)">🔗</div>
-      <div><div class="pcard-title">Smart Links</div><div class="pcard-sub">AI uses only these links — never invents others</div></div>
+    <div class="pcard-head" onclick="spToggle('web-body','web-chev')" style="cursor:pointer">
+      <div class="pcard-icon" style="background:rgba(59,130,246,.15)">&#127760;</div>
+      <div style="flex:1;min-width:0">
+        <div class="pcard-title">Online Presence <span id="web-ai-badge" class="sp-ai-badge" style="display:none">&#10024; AI filled</span></div>
+        <div class="pcard-sub">Website, Instagram, Facebook</div>
+      </div>
+      <span class="pcard-chev" id="web-chev" style="transform:rotate(-90deg)">&#9660;</span>
+    </div>
+    <div class="pcard-body pcard-body--hidden" id="web-body">
+      <div class="prow">
+        <div class="pf"><label class="pl">Website</label><input class="pi" id="s-web" placeholder="https://yourwebsite.com"></div>
+        <div class="pf"><label class="pl">Instagram</label><input class="pi" id="s-instagram" placeholder="@yourhandle"></div>
+      </div>
+      <div class="prow"><div class="pf"><label class="pl">Facebook Page URL</label><input class="pi" id="s-facebook" placeholder="https://facebook.com/yourpage"></div></div>
+    </div>
+  </div>
+
+  <div class="pcard">
+    <div class="pcard-head" style="cursor:default">
+      <div class="pcard-icon" style="background:rgba(236,72,153,.15)">&#128279;</div>
+      <div><div class="pcard-title">Smart Links</div><div class="pcard-sub">AI uses ONLY these &#8212; never invents URLs</div></div>
     </div>
     <div class="pcard-body">
       <div class="slink-grid" id="smart-links-grid">
-        <span class="slink missing"><span class="slink-dot"></span>Phone — fill above</span>
-        <span class="slink missing"><span class="slink-dot"></span>Maps — fill location</span>
+        <span class="slink slink-miss"><span class="slink-dot"></span>Phone &#8212; fill above</span>
+        <span class="slink slink-miss"><span class="slink-dot"></span>Map URL &#8212; fill location</span>
       </div>
     </div>
   </div>
 
-  <!-- Save row -->
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
     <div id="sp-save-msg" style="font-size:11.5px;color:var(--green)"></div>
     <div style="display:flex;gap:8px;align-items:center">
-      <div id="sp-autosave" style="font-size:11px;color:var(--green);display:none">✓ Saved</div>
+      <div id="sp-autosave" style="font-size:11px;color:var(--green);display:none">&#10003; Saved</div>
       <button id="save-biz-btn" class="btn bp" onclick="saveBizProfile()" style="padding:9px 22px;font-size:13px;font-weight:600">Save Profile</button>
     </div>
   </div>
 
-  <!-- Hidden compat inputs still used by old JS -->
-  <input type="hidden" id="s-services">
-  <input type="hidden" id="s-desc">
-  <input type="hidden" id="s-pin">
-  <div id="biz-summary"   style="display:none"></div>
+  <textarea id="s-services" style="display:none"></textarea>
+  <div id="biz-summary" style="display:none"></div>
   <div id="prof-card-icon" style="display:none"></div>
   <div id="prof-card-name" style="display:none"></div>
-  <div id="prof-card-tag"  style="display:none"></div>
+  <div id="prof-card-tag" style="display:none"></div>
   <div id="prof-card-info" style="display:none"></div>
   <div id="prof-save-state" style="display:none"></div>
-  <div id="sp-chips"       style="display:none"></div>
-  <div id="sp-svc-inp"     style="display:none"></div>
-  <div id="sp-sugs"        style="display:none"></div>
-  <div id="sp-prev-icon"   style="display:none"></div>
-  <div id="sp-prev-name"   style="display:none"></div>
-  <div id="sp-prev-tag"    style="display:none"></div>
-  <div id="sp-prev-rows"   style="display:none"></div>
-
+  <div id="sp-chips" style="display:none"></div>
+  <div id="sp-svc-inp" style="display:none"></div>
+  <div id="sp-sugs" style="display:none"></div>
+  <div id="sp-prev-icon" style="display:none"></div>
+  <div id="sp-prev-name" style="display:none"></div>
+  <div id="sp-prev-tag" style="display:none"></div>
+  <div id="sp-prev-rows" style="display:none"></div>
 </div>
 
 <div id="setup-tab-channels" class="setup-tab-panel" style="display:none">
@@ -6269,7 +6263,11 @@ async function saveBizProfile() {
     maps_url:    document.getElementById('s-maps')?.value.trim()   || '',
     website:     document.getElementById('s-web')?.value.trim()    || '',
     instagram:   document.getElementById('s-instagram')?.value.trim() || '',
-    facebook:     document.getElementById('s-facebook')?.value.trim()     || '',
+    facebook:       document.getElementById('s-facebook')?.value.trim()      || '',
+    booking_mode:   document.getElementById('s-booking-mode')?.value           || 'both',
+    primary_goal:   document.getElementById('s-primary-goal')?.value           || 'bookings',
+    ai_booking_url: document.getElementById('s-booking-url')?.value?.trim()    || '',
+    review_url:     document.getElementById('s-review-url')?.value?.trim()     || '',
     booking_mode:  document.getElementById('s-booking-mode')?.value         || 'both',
     primary_goal:  document.getElementById('s-primary-goal')?.value         || 'bookings',
     ai_booking_url:document.getElementById('s-booking-url')?.value.trim()   || '',
@@ -6581,8 +6579,7 @@ async function loadSetup() {
   }
 
   // Show active tab — always call switchSetupTab to ensure only one panel visible
-  const activeTab = document.querySelector('.setup-tab.on')?.dataset.tab || 'profile';
-  switchSetupTab(activeTab);
+  switchSetupTab('profile');
 }
 
 
