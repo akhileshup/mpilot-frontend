@@ -741,8 +741,149 @@ code { background: var(--s2); padding: 1px 5px; border-radius: 4px; font-size: 1
   .fr { grid-template-columns: 1fr }
   .kb-links-grid { grid-template-columns: 1fr }
 }
+
+/* ── Quick Setup Banner ─────────────────────────────────────────── */
+.qs-banner{background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(99,102,241,.05));border:1px solid rgba(99,102,241,.25);border-radius:var(--r);padding:16px 18px;margin-bottom:14px;display:flex;align-items:center;gap:14px}
+.qs-icon{width:42px;height:42px;border-radius:var(--r2);background:rgba(99,102,241,.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.qs-title{font-size:13.5px;font-weight:600;color:var(--text)}
+.qs-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.qs-btn{margin-left:auto;height:32px;padding:0 14px;border-radius:var(--r2);background:var(--accent);color:#fff;border:none;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.qs-btn:hover{background:#5254cc}
+
+/* ── Profile Cards ─────────────────────────────────────────────── */
+.pcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:0;overflow:hidden;margin-bottom:10px}
+.pcard-head{padding:13px 15px 11px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.pcard-icon{width:32px;height:32px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.pcard-title{font-size:12.5px;font-weight:600;color:var(--text)}
+.pcard-sub{font-size:10.5px;color:var(--muted);margin-top:1px}
+.pcard-action{margin-left:auto;font-size:11px;padding:4px 10px;border-radius:var(--r3);border:1px solid var(--border2);background:none;cursor:pointer;color:var(--muted)}
+.pcard-action:hover{color:var(--text);border-color:var(--accent)}
+.pcard-body{padding:13px 15px}
+.pcard-toggle{cursor:pointer}
+.pcard-toggle .pcard-head:after{content:"›";margin-left:auto;color:var(--muted);font-size:16px;transform:rotate(90deg);display:inline-block;transition:transform .2s}
+.pcard-toggle.collapsed .pcard-head:after{transform:rotate(0deg)}
+.pcard-toggle.collapsed .pcard-body{display:none}
+
+/* ── Inline field rows ──────────────────────────────────────────── */
+.prow{display:flex;gap:10px;margin-bottom:10px}
+.prow:last-child{margin-bottom:0}
+.pf{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
+.pf.fw{flex:2}
+.pl{font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+.pi{height:33px;border-radius:var(--r2);border:1px solid var(--border2);background:var(--s2);padding:0 10px;font-size:12.5px;color:var(--text);outline:none;width:100%}
+.pi:focus{border-color:var(--accent)}
+.pi::placeholder{color:var(--dim)}
+.psel{height:33px;border-radius:var(--r2);border:1px solid var(--border2);background:var(--s2);padding:0 8px;font-size:12.5px;color:var(--text);outline:none;width:100%}
+.psel:focus{border-color:var(--accent)}
+
+/* ── Smart link pills ───────────────────────────────────────────── */
+.slink-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.slink{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:20px;background:var(--s2);border:1px solid var(--border);font-size:11px;color:var(--text2);cursor:pointer;transition:all .12s}
+.slink:hover{border-color:var(--accent);color:var(--accent2)}
+.slink.set{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08);color:var(--green)}
+.slink.missing{border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.06);color:var(--amber)}
+.slink-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;background:currentColor}
+
+/* ── Toggle / radio row ─────────────────────────────────────────── */
+.tog-group{display:flex;background:var(--s3);border-radius:var(--r2);padding:3px;gap:2px}
+.tog-opt{flex:1;height:28px;border-radius:6px;border:none;background:none;font-size:11.5px;color:var(--muted);cursor:pointer;transition:all .15s}
+.tog-opt.active{background:var(--s2);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.4)}
+
+/* ── AI health strip ────────────────────────────────────────────── */
+.ai-strip{display:flex;align-items:center;gap:10px;background:var(--s2);border-radius:var(--r2);padding:10px 13px;margin-bottom:12px}
+.ai-strip-grade{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0}
+.ai-strip-bar-wrap{flex:1;height:5px;background:var(--border2);border-radius:3px;overflow:hidden}
+.ai-strip-bar{height:100%;border-radius:3px;transition:width .5s}
+.ai-strip-miss{font-size:10.5px;color:var(--amber);margin-top:3px}
+
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js">
+// ── Profile tab helpers ──────────────────────────────────────────
+
+function spToggleCard(id) {
+  const card = document.getElementById(id);
+  if (!card) return;
+  card.classList.toggle('collapsed');
+  const body = card.querySelector('.pcard-body');
+  if (body) body.style.display = card.classList.contains('collapsed') ? 'none' : '';
+}
+
+function spSetTog(groupId, btn, hiddenId) {
+  const grp = document.getElementById(groupId);
+  if (grp) grp.querySelectorAll('.tog-opt').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const hid = document.getElementById(hiddenId);
+  if (hid) hid.value = btn.dataset.val;
+}
+
+function spLoadToggle(groupId, hiddenId, val) {
+  const grp = document.getElementById(groupId);
+  const hid = document.getElementById(hiddenId);
+  if (!grp || !val) return;
+  if (hid) hid.value = val;
+  grp.querySelectorAll('.tog-opt').forEach(b => {
+    b.classList.toggle('active', b.dataset.val === val);
+  });
+}
+
+function spLivePreview() {
+  const name  = document.getElementById('s-nm')?.value.trim()  || '';
+  const phone = document.getElementById('s-ph')?.value.trim()  || '';
+  spRefreshSmartLinks(name, phone,
+    document.getElementById('s-maps')?.value.trim() || '',
+    document.getElementById('s-booking-url')?.value.trim() || ''
+  );
+}
+
+function spUpdateLocPreview() {
+  const addr = document.getElementById('s-addr')?.value.trim() || '';
+  const el   = document.getElementById('loc-preview');
+  if (el) el.textContent = addr || 'Add address, map link, working hours';
+  spLivePreview();
+}
+
+function spRefreshSmartLinks(name, phone, mapsUrl, bookingUrl) {
+  const grid = document.getElementById('smart-links-grid');
+  if (!grid) return;
+  const items = [
+    { label: phone ? '📞 +' + (phone.length===10?'91':'')+phone : 'Phone — fill above', set: !!phone },
+    { label: mapsUrl ? '📍 Map link set' : 'Maps — fill location', set: !!mapsUrl },
+    { label: bookingUrl ? '🔗 Booking URL set' : 'Booking URL — optional', set: !!bookingUrl },
+    { label: name ? '🏪 ' + name : 'Name — fill above', set: !!name },
+  ];
+  grid.innerHTML = items.map(it =>
+    `<span class="slink ${it.set ? 'set' : 'missing'}">
+       <span class="slink-dot"></span>${it.label}
+     </span>`
+  ).join('');
+}
+
+async function spAutoFill() {
+  if (!BIZ) { toast('Save your name + phone first', 'err'); return; }
+  const btn = document.querySelector('.qs-btn');
+  if (btn) btn.textContent = '✨ Filling...';
+  const r = await req('POST', `/api/kb/${BIZ}/seed-from-profile`);
+  if (btn) btn.textContent = '✨ Auto-fill with AI';
+  if (r?.seeded_services >= 0) {
+    toast(`Auto-filled: ${r.seeded_services||0} services added ✓`);
+    loadKBTab && loadKBTab();
+    loadKBHealth && loadKBHealth();
+  } else {
+    toast('Auto-fill: save profile first', 'err');
+  }
+}
+
+// Stub old functions that may still be called
+function spUpdatePreview() { spLivePreview(); }
+function spSyncSvcs() {
+  const ta = document.getElementById('s-services');
+  if (ta && !ta.value) ta.value = '';
+}
+function spAddChipVal(v) {}
+function spLoadSugs() {}
+function spLoadSugsFor() {}
+
+</script>
 </head>
 <body>
 
@@ -1872,238 +2013,201 @@ code { background: var(--s2); padding: 1px 5px; border-radius: 4px; font-size: 1
   </div>
 
   <!-- ── TAB: Profile ──────────────────────────────── -->
-  <div id="setup-tab-profile" class="setup-tab-panel">
-  <div style="display:flex;flex-direction:column;gap:12px">
+  <div id="setup-tab-profile" class="setup-tab-panel" style="display:none">
 
-    <!-- Row 1: Identity + Location (side by side) -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-
-      <!-- Identity -->
-      <div class="card">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-          <div style="width:38px;height:38px;border-radius:9px;background:rgba(108,99,255,.15);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🏪</div>
-          <div>
-            <div style="font-size:13.5px;font-weight:600">Business Identity</div>
-            <div style="font-size:11px;color:var(--muted)">Core info used in AI conversations</div>
-          </div>
-        </div>
-        <div class="fg">
-          <label class="fl">Business Name <span style="color:var(--a3)">*</span></label>
-          <input class="fi" id="s-nm" placeholder="e.g. PetsWoof Grooming" oninput="spUpdatePreview()">
-        </div>
-        <div class="fr">
-          <div class="fg">
-            <label class="fl">Category</label>
-            <select class="fsel" id="s-cat" onchange="spUpdatePreview();spLoadSugs()">
-              <option value="petcare">🐾 Pet Care</option>
-              <option value="salon">✂️ Salon / Beauty</option>
-              <option value="spa">🧘 Spa &amp; Wellness</option>
-              <option value="restaurant">🍽️ Restaurant</option>
-              <option value="cafe">☕ Cafe / Bakery</option>
-              <option value="gym">🏋️ Gym / Fitness</option>
-              <option value="clinic">🩺 Clinic / Medical</option>
-              <option value="retail">🛍️ Retail / Shop</option>
-              <option value="boutique">👗 Boutique</option>
-              <option value="pharmacy">💊 Pharmacy</option>
-              <option value="education">📚 Education</option>
-              <option value="other">📌 Other</option>
-            </select>
-          </div>
-          <div class="fg">
-            <label class="fl">Owner Phone <span style="color:var(--a3)">*</span></label>
-            <input class="fi" id="s-ph" placeholder="9876543210" maxlength="12" oninput="spUpdatePreview()">
-          </div>
-        </div>
-        <div class="fg">
-          <label class="fl">Tagline <span style="font-size:9px;color:var(--muted)">(max 80 chars)</span></label>
-          <input class="fi" id="s-tagline" placeholder="We Care Your Pets 🐾" maxlength="80" oninput="spUpdatePreview()">
-        </div>
-        <div class="fg" style="margin-bottom:0">
-          <label class="fl">Description <span style="font-size:9px;color:var(--muted)">shown in AI chat</span></label>
-          <textarea class="fta" id="s-desc" rows="3" placeholder="What makes your business special — experience, specialisations, story…" style="resize:none"></textarea>
-        </div>
-      </div>
-
-      <!-- Location -->
-      <div class="card">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-          <div style="width:38px;height:38px;border-radius:9px;background:rgba(245,158,11,.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📍</div>
-          <div>
-            <div style="font-size:13.5px;font-weight:600">Location</div>
-            <div style="font-size:11px;color:var(--muted)">Used in local SEO &amp; review links</div>
-          </div>
-        </div>
-        <div class="fg">
-          <label class="fl">Full Address</label>
-          <input class="fi" id="s-addr" placeholder="#42, 3rd Cross, Horamavu Main Road" oninput="spUpdatePreview()">
-        </div>
-        <div class="fr">
-          <div class="fg">
-            <label class="fl">City <span style="color:var(--a3)">*</span></label>
-            <input class="fi" id="s-loc" placeholder="Bangalore" oninput="spUpdatePreview()">
-          </div>
-          <div class="fg">
-            <label class="fl">PIN Code</label>
-            <input class="fi" id="s-pin" placeholder="560043" maxlength="6">
-          </div>
-        </div>
-        <div class="fg">
-          <label class="fl">Google Maps URL <span style="font-size:9px;color:var(--muted)">for review requests</span></label>
-          <div style="display:flex;gap:6px">
-            <input class="fi" id="s-maps" placeholder="https://g.page/your-business" style="flex:1">
-            <button class="btn bs sm" onclick="var u=document.getElementById('s-maps').value;if(u)window.open(u,'_blank')" style="flex-shrink:0">↗</button>
-          </div>
-        </div>
-        <div class="fg" style="margin-bottom:0">
-          <label class="fl">Business Hours</label>
-          <input class="fi" id="s-hours" placeholder="Mon–Sat 10am–8pm · Sun 11am–6pm" oninput="spUpdatePreview()">
-        </div>
-      </div>
+  <!-- Quick Setup Banner -->
+  <div class="qs-banner">
+    <div class="qs-icon">⚡</div>
+    <div>
+      <div class="qs-title">Quick Setup — 2 minutes</div>
+      <div class="qs-sub">Fill Name + Phone → AI handles the rest automatically</div>
     </div>
-
-    <!-- Row 2: Services + Online Presence (side by side) -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-
-      <!-- Services -->
-      <div class="card">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-          <div style="width:38px;height:38px;border-radius:9px;background:rgba(0,212,170,.1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🛎</div>
-          <div>
-            <div style="font-size:13.5px;font-weight:600">Services Offered</div>
-            <div style="font-size:11px;color:var(--muted)">AI bot uses this to answer customer queries</div>
-          </div>
-        </div>
-        <!-- Chips area -->
-        <div id="sp-chips" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px;min-height:24px"></div>
-        <div style="display:flex;gap:6px;margin-bottom:10px">
-          <input class="fi" id="sp-svc-inp" placeholder="Type service, press Enter…" style="flex:1;font-size:12.5px"
-            onkeydown="if(event.key==='Enter'){event.preventDefault();spAddChip();}">
-          <button class="btn bp sm" onclick="spAddChip()" style="flex-shrink:0">+ Add</button>
-        </div>
-        <!-- Suggestions -->
-        <div style="font-size:10px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Quick add</div>
-        <div id="sp-sugs" style="display:flex;flex-wrap:wrap;gap:5px"></div>
-        <textarea id="s-services" style="display:none"></textarea>
-      </div>
-
-      <!-- Online Presence + GST + Preview -->
-      <div style="display:flex;flex-direction:column;gap:12px">
-
-        <div class="card">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-            <div style="width:38px;height:38px;border-radius:9px;background:rgba(236,72,153,.1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🌐</div>
-            <div>
-              <div style="font-size:13.5px;font-weight:600">Online Presence</div>
-              <div style="font-size:11px;color:var(--muted)">Website, social media, GST</div>
-            </div>
-          </div>
-          <div class="fg">
-            <label class="fl">Website</label>
-            <div style="display:flex;gap:6px">
-              <input class="fi" id="s-web" placeholder="https://petswoof.com" style="flex:1" oninput="spUpdatePreview()">
-              <button class="btn bs sm" onclick="var u=document.getElementById('s-web').value;if(u)window.open(u,'_blank')" style="flex-shrink:0">↗</button>
-            </div>
-          </div>
-          <div class="fr">
-            <div class="fg">
-              <label class="fl">Instagram</label>
-              <div style="display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--s2);transition:border .12s" onfocusin="this.style.borderColor='var(--accent)'" onfocusout="this.style.borderColor='var(--border)'">
-                <span style="padding:8px 10px;font-size:12px;color:var(--muted);border-right:1px solid var(--border);background:rgba(236,72,153,.06)">@</span>
-                <input style="flex:1;padding:8px 10px;background:transparent;border:none;outline:none;font-size:13px;color:var(--text);font-family:var(--fb)" id="s-instagram" placeholder="handle">
-              </div>
-            </div>
-            <div class="fg">
-              <label class="fl">GST Number</label>
-              <input class="fi" id="s-gst" placeholder="29AAAAA0000A1Z5" maxlength="15" style="text-transform:uppercase">
-            </div>
-          </div>
-          <div class="fg" style="margin-bottom:0">
-            <label class="fl">Facebook Page URL</label>
-            <input class="fi" id="s-facebook" placeholder="https://facebook.com/petswoof">
-          </div>
-        </div>
-
-        <!-- Live preview card -->
-        <div class="card" style="background:linear-gradient(135deg,rgba(108,99,255,.08),rgba(0,212,170,.04));border-color:rgba(108,99,255,.18)">
-          <div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Live Preview</div>
-          <div style="display:flex;gap:12px;align-items:flex-start">
-            <div id="sp-prev-icon" style="font-size:32px;flex-shrink:0">🏪</div>
-
-      <!-- ─── AI Settings ─────────────────────────────────── -->
-      <div class="card">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-          <div style="width:38px;height:38px;border-radius:9px;background:rgba(99,102,241,.15);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🤖</div>
-          <div>
-            <div style="font-size:13.5px;font-weight:600">AI Settings</div>
-            <div style="font-size:11px;color:var(--muted)">Controls how your WhatsApp AI behaves</div>
-          </div>
-        </div>
-        <div class="fr">
-          <div class="fg">
-            <label class="fl">Booking Mode</label>
-            <select class="fsel" id="s-booking-mode">
-              <option value="both">Both — URL + WhatsApp</option>
-              <option value="url">Website / URL Only</option>
-              <option value="whatsapp">WhatsApp Only</option>
-            </select>
-            <div style="font-size:10px;color:var(--muted);margin-top:3px">How AI shows booking options</div>
-          </div>
-          <div class="fg">
-            <label class="fl">Primary Goal</label>
-            <select class="fsel" id="s-primary-goal">
-              <option value="bookings">📅 Increase Bookings</option>
-              <option value="walkins">🚶 Drive Walk-ins</option>
-              <option value="leads">📋 Capture Leads</option>
-              <option value="retention">🔄 Retention &amp; Repeat Visits</option>
-            </select>
-            <div style="font-size:10px;color:var(--muted);margin-top:3px">AI tunes replies to this goal</div>
-          </div>
-        </div>
-        <div class="fr">
-          <div class="fg">
-            <label class="fl">Booking URL <span style="color:var(--muted);font-size:9px">(optional)</span></label>
-            <input class="fi" id="s-booking-url" placeholder="https://yourbusiness.com/book">
-          </div>
-          <div class="fg">
-            <label class="fl">Review Link <span style="color:var(--muted);font-size:9px">(optional)</span></label>
-            <input class="fi" id="s-review-url" placeholder="https://g.page/yourbusiness/review">
-          </div>
-        </div>
-      </div>
-
-            <div style="flex:1;min-width:0">
-              <div id="sp-prev-name" style="font-size:14px;font-weight:700;font-family:var(--fh);margin-bottom:2px">Your Business</div>
-              <div id="sp-prev-tag"  style="font-size:11px;color:var(--muted);margin-bottom:8px;font-style:italic"></div>
-              <div id="sp-prev-rows" style="display:flex;flex-direction:column;gap:3px"></div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Save bar -->
-    <div class="card" style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between">
-      <div style="font-size:11.5px;color:var(--muted)" id="sp-save-msg">Fill all required fields (*) then save</div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <div id="sp-autosave" style="font-size:11px;color:var(--a2);display:none">✓ Saved</div>
-        <button id="save-biz-btn" class="btn bp" onclick="saveBizProfile()" style="padding:9px 22px;font-size:13px;font-weight:600">
-          Save Profile
-        </button>
-      </div>
-    </div>
-
+    <button class="qs-btn" onclick="spAutoFill()">✨ Auto-fill with AI</button>
   </div>
 
-<!-- compat stubs -->
-  <div id="biz-summary" style="display:none"></div>
+  <!-- Card 1: Business Identity (always visible, minimal) -->
+  <div class="pcard">
+    <div class="pcard-head">
+      <div class="pcard-icon" style="background:rgba(99,102,241,.15)">🏪</div>
+      <div><div class="pcard-title">Business Identity</div><div class="pcard-sub">Core info — used in every AI reply</div></div>
+    </div>
+    <div class="pcard-body">
+      <div class="prow">
+        <div class="pf fw">
+          <label class="pl">Business Name <span style="color:var(--red)">*</span></label>
+          <input class="pi" id="s-nm" placeholder="e.g. PetsWoof Horamavu" oninput="spLivePreview()">
+        </div>
+        <div class="pf">
+          <label class="pl">Category</label>
+          <select class="psel" id="s-cat" onchange="spLivePreview()">
+            <option value="petcare">🐾 Pet Care</option>
+            <option value="salon">✂️ Salon / Beauty</option>
+            <option value="spa">🧘 Spa &amp; Wellness</option>
+            <option value="restaurant">🍽️ Restaurant</option>
+            <option value="cafe">☕ Cafe / Bakery</option>
+            <option value="gym">🏋️ Gym / Fitness</option>
+            <option value="clinic">🩺 Clinic / Medical</option>
+            <option value="retail">🛍️ Retail / Shop</option>
+            <option value="boutique">👗 Boutique</option>
+            <option value="pharmacy">💊 Pharmacy</option>
+            <option value="education">📚 Education</option>
+            <option value="other">📌 Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="prow">
+        <div class="pf">
+          <label class="pl">Phone / WhatsApp <span style="color:var(--red)">*</span></label>
+          <input class="pi" id="s-ph" placeholder="9XXXXXXXXX" oninput="spLivePreview()">
+        </div>
+        <div class="pf">
+          <label class="pl">Tagline</label>
+          <input class="pi" id="s-tagline" placeholder="e.g. Pet care you can trust">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Location (collapsible) -->
+  <div class="pcard pcard-toggle" id="pcard-location">
+    <div class="pcard-head" onclick="spToggleCard('pcard-location')">
+      <div class="pcard-icon" style="background:rgba(16,185,129,.15)">📍</div>
+      <div><div class="pcard-title">Location &amp; Hours</div><div class="pcard-sub" id="loc-preview">Add address, map link, working hours</div></div>
+    </div>
+    <div class="pcard-body">
+      <div class="prow">
+        <div class="pf fw">
+          <label class="pl">Full Address</label>
+          <input class="pi" id="s-addr" placeholder="e.g. 15/16 Palm Arcade, Horamavu" oninput="spUpdateLocPreview()">
+        </div>
+        <div class="pf">
+          <label class="pl">City</label>
+          <input class="pi" id="s-loc" placeholder="Bangalore">
+        </div>
+      </div>
+      <div class="prow">
+        <div class="pf fw">
+          <label class="pl">Google Maps URL</label>
+          <input class="pi" id="s-maps" placeholder="https://maps.app.goo.gl/...">
+        </div>
+        <div class="pf">
+          <label class="pl">Working Hours</label>
+          <input class="pi" id="s-hours" placeholder="Mon–Sun 10am–8pm">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Online Presence (collapsible) -->
+  <div class="pcard pcard-toggle collapsed" id="pcard-online">
+    <div class="pcard-head" onclick="spToggleCard('pcard-online')">
+      <div class="pcard-icon" style="background:rgba(59,130,246,.15)">🌐</div>
+      <div><div class="pcard-title">Online Presence</div><div class="pcard-sub">Website, Instagram, Facebook</div></div>
+    </div>
+    <div class="pcard-body" style="display:none">
+      <div class="prow">
+        <div class="pf">
+          <label class="pl">Website</label>
+          <input class="pi" id="s-web" placeholder="https://yourwebsite.com">
+        </div>
+        <div class="pf">
+          <label class="pl">Instagram</label>
+          <input class="pi" id="s-instagram" placeholder="@yourhandle">
+        </div>
+      </div>
+      <div class="prow">
+        <div class="pf">
+          <label class="pl">Facebook</label>
+          <input class="pi" id="s-facebook" placeholder="https://facebook.com/yourpage">
+        </div>
+        <div class="pf">
+          <label class="pl">GST Number</label>
+          <input class="pi" id="s-gst" placeholder="22AAAAA0000A1Z5">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: AI Settings (inline toggles) -->
+  <div class="pcard">
+    <div class="pcard-head">
+      <div class="pcard-icon" style="background:rgba(245,158,11,.15)">🤖</div>
+      <div><div class="pcard-title">AI Settings</div><div class="pcard-sub">How your AI handles bookings</div></div>
+    </div>
+    <div class="pcard-body">
+      <div class="prow">
+        <div class="pf">
+          <label class="pl">Booking Mode</label>
+          <div class="tog-group" id="bm-group">
+            <button class="tog-opt active" data-val="both"    onclick="spSetTog('bm-group',this,'s-booking-mode')">Both</button>
+            <button class="tog-opt"        data-val="url"     onclick="spSetTog('bm-group',this,'s-booking-mode')">URL Only</button>
+            <button class="tog-opt"        data-val="whatsapp"onclick="spSetTog('bm-group',this,'s-booking-mode')">WhatsApp</button>
+          </div>
+          <input type="hidden" id="s-booking-mode" value="both">
+        </div>
+        <div class="pf">
+          <label class="pl">Primary Goal</label>
+          <div class="tog-group" id="pg-group">
+            <button class="tog-opt active" data-val="bookings" onclick="spSetTog('pg-group',this,'s-primary-goal')">Bookings</button>
+            <button class="tog-opt"        data-val="walkins"  onclick="spSetTog('pg-group',this,'s-primary-goal')">Walk-ins</button>
+            <button class="tog-opt"        data-val="leads"    onclick="spSetTog('pg-group',this,'s-primary-goal')">Leads</button>
+          </div>
+          <input type="hidden" id="s-primary-goal" value="bookings">
+        </div>
+      </div>
+      <div class="prow">
+        <div class="pf">
+          <label class="pl">Booking URL <span style="color:var(--muted);font-size:9px">(optional)</span></label>
+          <input class="pi" id="s-booking-url" placeholder="https://yourbusiness.com/book">
+        </div>
+        <div class="pf">
+          <label class="pl">Review Link <span style="color:var(--muted);font-size:9px">(optional)</span></label>
+          <input class="pi" id="s-review-url" placeholder="https://g.page/yourbusiness/review">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Smart Links Summary -->
+  <div class="pcard">
+    <div class="pcard-head">
+      <div class="pcard-icon" style="background:rgba(236,72,153,.15)">🔗</div>
+      <div><div class="pcard-title">Smart Links</div><div class="pcard-sub">AI uses only these links — never invents others</div></div>
+    </div>
+    <div class="pcard-body">
+      <div class="slink-grid" id="smart-links-grid">
+        <span class="slink missing"><span class="slink-dot"></span>Phone — fill above</span>
+        <span class="slink missing"><span class="slink-dot"></span>Maps — fill location</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save row -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px">
+    <div id="sp-save-msg" style="font-size:11.5px;color:var(--green)"></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div id="sp-autosave" style="font-size:11px;color:var(--green);display:none">✓ Saved</div>
+      <button id="save-biz-btn" class="btn bp" onclick="saveBizProfile()" style="padding:9px 22px;font-size:13px;font-weight:600">Save Profile</button>
+    </div>
+  </div>
+
+  <!-- Hidden compat inputs still used by old JS -->
+  <input type="hidden" id="s-services">
+  <input type="hidden" id="s-desc">
+  <input type="hidden" id="s-pin">
+  <div id="biz-summary"   style="display:none"></div>
   <div id="prof-card-icon" style="display:none"></div>
   <div id="prof-card-name" style="display:none"></div>
   <div id="prof-card-tag"  style="display:none"></div>
   <div id="prof-card-info" style="display:none"></div>
   <div id="prof-save-state" style="display:none"></div>
-  <div id="prof-card-badge" style="display:none"></div>
-  
+  <div id="sp-chips"       style="display:none"></div>
+  <div id="sp-svc-inp"     style="display:none"></div>
+  <div id="sp-sugs"        style="display:none"></div>
+  <div id="sp-prev-icon"   style="display:none"></div>
+  <div id="sp-prev-name"   style="display:none"></div>
+  <div id="sp-prev-tag"    style="display:none"></div>
+  <div id="sp-prev-rows"   style="display:none"></div>
 
 </div>
 
@@ -6428,38 +6532,29 @@ async function loadSetup() {
 
   // Profile tab fields
   const set = (id, v) => { const e = document.getElementById(id); if(e) e.value = v || ''; };
-  set('s-nm',        biz.name);
-  set('s-ph',        (biz.phone||'').replace(/^91/,''));
-  set('s-tagline',   biz.tagline);
-  set('s-desc',      biz.description);
-  set('s-services', biz.services);
-  set('s-pin',      biz.pin_code || biz.pin || '');
-  // Populate service chips
-  const spChipArea = document.getElementById('sp-chips');
-  if (spChipArea) {
-    spChipArea.innerHTML = '';
-    (biz.services || '').split(',').map(s => s.trim()).filter(Boolean).forEach(s => spAddChipVal(s));
-  }
-  spUpdatePreview();
-  spLoadSugs();
-  set('s-hours',     biz.hours);
-  set('s-addr',      biz.address);
-  set('s-loc',       biz.location || biz.city);
-  set('s-pin',       biz.pin_code || biz.pin || '');
-  set('s-maps',      biz.maps_url);
-  set('s-web',       biz.website);
-  set('s-instagram', (biz.instagram||'').replace(/.*instagram\.com\//,'').replace('@',''));
-  set('s-facebook',  biz.facebook);
-  set('s-gst',       biz.gst_number);
+  set('s-nm',       biz.name);
+  set('s-ph',       (biz.phone||'').replace(/^91/,''));
+  set('s-tagline',  biz.tagline);
+  set('s-addr',     biz.address);
+  set('s-loc',      biz.location || biz.city);
+  set('s-maps',     biz.maps_url);
+  set('s-hours',    biz.hours);
+  set('s-web',      biz.website);
+  set('s-instagram',(biz.instagram||'').replace(/.*instagram\.com\//,'').replace('@',''));
+  set('s-facebook', biz.facebook);
+  set('s-gst',      biz.gst_number);
+  set('s-booking-url', biz.ai_booking_url || biz.booking_url || '');
+  set('s-review-url',  biz.review_url || '');
   const catEl = document.getElementById('s-cat');
   if (catEl) catEl.value = biz.category || 'other';
-  // AI Settings fields
-  set('s-booking-url',  biz.ai_booking_url  || biz.booking_url || '');
-  set('s-review-url',   biz.review_url       || '');
-  const bmEl = document.getElementById('s-booking-mode');
-  if (bmEl) bmEl.value = biz.booking_mode || 'both';
-  const pgEl = document.getElementById('s-primary-goal');
-  if (pgEl) pgEl.value = biz.primary_goal || 'bookings';
+  spLoadToggle('bm-group', 's-booking-mode', biz.booking_mode || 'both');
+  spLoadToggle('pg-group', 's-primary-goal', biz.primary_goal || 'bookings');
+  spLivePreview();
+  // Show location card expanded if address exists
+  if (biz.address || biz.maps_url) {
+    const lcard = document.getElementById('pcard-location');
+    if (lcard) { lcard.classList.remove('collapsed'); const b=lcard.querySelector('.pcard-body'); if(b) b.style.display=''; }
+  }
 
   // Business summary card
   const sumEl = document.getElementById('biz-summary');
