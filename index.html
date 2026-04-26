@@ -1049,7 +1049,7 @@ function showUpgradePage() {
 <main class="main">
 
 <!-- DASHBOARD -->
-<div class="page on" id="p-dashboard">
+<div class="page" id="p-dashboard">
   <div class="ph">
     <div>
       <div class="pt" id="dash-biz-name">Dashboard</div>
@@ -4038,7 +4038,7 @@ async function _pickBizAndEnter(bizId, bizName, fromPicker) {
 
   initUserUI();
   await loadBizList();
-  loadDash();
+  goTo('dashboard');
   toast('Welcome to ' + bizName + '! 👋');
   checkAndShowWizard();
 }
@@ -4919,7 +4919,7 @@ function confirmDeleteBiz() {
 
       // Has a stored active business → go straight to dashboard
       if (BIZ && arr.find(b => b.business_id === BIZ)) {
-        loadDash();
+        goTo('dashboard');
         return;
       }
 
