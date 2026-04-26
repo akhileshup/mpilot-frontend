@@ -1016,6 +1016,12 @@ function showUpgradePage() {
       Reputation
     </div>
 
+    <!-- My Account -->
+    <div class="ni" data-p="myaccount" onclick="goTo('myaccount')">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      My Account
+    </div>
+
     <div style="height:1px;background:var(--border);margin:8px 4px"></div>
 
     <!-- Setup -->
@@ -5841,66 +5847,83 @@ var _origGoTo = typeof goTo === 'function' ? goTo : null;
 
 // ─── My Account ──────────────────────────────────────────────────
 async function loadMyAccount() {
-  var fn=USER.name||''; var em=USER.email||''; var pln=USER.plan||'pro'; var rol=USER.role||'owner';
-  var ini=fn?fn.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase():(em?em[0].toUpperCase():'A');
-  var setT=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v||'';};
-  var setH=function(id,v){var e=document.getElementById(id);if(e)e.innerHTML=v||'';};
-  setT('acc-name',fn||em||'Account'); setT('acc-role',rol.charAt(0).toUpperCase()+rol.slice(1));
-  setT('acc-email',em||'—'); setT('acc-phone','—');
+  var fn  = USER.name  || '';
+  var em  = USER.email || '';
+  var pln = USER.plan  || 'pro';
+  var rol = USER.role  || 'owner';
+  var ini = fn ? fn.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase() : (em?em[0].toUpperCase():'A');
+  var setT = function(id,v){var e=document.getElementById(id); if(e)e.textContent=v||'';};
+  var setH = function(id,v){var e=document.getElementById(id); if(e)e.innerHTML=v||'';};
+  setT('acc-name', fn||em||'Account');
+  setT('acc-role', rol.charAt(0).toUpperCase()+rol.slice(1));
+  setT('acc-email', em||'—');
+  setT('acc-phone', '—');
   var av=document.getElementById('acc-avatar'); if(av)av.textContent=ini;
   var sn=document.getElementById('sb-user-name'); if(sn)sn.textContent=fn||em||'Account';
   var sp=document.getElementById('sb-plan-label'); if(sp)sp.textContent=pln+' plan';
-  var planNames={free:'Free',starter:'Starter',growth:'Growth',pro:'Pro',agency:'Agency'};
-  var planLabel=planNames[pln]||'Pro';
+  var planLabel={free:'Free',starter:'Starter',growth:'Growth',pro:'Pro',agency:'Agency'}[pln]||'Pro';
   setH('acc-plan','MPilot '+planLabel+' &#128081;');
   setT('acc-plan-badge','MPilot '+planLabel);
   try {
-    var bizList=await req('GET','/api/businesses/'); var arr=Array.isArray(bizList)?bizList:[];
+    var bizList=await req('GET','/api/businesses/');
+    var arr=Array.isArray(bizList)?bizList:[];
+    // Phone from active business (not stored on user)
     var activeBiz=arr.find(function(b){return b.business_id===BIZ;})||arr[0];
     if(activeBiz){var ph=String(activeBiz.phone||activeBiz.whatsapp||'').replace(/^91/,''); if(ph)setT('acc-phone','+91 '+ph);}
+    // Business list
     var icons={petcare:'&#128062;',salon:'&#9986;',clinic:'&#129514;',retail:'&#128717;',restaurant:'&#127829;',cafe:'&#9749;',gym:'&#127947;',other:'&#127983;'};
     var listEl=document.getElementById('acc-biz-list');
     if(listEl){
-      if(!arr.length){listEl.innerHTML='<div style="text-align:center;padding:24px;font-size:13px;color:var(--muted)">No businesses yet.</div>';}
-      else{
+      if(!arr.length){
+        listEl.innerHTML='<div style="text-align:center;padding:28px;font-size:13px;color:var(--muted)">No businesses yet.<br><button onclick="goTo(\'setup\')" style="margin-top:10px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:var(--fb);font-weight:600;font-size:13px">Set up your first business &#8594;</button></div>';
+      }else{
         var frag=document.createDocumentFragment();
         arr.forEach(function(b){
           var isA=b.business_id===BIZ;
           var row=document.createElement('div');
           row.className='acc-biz-row'+(isA?' active-biz':'');
           row.dataset.bid=b.business_id; row.dataset.bname=b.name||'';
-          var icon=icons[b.category]||'&#127983;'; var loc=b.location||b.city||'';
+          var icon=icons[b.category]||'&#127983;';
+          var loc=b.location||b.city||'';
           row.innerHTML='<div class="acc-biz-icon">'+icon+'</div>'
             +'<div style="flex:1;min-width:0">'
             +'<div style="font-size:13.5px;font-weight:600;color:var(--text)">'+(b.name||'')+'</div>'
             +(loc?'<div style="font-size:12px;color:var(--muted);margin-top:2px">'+loc+'</div>':'')
-            +'<div style="font-size:11px;color:var(--muted);margin-top:3px">'+(b.lead_count||0)+' customers</div>'
             +'</div>'
             +(isA?'<span style="font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(108,99,255,.14);color:var(--accent);font-weight:600">Active</span>'
-                 :'<span class="btn bs" style="font-size:11.5px;height:28px;padding:0 11px;flex-shrink:0">Switch</span>');
+                 :'<span class="btn bs sm" style="height:26px;font-size:11px">Switch</span>');
           row.onclick=function(){if(!this.classList.contains('active-biz'))_pickBizAndEnter(this.dataset.bid,this.dataset.bname);};
           frag.appendChild(row);
         });
         listEl.innerHTML=''; listEl.appendChild(frag);
       }
     }
-    setT('acc-biz-count',String(arr.length));
-    var total=arr.reduce(function(s,b){return s+(b.lead_count||0);},0);
-    setT('acc-cust-count',String(total));
-    var emptyEl=document.getElementById('acc-empty-state'); var statsEl=document.getElementById('acc-stats-state');
-    if(total>0){if(emptyEl)emptyEl.style.display='none';if(statsEl)statsEl.style.display='';}
-    else{if(emptyEl)emptyEl.style.display='';if(statsEl)statsEl.style.display='none';
-      var prog=10;
-      if(arr.length>0)prog+=30;
-      if(activeBiz&&(activeBiz.address||activeBiz.maps_url))prog+=20;
-      if(activeBiz&&activeBiz.whatsapp_connected)prog+=30;
-      var fill=document.getElementById('acc-progress-fill'); if(fill)fill.style.width=prog+'%';
-      var lbl=document.getElementById('acc-progress-label');
-      if(lbl)lbl.textContent=prog<30?'Start by setting up your business':prog<60?'Connect WhatsApp to capture customers':'Almost ready! Print your QR code to start';
+    // Overview section
+    var ov=document.getElementById('acc-overview-content');
+    if(ov){
+      var total=arr.reduce(function(s,b){return s+(b.lead_count||0);},0);
+      var sinceText='Apr 2026';
+      if(USER.created_at){try{sinceText=new Date(USER.created_at).toLocaleDateString('en-IN',{month:'short',year:'numeric'});}catch(e){}}
+      var rows=[
+        ['Total Businesses', String(arr.length), 'var(--text)'],
+        ['Total Customers',  total>0?String(total):'0', 'var(--accent)'],
+        ['Member Since',     sinceText, 'var(--text2)'],
+      ];
+      if(total===0){
+        ov.innerHTML='<div style="background:rgba(108,99,255,.07);border:1px solid rgba(108,99,255,.15);border-radius:10px;padding:16px;text-align:center">'
+          +'<div style="font-size:24px;margin-bottom:8px">&#128247;</div>'
+          +'<div style="font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:5px">No customers yet</div>'
+          +'<div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6">Print your QR and place it in store. Customers scan it — AI converts them automatically.</div>'
+          +'<button onclick="goTo(\'dashboard\')" class="btn bp" style="height:36px;font-size:12.5px;width:100%">&#128247; Go to Dashboard &amp; Print QR</button>'
+          +'</div>';
+      }else{
+        ov.innerHTML=rows.map(function(r){
+          return '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)">'
+            +'<span style="font-size:13px;color:var(--muted)">'+r[0]+'</span>'
+            +'<span style="font-size:15px;font-weight:700;color:'+r[2]+'">'+r[1]+'</span></div>';
+        }).join('')+'<button onclick="goTo(\'dashboard\')" class="btn bp" style="width:100%;height:36px;margin-top:14px;font-size:13px">&#128202; View Dashboard</button>';
+      }
     }
-    var ms=document.getElementById('acc-since');
-    if(ms)ms.textContent=USER.created_at?new Date(USER.created_at).toLocaleDateString('en-IN',{month:'short',year:'numeric'}):'Apr 2026';
-    if(BIZ){try{var stats=await req('GET','/api/dashboard/stats/'+BIZ);if(stats)setT('acc-camp-count',String(stats.campaigns_sent||0));}catch(e){}}
   }catch(e){console.log('loadMyAccount:',e);}
 }
 
@@ -6273,203 +6296,95 @@ function updateDashActionCards(r) {
 </script>
 <div class="page" id="p-myaccount">
   <div class="ph">
-    <div><div class="pt">My Account</div><div class="ps">Your control centre — profile, businesses and billing</div></div>
-    <button onclick="doLogout()" style="height:34px;padding:0 16px;border-radius:8px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--a3);font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--fb);display:flex;align-items:center;gap:7px">&#8594; Logout</button>
-  </div>
-
-  <div style="display:grid;grid-template-columns:320px 1fr;gap:16px;align-items:start">
-
-    <!-- LEFT -->
-    <div style="display:flex;flex-direction:column;gap:14px">
-
-      <!-- Profile -->
-      <div class="card">
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
-          <div id="acc-avatar" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#6c63ff,#8b7cf8);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;flex-shrink:0">A</div>
-          <div style="flex:1;min-width:0">
-            <div id="acc-name" style="font-size:16px;font-weight:700;color:var(--text)">Account</div>
-            <div style="display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap">
-              <span id="acc-role" style="font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:20px;background:rgba(108,99,255,.12);color:var(--accent)">Owner</span>
-              <span id="acc-plan-badge" style="font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:20px;background:rgba(16,185,129,.1);color:#10b981">Pro</span>
-            </div>
-          </div>
-          <button onclick="editAccountProfile()" class="btn bs sm" style="flex-shrink:0;height:30px;padding:0 13px;font-size:12px">Edit</button>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <div style="padding:10px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:space-between">
-            <div><div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Phone / WhatsApp</div><div id="acc-phone" style="font-size:13.5px;font-weight:500;color:var(--text)">&#8212;</div></div>
-            <span style="font-size:18px">&#128241;</span>
-          </div>
-          <div style="padding:10px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:space-between">
-            <div><div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Email Address</div><div id="acc-email" style="font-size:13.5px;font-weight:500;color:var(--text)">&#8212;</div></div>
-            <span style="font-size:18px">&#128231;</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Security -->
-      <div class="card">
-        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px">Security</div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <div style="padding:10px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:space-between">
-            <div><div style="font-size:12.5px;font-weight:500;color:var(--text)">Phone Verification</div><div style="font-size:11.5px;color:#10b981;margin-top:2px;font-weight:600">&#10003; Verified</div></div>
-            <button onclick="toast('Change number — coming soon')" class="btn bs sm" style="height:28px;padding:0 11px;font-size:11.5px">Change</button>
-          </div>
-          <div style="padding:10px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:space-between">
-            <div><div style="font-size:12.5px;font-weight:500;color:var(--text)">Active Sessions</div><div style="font-size:11.5px;color:var(--muted);margin-top:2px">This device</div></div>
-            <button onclick="doLogout()" style="height:28px;padding:0 11px;border-radius:6px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.2);color:var(--a3);font-size:11.5px;font-weight:600;cursor:pointer;font-family:var(--fb)">Logout All</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Quick Actions -->
-      <div class="card">
-        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px">Quick Actions</div>
-        <div style="display:flex;flex-direction:column;gap:7px">
-          <button onclick="goTo('dashboard')" style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:all .12s;font-size:13px;font-weight:500;color:var(--text);width:100%;font-family:var(--fb);text-align:left" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-            <span style="width:32px;height:32px;border-radius:8px;background:rgba(108,99,255,.12);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">&#128202;</span>
-            <div><div style="font-size:13px;font-weight:600">Go to Dashboard</div><div style="font-size:11px;color:var(--muted);margin-top:1px">See AI performance</div></div>
-            <span style="margin-left:auto;color:var(--muted)">&#8250;</span>
-          </button>
-          <button onclick="goTo('dashboard');setTimeout(function(){printQR();},500)" style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:all .12s;font-size:13px;font-weight:500;color:var(--text);width:100%;font-family:var(--fb);text-align:left" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-            <span style="width:32px;height:32px;border-radius:8px;background:rgba(0,212,170,.1);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">&#128247;</span>
-            <div><div style="font-size:13px;font-weight:600">Print QR Code</div><div style="font-size:11px;color:var(--muted);margin-top:1px">Place in store, get customers</div></div>
-            <span style="margin-left:auto;color:var(--muted)">&#8250;</span>
-          </button>
-          <button onclick="goTo('campaigns')" style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:all .12s;font-size:13px;font-weight:500;color:var(--text);width:100%;font-family:var(--fb);text-align:left" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-            <span style="width:32px;height:32px;border-radius:8px;background:rgba(245,158,11,.1);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">&#128293;</span>
-            <div><div style="font-size:13px;font-weight:600">Run Campaign</div><div style="font-size:11px;color:var(--muted);margin-top:1px">Win back or attract customers</div></div>
-            <span style="margin-left:auto;color:var(--muted)">&#8250;</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- RIGHT -->
-    <div style="display:flex;flex-direction:column;gap:14px">
-
-      <!-- My Businesses -->
-      <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-          <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px">My Businesses</div>
-          <button onclick="addNewBusinessQuick()" class="btn bp sm" style="height:30px;padding:0 13px;font-size:12px">+ Add Business</button>
-        </div>
-        <div id="acc-biz-list"><div style="text-align:center;padding:20px;font-size:13px;color:var(--muted)">Loading...</div></div>
-      </div>
-
-      <!-- Billing -->
-      <div class="card">
-        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px">Plan &amp; Billing</div>
-        <div style="background:linear-gradient(135deg,rgba(108,99,255,.12),rgba(108,99,255,.04));border:1px solid rgba(108,99,255,.2);border-radius:10px;padding:16px;margin-bottom:14px">
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <div>
-              <div id="acc-plan" style="font-size:18px;font-weight:800;color:var(--text);font-family:var(--fh)">MPilot Pro &#128081;</div>
-              <div style="font-size:12px;color:var(--muted);margin-top:5px">Renews on <span id="acc-renew" style="color:var(--text2);font-weight:500">May 25, 2026</span></div>
-            </div>
-            <div style="font-size:11px;font-weight:700;padding:5px 12px;background:rgba(16,185,129,.12);color:#10b981;border-radius:20px;border:1px solid rgba(16,185,129,.2)">Active</div>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <button onclick="showUpgradePage()" class="btn bp" style="height:38px;font-size:13px;display:flex;align-items:center;justify-content:center;gap:7px">&#8599; Upgrade</button>
-          <button onclick="showInvoices()" class="btn bs" style="height:38px;font-size:13px;display:flex;align-items:center;justify-content:center;gap:7px">&#128196; Invoices</button>
-        </div>
-      </div>
-
-      <!-- Account Overview — Smart Empty State -->
-      <div class="card">
-        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px">Account Overview</div>
-
-        <div id="acc-empty-state">
-          <div style="background:linear-gradient(135deg,rgba(108,99,255,.08),rgba(0,212,170,.05));border:1px solid rgba
-<!-- ═══ ONBOARDING SCREEN (no business exists) ═══════════════════ -->
-<div class="page" id="p-onboarding">
-  <div class="onboard-card">
-    <div class="onboard-icon">&#9889;</div>
-    <div class="onboard-title">Welcome to MPilot!</div>
-    <div class="onboard-sub">
-      You're one step away from getting your first customer automatically.
-      Let's set up your business in 2 minutes.
-    </div>
-    <div class="onboard-steps">
-      <div class="onboard-step">
-        <div class="onboard-step-num">1</div>
-        <div>
-          <div class="onboard-step-text">Tell us about your business</div>
-          <div class="onboard-step-sub">Name, category, phone — that's all you need</div>
-        </div>
-      </div>
-      <div class="onboard-step">
-        <div class="onboard-step-num">2</div>
-        <div>
-          <div class="onboard-step-text">AI finds you on Google automatically</div>
-          <div class="onboard-step-sub">Address, hours, reviews — all auto-filled</div>
-        </div>
-      </div>
-      <div class="onboard-step">
-        <div class="onboard-step-num">3</div>
-        <div>
-          <div class="onboard-step-text">Print your QR &amp; get customers</div>
-          <div class="onboard-step-sub">Customers scan, AI converts — 24/7</div>
-        </div>
-      </div>
-    </div>
-    <button onclick="goTo('setup');wizGo(1);"
-      class="btn bp lg" style="width:100%;height:48px;font-size:15px;font-weight:800;
-      box-shadow:0 6px 20px rgba(108,99,255,.4)">
-      &#9889; Set Up My Business — 2 Minutes
+    <div><div class="pt">My Account</div><div class="ps">Profile, businesses and billing</div></div>
+    <button onclick="doLogout()" class="btn" style="height:34px;padding:0 16px;border-radius:8px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.22);color:var(--a3);font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--fb)">
+      &#8594;&nbsp;Logout
     </button>
-    <div style="margin-top:14px;font-size:12px;color:var(--muted)">
-      &#10003; Free to start &nbsp;&nbsp; &#10003; No credit card &nbsp;&nbsp; &#10003; Works on WhatsApp
-    </div>
   </div>
-</div>
 
-<!-- ═══ BIZ GUARD (no active business selected) ══════════════════ -->
-<div id="biz-guard">
-  <div class="guard-box">
-    <div style="font-size:36px;margin-bottom:12px">&#127983;</div>
-    <div style="font-family:var(--fh);font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px">Select a Business First</div>
-    <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:22px">
-      Choose which business to manage from the dropdown in the sidebar,
-      or add a new one.
-    </div>
-    <div style="display:flex;flex-direction:column;gap:9px">
-      <button onclick="document.getElementById('biz-sel')?.focus();document.getElementById('biz-guard').classList.remove('show')"
-        class="btn bp" style="width:100%;height:42px;font-size:14px">
-        Select Business
-      </button>
-      <button onclick="addNewBusinessQuick();document.getElementById('biz-guard').classList.remove('show')"
-        class="btn bs" style="width:100%;height:42px;font-size:14px">
-        + Add New Business
-      </button>
-    </div>
-  </div>
-</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
 
-(108,99,255,.15);border-radius:12px;padding:20px;text-align:center;margin-bottom:14px">
-            <div style="font-size:34px;margin-bottom:10px">&#128247;</div>
-            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">No customers captured yet</div>
-            <div style="font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:16px">Print your QR code and place it in your store.<br>Customers scan it — AI converts them automatically.</div>
-            <button onclick="goTo('dashboard')" class="btn bp" style="height:36px;padding:0 18px;font-size:13px;display:inline-flex;align-items:center;gap:7px">&#128247; Print QR &amp; Get Customers</button>
+    <!-- Profile -->
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:13px;margin-bottom:18px">
+        <div id="acc-avatar" style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#8b7cf8);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;flex-shrink:0">P</div>
+        <div style="flex:1;min-width:0">
+          <div id="acc-name" style="font-size:15px;font-weight:700;color:var(--text)">Account</div>
+          <div style="margin-top:4px;display:flex;gap:6px;flex-wrap:wrap">
+            <span id="acc-role" style="font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(108,99,255,.12);color:var(--accent)">Owner</span>
+            <span id="acc-plan-badge" style="font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(16,185,129,.1);color:#10b981">Pro</span>
           </div>
+        </div>
+        <button onclick="editAccountProfile()" class="btn bs sm">Edit</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="padding:10px 13px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
+          <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Phone / WhatsApp</div>
+          <div id="acc-phone" style="font-size:13.5px;font-weight:500;color:var(--text)">&#8212;</div>
+        </div>
+        <div style="padding:10px 13px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
+          <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Email</div>
+          <div id="acc-email" style="font-size:13.5px;font-weight:500;color:var(--text)">&#8212;</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plan & Billing -->
+    <div class="card">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:14px">Plan &amp; Billing</div>
+      <div style="background:linear-gradient(135deg,rgba(108,99,255,.12),rgba(108,99,255,.04));border:1px solid rgba(108,99,255,.22);border-radius:10px;padding:16px;margin-bottom:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
           <div>
-            <div style="font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:600">Setup progress</div>
-            <div style="height:6px;background:var(--s3);border-radius:3px;overflow:hidden">
-              <div id="acc-progress-fill" style="height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),#8b7cf8);width:30%;transition:width .4s ease"></div>
-            </div>
-            <div id="acc-progress-label" style="font-size:11px;color:var(--muted);margin-top:5px">Complete setup to unlock full AI power</div>
+            <div id="acc-plan" style="font-size:17px;font-weight:800;color:var(--text);font-family:var(--fh)">MPilot Pro &#128081;</div>
+            <div style="font-size:11.5px;color:var(--muted);margin-top:5px">Renews <span id="acc-renew" style="color:var(--text2)">May 25, 2026</span></div>
           </div>
+          <span style="font-size:11px;font-weight:600;padding:4px 10px;background:rgba(16,185,129,.12);color:#10b981;border-radius:20px;border:1px solid rgba(16,185,129,.2)">Active</span>
         </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button onclick="showUpgradePage()" class="btn bp" style="height:38px;font-size:13px">&#8599; Upgrade</button>
+        <button onclick="toast('Invoices — contact support@mpilot.in')" class="btn bs" style="height:38px;font-size:13px">&#128196; Invoices</button>
+      </div>
+    </div>
 
-        <div id="acc-stats-state" style="display:none">
-          <div style="display:flex;flex-direction:column;gap:2px">
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px;color:var(--muted)">Total Customers</span><span id="acc-cust-count" style="font-size:16px;font-weight:700;color:var(--accent)">0</span></div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px;color:var(--muted)">Businesses</span><span id="acc-biz-count" style="font-size:16px;font-weight:700;color:var(--text)">1</span></div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px;color:var(--muted)">Campaigns Sent</span><span id="acc-camp-count" style="font-size:16px;font-weight:700;color:var(--text)">0</span></div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0"><span style="font-size:13px;color:var(--muted)">Member Since</span><span id="acc-since" style="font-size:13px;color:var(--text2)">Apr 2026</span></div>
+    <!-- My Businesses (full width) -->
+    <div class="card" style="grid-column:1/-1">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px">My Businesses</div>
+        <button onclick="addNewBusinessQuick()" class="btn bp sm" style="height:30px;font-size:12px">+ Add Business</button>
+      </div>
+      <div id="acc-biz-list"><div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">Loading...</div></div>
+    </div>
+
+    <!-- Security -->
+    <div class="card">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:14px">Security</div>
+      <div style="display:flex;flex-direction:column;gap:9px">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 13px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
+          <div>
+            <div style="font-size:13px;font-weight:500;color:var(--text)">Phone Verification</div>
+            <div style="font-size:11.5px;color:#10b981;margin-top:2px;font-weight:600">&#10003; Verified</div>
           </div>
-          <button onclick="goTo('dashboard')" class="btn bp" style="width:100%;height:36px;margin-top:14px;font-size:13px;display:flex;align-items:center;justify-content:center;gap:7px">&#128202; View Full Dashboard</button>
+          <button onclick="toast('Change number — coming soon')" class="btn bs sm" style="height:28px;font-size:11.5px">Change</button>
         </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 13px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
+          <div>
+            <div style="font-size:13px;font-weight:500;color:var(--text)">Active Sessions</div>
+            <div style="font-size:11.5px;color:var(--muted);margin-top:2px">This device</div>
+          </div>
+          <button onclick="doLogout()" style="height:28px;padding:0 11px;border-radius:6px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.2);color:var(--a3);font-size:11.5px;font-weight:600;cursor:pointer;font-family:var(--fb)">Logout All</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account Overview -->
+    <div class="card">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:14px">Account Overview</div>
+      <div id="acc-overview-content">
+        <!-- Populated by loadMyAccount -->
+        <div class="skel skel-block" style="height:48px;margin-bottom:8px"></div>
+        <div class="skel skel-block" style="height:48px;margin-bottom:8px"></div>
+        <div class="skel skel-block" style="height:48px"></div>
       </div>
     </div>
 
