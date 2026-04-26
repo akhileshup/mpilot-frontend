@@ -1163,7 +1163,7 @@ function showUpgradePage() {
         <div class="action-card-icon" style="background:rgba(108,99,255,.12)">&#128101;</div>
         <div>
           <div class="action-card-title">View All Customers</div>
-          <div class="action-card-sub"><span id="s-leads" style="color:var(--accent2);font-weight:700">—</span> leads captured via WhatsApp AI</div>
+          <div class="action-card-sub"><span id="s-leads" style="color:var(--accent2);font-weight:700">0</span> leads captured via WhatsApp AI</div>
         </div>
         <button class="action-card-cta" onclick="event.stopPropagation();goTo('customers')" style="background:var(--s3);color:var(--text2)">View</button>
       </div>
@@ -2601,7 +2601,8 @@ function initUserUI() {
     planLbl.textContent = planLabels[planName] || (planName + ' plan');
   }
   if (!card || !prompt) return;
-  if (USER.email || USER.name) {
+  var token = localStorage.getItem('mpilot_token');
+  if ((USER.email || USER.name) && localStorage.getItem('mpilot_token')) {
     card.style.display = 'block';
     prompt.style.display = 'none';
     const nameEl = document.getElementById('user-name-label');
@@ -2683,6 +2684,23 @@ function closeForm(id) { const e = document.getElementById(id); if(e) e.style.di
 
 // ─── Navigation ───────────────────────────────────────────
 function goTo(page) {
+  // Guard: pages that need a business
+  var freePages = ['setup','myaccount','onboarding'];
+  if (!BIZ && freePages.indexOf(page) === -1) {
+    // If no businesses at all → onboarding
+    var sel = document.getElementById('biz-sel');
+    var hasBiz = sel && Array.from(sel.options).some(function(o){return o.value && o.value !== '';});
+    if (!hasBiz) {
+      document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on');});
+      document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on');});
+      var ob = document.getElementById('p-onboarding'); if(ob) ob.classList.add('on');
+      return;
+    }
+    // Has businesses but none active → show guard
+    var guard = document.getElementById('biz-guard'); if(guard) guard.classList.add('show');
+    return;
+  }
+  var guard = document.getElementById('biz-guard'); if(guard) guard.classList.remove('show');
   closeMobileNav();
   document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
   document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
@@ -3882,6 +3900,13 @@ async function loadBizList() {
   } else {
     BIZ = '';
     localStorage.removeItem('mpilot_biz');
+    // Rule 1: No business → show onboarding screen
+    setTimeout(function() {
+      document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('on'); });
+      document.querySelectorAll('.ni').forEach(function(n){ n.classList.remove('on'); });
+      var ob = document.getElementById('p-onboarding');
+      if (ob) ob.classList.add('on');
+    }, 50);
   }
 
   _renderBizSwitcher(_bizCache);
@@ -3994,6 +4019,9 @@ function _addBizFromPicker() {
 }
 
 async function _pickBizAndEnter(bizId, bizName, fromPicker) {
+  // Hide onboarding and guard
+  var ob = document.getElementById('p-onboarding'); if(ob) ob.classList.remove('on');
+  var guard = document.getElementById('biz-guard'); if(guard) guard.classList.remove('show');
   BIZ = bizId;
   localStorage.setItem('mpilot_biz', bizId);
   localStorage.setItem('mpilot_last_biz', bizId);
@@ -5722,6 +5750,11 @@ function setText2(id, val) {
 
 async function loadDash() {
   if (!BIZ) return;
+  // Show skeletons immediately
+  ['f-scans','f-chats','f-offers','f-bookings','f-reviews','f-repeat'].forEach(function(id){
+    var e=document.getElementById(id);
+    if(e) e.innerHTML='<div class="skel" style="width:36px;height:20px;border-radius:4px;margin:0 auto"></div>';
+  });
   var d = new Date();
   setText2('dash-date', d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'}));
   try {
@@ -5746,6 +5779,7 @@ async function loadDash() {
     setText2('s-leads',    r.total_leads || 0);
     // Biz name in header
     if (r.business_name) setText2('dash-biz-name', r.business_name);
+  updateDashActionCards(r);
   } catch(e) { console.log('loadDash error:', e.message); }
   // Load QR
   loadDashQR();
@@ -6159,27 +6193,23 @@ function closeUpgradeModal() {
 }
 
 function printQR() {
-  // Try dashboard QR first
   var img = document.querySelector('#dash-qr-wrap img') || document.querySelector('#qr-preview img');
   if (!img) {
-    toast('Go to Dashboard first to load your QR code', 'err');
+    toast('No QR loaded. Go to Dashboard first.', 'err');
     goTo('dashboard');
     return;
   }
+  var src = img.src;
   var w = window.open('', '_blank');
   if (!w) return;
-  var parts = [
-    '<!DOCTYPE html><html><head><title>MPilot QR Code</title>',
-    '<style>body{font-family:sans-serif;text-align:center;padding:60px;background:#fff}</style>',
-    '</head><body>',
-    '<h2 style="color:#333;margin-bottom:8px">Scan to Connect on WhatsApp</h2>',
-    '<p style="color:#888;margin-bottom:24px;font-size:14px">Powered by MPilot AI</p>',
-    '<img src="' + img.src + '" style="width:260px;height:260px;display:block;margin:0 auto">',
-    '<p style="color:#555;margin-top:24px;font-size:13px">Place this QR at your store counter, entrance or table</p>',
-    '</body></html>'
-  ];
   w.document.open();
-  w.document.write(parts.join(''));
+  w.document.write('<!DOCTYPE html><html><head><title>MPilot QR</title></head>');
+  w.document.write('<body style="text-align:center;padding:60px;font-family:sans-serif;background:#fff">');
+  w.document.write('<h2 style="color:#333;margin-bottom:8px">Scan to Connect on WhatsApp</h2>');
+  w.document.write('<p style="color:#888;margin-bottom:24px;font-size:14px">Powered by MPilot AI</p>');
+  w.document.write('<img src="'+src+'" style="width:260px;height:260px;display:block;margin:0 auto">');
+  w.document.write('<p style="color:#555;margin-top:24px;font-size:13px">Place this QR at your store counter</p>');
+  w.document.write('</body></html>');
   w.document.close();
   setTimeout(function(){ w.print(); }, 600);
 }
@@ -6220,145 +6250,25 @@ function getNextAction() {
   return {label: 'View Dashboard', action: function(){ goTo('dashboard'); }};
 }
 
-// ═══════════════════════════════════════════════════════════════
-// SMART ROUTING RULES
-// Rule 1: No business → onboarding screen
-// Rule 2: Has business → dashboard
-// Rule 3: Empty states guide action
-// Rule 4: Loading states show skeletons
-// ═══════════════════════════════════════════════════════════════
 
-// Override goTo with smart guard
-var _origGoTo = goTo;
-function goTo(page) {
-  // Pages that always work without a business
-  var noGuardPages = ['setup', 'myaccount', 'onboarding'];
-  if (!BIZ && noGuardPages.indexOf(page) === -1) {
-    // Check if we even have businesses
-    var bizSel = document.getElementById('biz-sel');
-    var hasBiz = bizSel && bizSel.options.length > 0 && bizSel.options[0].value !== '';
-    if (!hasBiz) {
-      // Show onboarding
-      document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('on'); });
-      document.querySelectorAll('.ni').forEach(function(n){ n.classList.remove('on'); });
-      var ob = document.getElementById('p-onboarding');
-      if (ob) ob.classList.add('on');
-      return;
-    }
-    // Has businesses but none selected → show guard
-    var guard = document.getElementById('biz-guard');
-    if (guard) guard.classList.add('show');
-    return;
-  }
-  // Hide guard if showing
-  var guard = document.getElementById('biz-guard');
-  if (guard) guard.classList.remove('show');
-  _origGoTo(page);
-}
 
-// After business selected — always go to dashboard
-var _origPickBiz = _pickBizAndEnter;
-async function _pickBizAndEnter(bizId, bizName, fromPicker) {
-  var guard = document.getElementById('biz-guard');
-  if (guard) guard.classList.remove('show');
-  // Hide onboarding
-  var ob = document.getElementById('p-onboarding');
-  if (ob) ob.classList.remove('on');
-  await _origPickBiz(bizId, bizName, fromPicker);
-}
-
-// Skeleton loader helpers
-function showSkeleton(containerId, rows) {
-  var el = document.getElementById(containerId);
-  if (!el) return;
-  var html = '';
-  for (var i = 0; i < (rows || 3); i++) {
-    html += '<div class="skel skel-block" style="margin-bottom:10px;height:'+(i===0?'70px':'54px')+'"></div>';
-  }
-  el.innerHTML = html;
-}
-
-function showStatSkeleton() {
-  ['f-scans','f-chats','f-offers','f-bookings','f-reviews','f-repeat'].forEach(function(id){
-    var e = document.getElementById(id);
-    if (e) e.innerHTML = '<div class="skel skel-stat" style="width:40px;height:24px;margin:0 auto"></div>';
-  });
-  ['s-leads','s-optin','s-camps','s-rating'].forEach(function(id){
-    var e = document.getElementById(id);
-    if (e) e.innerHTML = '<div class="skel skel-stat" style="width:36px;height:22px;margin:0 auto"></div>';
-  });
-  var qr = document.getElementById('dash-qr');
-  if (qr && !qr.querySelector('img')) {
-    qr.innerHTML = '<div class="skel" style="width:140px;height:140px;border-radius:8px;margin:0 auto"></div>';
-  }
-}
-
-// Override loadDash to show skeletons first
-var _origLoadDash = loadDash;
-async function loadDash() {
-  showStatSkeleton();
-  await _origLoadDash();
-}
-
-// Smart check on initial page load
-async function smartBoot() {
-  var bizSel = document.getElementById('biz-sel');
-  var hasBiz = bizSel && Array.from(bizSel.options).some(function(o){ return o.value !== ''; });
-  if (!hasBiz && !BIZ) {
-    // Show onboarding
-    document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('on'); });
-    var ob = document.getElementById('p-onboarding');
-    if (ob) ob.classList.add('on');
-  }
-}
-
-// Run smart check after biz list loads
-var _origLoadBizList = loadBizList;
-async function loadBizList() {
-  var result = await _origLoadBizList();
-  // After loading: if no businesses, show onboarding
-  if (!result || result.length === 0) {
-    document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('on'); });
-    var ob = document.getElementById('p-onboarding');
-    if (ob) ob.classList.add('on');
-  }
-  return result;
-}
-
-// Smart empty state for dashboard action cards
-function updateDashActionCards(data) {
-  if (!data) return;
-  var total = (data.total_leads||0) + (data.total_scans||0);
-  // Win-back card
-  var wb = document.getElementById('ac-winback');
-  if (wb) {
-    var churn = data.churn_risk_count || 0;
-    wb.textContent = churn > 0
-      ? churn + ' customers haven\'t visited in 30+ days'
-      : 'Send an offer to re-engage past customers';
-  }
-  // Review card
-  var rv = document.getElementById('ac-review');
-  if (rv) {
-    var elig = data.review_eligible || 0;
-    rv.textContent = elig > 0
-      ? elig + ' recent customers — ask them for a review'
-      : 'Boost your Google rating automatically';
-  }
-  // Leads count
-  var ld = document.getElementById('s-leads');
-  if (ld) {
-    var lc = data.total_leads || 0;
-    ld.textContent = lc > 0
-      ? lc + ''
-      : '0';
-  }
-  // Funnel: replace raw 0 with guidance
-  var funnelEl = document.getElementById('dash-funnel');
-  if (funnelEl && total === 0) {
-    var banner = document.getElementById('dash-onboard-banner');
-    if (banner) banner.style.display = '';
-  }
+function updateDashActionCards(r) {
+  if (!r) return;
+  var churn = r.churn_risk_count || 0;
+  var el = document.getElementById('ac-winback');
+  if (el) el.textContent = churn > 0
+    ? churn + ' customers haven\'t visited in 30+ days'
+    : 'Send an offer to re-engage past customers';
+  var elig = r.review_eligible || 0;
+  el = document.getElementById('ac-review');
+  if (el) el.textContent = elig > 0
+    ? elig + ' recent customers — ask for a review'
+    : 'Boost your Google rating automatically';
+  var lc = r.total_leads || 0;
+  el = document.getElementById('s-leads'); if (el) el.textContent = String(lc);
+  var total = (r.total_scans||0)+(r.total_leads||0)+(r.campaigns_sent||0);
+  var banner = document.getElementById('dash-onboard-banner');
+  if (banner) banner.style.display = total === 0 ? '' : 'none';
 }
 </script>
 <div class="page" id="p-myaccount">
