@@ -5364,37 +5364,63 @@ function spLoadTog() {}
 // ─── Dashboard loader v2 (uses real backend endpoints) ────────
 function setText2(id, val) {
   var e = document.getElementById(id);
-  if (e) e.innerHTML = (val !== null && val !== undefined) ? String(val) : '—';
+  if (e) e.innerHTML = (val !== null && val !== undefined && val !== '') ? String(val) : '—';
 }
 
 async function loadDash() {
   if (!BIZ) return;
-  // Date display
   var d = new Date();
   setText2('dash-date', d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'}));
   try {
-    var r = await req('GET', '/api/dashboard/' + BIZ);
+    // Real backend endpoint: /api/dashboard/stats/{BIZ}
+    var r = await req('GET', '/api/dashboard/stats/' + BIZ);
     if (!r) return;
-    // Funnel
-    setText2('f-scans',    r.qr_scans          || '0');
-    setText2('f-chats',    r.total_leads        || r.total_customers || '0');
-    setText2('f-offers',   r.campaigns_sent     || '0');
-    setText2('f-bookings', r.bookings           || '0');
-    setText2('f-reviews',  r.reviews_count      || '0');
-    setText2('f-repeat',   r.repeat_customers   || '0');
-    // Stats
-    setText2('s-leads',   r.total_leads    || r.total_customers || '0');
-    setText2('s-optin',   r.opted_in       || r.total_customers || '0');
-    setText2('s-camps',   r.campaigns_sent || '0');
-    setText2('s-rating',  r.google_rating  ? r.google_rating + ' ★' : '—');
-    // Action labels
-    setText2('ac-winback', (r.churn_risk||0) + ' customers need win-back');
-    setText2('ac-review',  'You have ' + (r.review_eligible||0) + ' customers to request');
-    // Biz name
-    if (r.business_name || r.name) setText2('dash-biz-name', r.business_name || r.name);
-  } catch(e) { console.log('dash error', e); }
+    // Funnel — map real field names
+    setText2('f-scans',    r.total_scans           || 0);
+    setText2('f-chats',    r.total_leads            || 0);
+    setText2('f-offers',   r.campaigns_sent         || 0);
+    setText2('f-bookings', r.bookings               || 0);
+    setText2('f-reviews',  r.total_reviews          || 0);
+    setText2('f-repeat',   r.repeat_customers       || 0);
+    // Stats row
+    setText2('s-leads',  r.total_leads              || 0);
+    setText2('s-optin',  r.opted_in_customers       || 0);
+    setText2('s-camps',  r.campaigns_sent           || 0);
+    setText2('s-rating', r.avg_rating > 0 ? r.avg_rating + ' ★' : '—');
+    // Action card sub-labels
+    setText2('ac-winback', (r.churn_risk_count || 0) + ' customers need win-back');
+    setText2('ac-review',  'You have ' + (r.total_leads || 0) + ' customers to request');
+    setText2('s-leads',    r.total_leads || 0);
+    // Biz name in header
+    if (r.business_name) setText2('dash-biz-name', r.business_name);
+  } catch(e) { console.log('loadDash error:', e.message); }
+  // Load QR
   loadDashQR();
 }
+
+async function loadDashQR() {
+  if (!BIZ) return;
+  var wrap = document.getElementById('dash-qr');
+  if (!wrap) return;
+  try {
+    var list = await req('GET', '/api/qr/list/' + BIZ);
+    if (list && list.length > 0) {
+      var qr = list[0];
+      var src = qr.qr_url || qr.qr_data_url || qr.image_url || '';
+      if (src) {
+        wrap.innerHTML = '<img src="' + src + '" style="width:140px;height:140px;border-radius:8px;object-fit:contain">';
+      } else {
+        wrap.innerHTML = '<div style="font-size:11px;color:var(--muted);padding:10px;text-align:center">QR ready<br>No image URL</div>';
+      }
+    } else {
+      wrap.innerHTML = '<div style="font-size:11px;color:var(--muted);padding:10px;text-align:center">No QR yet<br><button onclick="goTo(\"qr\")" style="margin-top:8px;font-size:11px;padding:5px 12px;border-radius:6px;background:var(--accent);color:#fff;border:none;cursor:pointer">Generate QR</button></div>';
+    }
+  } catch(e) {
+    wrap.innerHTML = '<div style="font-size:11px;color:var(--muted);padding:10px;text-align:center">QR unavailable</div>';
+    console.log('loadDashQR error:', e.message);
+  }
+}
+
 
 // ─── Nav active state ────────────────────────────────────────────
 function setNavActive(page) {
