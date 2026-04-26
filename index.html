@@ -2382,143 +2382,7 @@ function loadPage(page) {
 
 
 
-async function loadDash() {
-  if (!BIZ) return;
-
-  // Update date
-  const dateEl = document.getElementById('dash-date');
-  if (dateEl) dateEl.textContent = new Date().toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
-
-  showStatsSkeleton();
-  showSkeleton('activity-feed', 4);
-
-  const [stats, activity, social, revStats] = await Promise.all([
-    req('GET', `/api/dashboard/stats/${BIZ}`),
-    req('GET', `/api/dashboard/activity/${BIZ}`),
-    req('GET', `/api/dashboard/social-summary/${BIZ}`),
-    req('GET', `/api/reviews/stats/${BIZ}`),
-  ]);
-
-  const set = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v ?? '—'; };
-
-  // KPIs
-  set('s-leads', stats.total_leads ?? 0);
-  set('s-optin', stats.opted_in_customers ?? 0);
-  set('s-scans', stats.total_scans ?? 0);
-  set('s-churn', stats.churn_risk_count ?? 0);
-  set('s-camps', stats.campaigns_sent ?? 0);
-  set('s-rating', stats.avg_rating ? stats.avg_rating + '★' : '—');
-  set('s-vip', stats.vip_customers ?? 0);
-  set('s-rev', stats.revenue_attributed > 0 ? 'Rs.' + Math.round(stats.revenue_attributed) : '—');
-
-  // Subtitles
-  const optinPct = stats.total_leads > 0 ? Math.round((stats.opted_in_customers/stats.total_leads)*100) : 0;
-  set('sh-leads', `${stats.total_leads > 0 ? '+' + stats.total_leads + ' total' : 'Start scanning QR'}`);
-  set('sh-optin', `${optinPct}% opt-in rate`);
-  set('sh-scans', `${stats.total_scans > 0 ? 'Last scan today' : 'No scans yet'}`);
-  set('sh-rating', revStats.total ? `from ${revStats.total} reviews` : 'No reviews yet');
-
-  // Business name in header
-  const active = _bizCache.find(b => b.business_id === BIZ);
-  const nb = document.getElementById('dash-biz-name');
-  if (nb) nb.textContent = active ? active.name + ' — Today' : 'Dashboard';
-
-  // Activity feed
-  const feed = document.getElementById('activity-feed');
-  if (feed) {
-    const acts = activity || [];
-    feed.innerHTML = acts.length
-      ? acts.slice(0,8).map(a => `
-          <div class="ai">
-            <div class="ad ${a.icon||'user'}"></div>
-            <div style="flex:1">
-              <div class="at">${a.text}</div>
-              <div class="atm">${fd(a.time)}</div>
-            </div>
-          </div>`).join('')
-      : '<div class="empty"><div class="ei">📋</div><div>No activity yet</div><div style="font-size:11px;margin-top:4px">Scan a QR code to capture your first customer</div></div>';
-  }
-
-  // Reviews rating bars
-  const rb = document.getElementById('rating-bars');
-  if (rb) {
-    if (!revStats.total) {
-      rb.innerHTML = '<div class="empty"><div class="ei">⭐</div><div>No reviews yet</div><div style="font-size:11px;margin-top:4px;color:var(--muted)">Connect Google Business to sync reviews</div></div>';
-    } else {
-      const al = document.getElementById('avg-rlbl');
-      if (al) al.textContent = ` ${revStats.avg_rating}★ · ${revStats.total} reviews`;
-      rb.innerHTML = [5,4,3,2,1].map(s => {
-        const c   = revStats.distribution?.[String(s)] || 0;
-        const pct = revStats.total ? (c / revStats.total * 100) : 0;
-        const col = s >= 4 ? 'var(--a2)' : s === 3 ? 'var(--amber)' : 'var(--a3)';
-        return `<div class="rbw">
-          <span style="width:12px;color:var(--amber);font-size:11px">${s}</span>
-          <div class="rbb"><div class="rbf" style="width:${pct}%;background:${col}"></div></div>
-          <span style="width:18px;color:var(--muted);font-size:10px">${c}</span>
-        </div>`;
-      }).join('');
-    }
-  }
-
-  // Channel status strip (read-only — no connect button)
-  const dc = document.getElementById('dash-channels');
-  if (dc) {
-    const gbpOk  = social.gbp?.connected === true;
-    const igOk   = social.instagram?.connected === true;
-    const fbOk   = social.facebook?.connected === true;
-    const waOk   = social.whatsapp?.mode === 'real';
-    const channels = [
-      {icon:'G', label:'Google Business', ok:gbpOk,
-       detail: gbpOk ? ((social.gbp?.rating||0) + '\u2605 \u00b7 ' + (social.gbp?.reviews||0) + ' reviews') : 'Not connected',
-       color:'#4285f4'},
-      {icon:'IG', label:'Instagram', ok:igOk,
-       detail: igOk ? ('@' + (social.instagram?.username||'') + ' \u00b7 ' + (social.instagram?.followers||0) + ' followers') : 'Not connected',
-       color:'#e1306c'},
-      {icon:'FB', label:'Facebook', ok:fbOk,
-       detail: fbOk ? ((social.facebook?.page_name||'') + ' \u00b7 ' + (social.facebook?.page_likes||0) + ' likes') : 'Not connected',
-       color:'#1877f2'},
-      {icon:'WA', label:'WhatsApp', ok:waOk,
-       detail: waOk ? 'Live - ChatMitra connected' : 'Mock mode - configure in Setup',
-       color:'#25d366'},
-    ];
-    dc.innerHTML = channels.map(ch => `
-      <div class="chcard" style="padding:10px 12px;border-radius:9px;background:var(--s2)">
-        <div style="width:8px;height:8px;border-radius:50%;flex-shrink:0;background:${ch.ok?'var(--a2)':'var(--border)'}"></div>
-        <div class="chinfo" style="flex:1;min-width:0">
-          <div class="chname" style="color:${ch.color};font-size:12px">${ch.icon} ${ch.label}</div>
-          <div class="chdet" style="font-size:10.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ch.detail}</div>
-        </div>
-        ${!ch.ok ? '<span style="font-size:9px;color:var(--accent);cursor:pointer" onclick="_goSetupChannels()">Set up</span>' : ''}
-      </div>`).join('');
-  }
-
-  // WhatsApp funnel (only show when data exists)
-  if (stats.total_leads > 0) {
-    const funnel = document.getElementById('dash-wa-funnel');
-    const inner  = document.getElementById('dash-funnel-inner');
-    if (funnel && inner) {
-      funnel.style.display = 'block';
-      const steps = [
-        {label:'Scanned QR',      val:stats.total_scans,        color:'#6c63ff'},
-        {label:'Sent Message',    val:stats.total_leads,         color:'#0ea5e9'},
-        {label:'Opted In',        val:stats.opted_in_customers,  color:'#00d4aa'},
-        {label:'VIP Customers',   val:stats.vip_customers,       color:'#f59e0b'},
-        {label:'Revenue',         val:stats.revenue_attributed>0?1:0, label2:stats.revenue_attributed>0?'Rs.'+Math.round(stats.revenue_attributed):'—', color:'#ec4899'},
-      ];
-      const max = Math.max(...steps.map(s=>s.val||0), 1);
-      inner.innerHTML = steps.map(s => {
-        const pct = Math.round(((s.val||0)/max)*100);
-        return `<div style="text-align:center">
-          <div style="font-family:var(--fh);font-size:18px;font-weight:700;color:${s.color}">${s.label2||s.val||0}</div>
-          <div style="height:3px;background:var(--s2);border-radius:2px;margin:6px 0 4px">
-            <div style="height:100%;width:${pct}%;background:${s.color};border-radius:2px;transition:width .6s ease"></div>
-          </div>
-          <div style="font-size:10px;color:var(--muted)">${s.label}</div>
-        </div>`;
-      }).join('');
-    }
-  }
-}
+/* old loadDash removed */
 
 // ─── Revenue ─────────────────────────────────────────────
 async function loadRevenue() {
@@ -5498,6 +5362,11 @@ function spLoadTog() {}
 
 
 // ─── Dashboard loader v2 (uses real backend endpoints) ────────
+function setText2(id, val) {
+  var e = document.getElementById(id);
+  if (e) e.innerHTML = (val !== null && val !== undefined) ? String(val) : '—';
+}
+
 async function loadDash() {
   if (!BIZ) return;
   // Date display
