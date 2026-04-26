@@ -618,6 +618,15 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 .mini-stat{background:var(--s2);border:1px solid var(--border);border-radius:var(--r2);padding:12px 14px}
 .mini-stat-val{font-size:22px;font-weight:700;color:var(--text)}
 .mini-stat-lbl{font-size:10.5px;color:var(--muted);margin-top:2px}
+
+/* ─── Auth + OTP ────────────────────────────────────────────────── */
+.otp-digit{text-align:center;font-size:22px;font-weight:700;caret-color:var(--accent)}
+.otp-digit:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(108,99,255,.15)}
+/* ─── My Account ────────────────────────────────────────────────── */
+.acc-biz-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--s2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .12s}
+.acc-biz-row:hover{border-color:var(--accent);background:rgba(108,99,255,.05)}
+.acc-biz-row.active-biz{border-color:var(--accent);background:rgba(108,99,255,.08)}
+.acc-biz-icon{width:40px;height:40px;border-radius:9px;background:rgba(108,99,255,.12);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
@@ -695,7 +704,7 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 
   <!-- User footer -->
   <div style="padding:10px 11px 14px;border-top:1px solid var(--border)">
-    <div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:8px 11px;margin-bottom:7px">
+    <div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:8px 11px;margin-bottom:7px;cursor:pointer" onclick="goTo('myaccount')">
       <div id="sb-user-name" style="font-size:12px;font-weight:600;color:var(--text)">PetsWoof Admin</div>
       <div style="font-size:10px;color:var(--muted);margin-top:1px">Owner &#183; <span id="sb-plan-label" style="color:var(--accent2)">pro plan</span></div>
     </div>
@@ -2096,51 +2105,77 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 </div>
 
 <!-- AUTH MODAL -->
-<div id="auth-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closeAuthModal()">
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;width:420px;max-width:100%;max-height:90vh;overflow-y:auto;position:relative">
-    <button onclick="closeAuthModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1">×</button>
-    <div style="font-family:var(--fh);font-size:19px;font-weight:700;margin-bottom:18px" id="auth-title">Sign in to MPilot</div>
-    <div style="display:flex;background:var(--s2);border-radius:8px;padding:3px;margin-bottom:18px">
-      <div id="auth-tab-login" onclick="switchAuthTab('login')" style="flex:1;padding:7px;text-align:center;border-radius:6px;cursor:pointer;font-size:12.5px;font-weight:500;background:var(--accent);color:#fff;transition:all .15s">Login</div>
-      <div id="auth-tab-signup" onclick="switchAuthTab('signup')" style="flex:1;padding:7px;text-align:center;border-radius:6px;cursor:pointer;font-size:12.5px;font-weight:500;color:var(--muted);transition:all .15s">Sign Up</div>
-    </div>
-    <!-- Step 1: Email + Password -->
-    <div id="auth-login-form">
-      <div style="margin-bottom:12px"><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px">Email</label><input id="li-email" type="email" placeholder="your@email.com" class="fi"></div>
-      <div style="margin-bottom:14px"><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px">Password</label><input id="li-pw" type="password" placeholder="Your password" class="fi" onkeydown="if(event.key==='Enter')doLogin()"></div>
-      <div id="li-err" style="color:var(--a3);font-size:12px;margin-bottom:10px;display:none"></div>
-      <button id="li-btn" onclick="doLogin()" class="btn bp" style="width:100%;padding:11px;font-size:14px;border-radius:9px;justify-content:center">Login →</button>
-      <div style="text-align:center;margin-top:12px;font-size:12px;color:var(--muted)">No account? <span onclick="switchAuthTab('signup')" style="color:var(--accent);cursor:pointer">Sign up free</span></div>
+<!-- AUTH MODAL (Phone + OTP) -->
+<div id="auth-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closeAuthModal()">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;width:420px;max-width:100%;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.5)">
+
+    <!-- Header -->
+    <div style="padding:24px 28px 20px;border-bottom:1px solid var(--border);text-align:center">
+      <div style="font-family:var(--fh);font-size:20px;font-weight:800;color:var(--accent);margin-bottom:4px">&#9889; MPilot</div>
+      <div id="auth-modal-title" style="font-size:15px;font-weight:600;color:var(--text)">Welcome back</div>
+      <div id="auth-modal-sub" style="font-size:12px;color:var(--muted);margin-top:3px">Enter your phone number to continue</div>
     </div>
 
-    <!-- Step 2: Business picker (shown when user has multiple businesses) -->
-    <div id="auth-biz-picker" style="display:none">
-      <div style="font-size:13px;color:var(--muted);margin-bottom:14px">Welcome back! Select a business to manage:</div>
-      <div id="auth-biz-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
-      <button class="btn bs" style="width:100%;justify-content:center" onclick="closeAuthModal()">Skip — go to Dashboard</button>
+    <!-- Tab switcher -->
+    <div style="display:flex;padding:16px 28px 0;gap:0">
+      <button id="auth-tab-login"  onclick="switchAuthTab('login')"  style="flex:1;padding:8px;font-size:13px;font-weight:600;border:none;background:transparent;border-bottom:2px solid var(--accent);color:var(--accent);cursor:pointer;font-family:var(--fb)">Login</button>
+      <button id="auth-tab-signup" onclick="switchAuthTab('signup')" style="flex:1;padding:8px;font-size:13px;font-weight:500;border:none;background:transparent;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;font-family:var(--fb)">Sign Up</button>
     </div>
-    <div id="auth-signup-form" style="display:none">
-      <div style="margin-bottom:11px"><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px">Your Name</label><input id="su-name" type="text" placeholder="Ravi Kumar" class="fi"></div>
-      <div style="margin-bottom:11px"><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px">Email</label><input id="su-email" type="email" placeholder="ravi@mybusiness.com" class="fi"></div>
-      <div style="margin-bottom:11px"><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px">Password</label><input id="su-pw" type="password" placeholder="Min 6 characters" class="fi"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:11px">
-        <div><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px">Business Name</label><input id="su-biz" type="text" placeholder="Ravi's Salon" class="fi"></div>
-        <div><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px">Phone (with code)</label><input id="su-ph" type="text" placeholder="919876543210" class="fi"></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-        <div><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px">Category</label><select id="su-cat" class="fsel"><option value="salon">Salon</option><option value="restaurant">Restaurant</option><option value="petcare">Pet Care</option><option value="retail">Retail</option><option value="gym">Gym</option><option value="clinic">Clinic</option><option value="other">Other</option></select></div>
-        <div><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px">Role</label><select id="su-role" class="fsel"><option value="owner">Owner</option><option value="manager">Manager</option><option value="staff">Staff</option><option value="agency">Agency</option></select></div>
-      </div>
-      <div id="su-err" style="color:var(--a3);font-size:12px;margin-bottom:10px;display:none"></div>
-      <div id="su-ok" style="color:var(--a2);font-size:12px;margin-bottom:10px;display:none"></div>
-      <button id="su-btn" onclick="doSignup()" class="btn bp" style="width:100%;padding:11px;font-size:14px;border-radius:9px;justify-content:center">Create Free Account</button>
-      <div style="text-align:center;margin-top:12px;font-size:12px;color:var(--muted)">Have an account? <span onclick="switchAuthTab('login')">
-              Log in
-            </span>
+
+    <!-- Body -->
+    <div style="padding:20px 28px 28px">
+
+      <!-- Phase 1: Phone entry -->
+      <div id="auth-phase-phone">
+        <!-- Signup-only name field -->
+        <div id="auth-name-row" style="display:none;margin-bottom:14px">
+          <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Your Name</label>
+          <input id="auth-name" class="fi" placeholder="Full Name" type="text">
+        </div>
+        <div style="margin-bottom:14px">
+          <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Phone / WhatsApp <span style="color:var(--a3)">*</span></label>
+          <div style="display:flex;gap:8px">
+            <div style="display:flex;align-items:center;gap:6px;background:var(--s2);border:1px solid var(--border2);border-radius:8px;padding:0 12px;height:38px;font-size:13px;flex-shrink:0">&#127470;&#127475; +91</div>
+            <input id="auth-phone" class="fi" placeholder="9XXXXXXXXX" type="tel" maxlength="10" style="flex:1" onkeydown="if(event.key==='Enter')sendOTP()">
           </div>
         </div>
+        <div id="auth-phone-err" style="color:var(--a3);font-size:12px;margin-bottom:10px;display:none"></div>
+        <button id="auth-otp-btn" onclick="sendOTP()" class="btn bp" style="width:100%;height:40px;font-size:13.5px;font-weight:700">
+          Send OTP &#8594;
+        </button>
+        <div style="margin-top:14px;text-align:center;font-size:11.5px;color:var(--muted)">
+          &#9745; We never post without your permission
+        </div>
       </div>
+
+      <!-- Phase 2: OTP entry -->
+      <div id="auth-phase-otp" style="display:none">
+        <div style="text-align:center;margin-bottom:20px">
+          <div style="font-size:32px;margin-bottom:8px">&#128241;</div>
+          <div style="font-size:13.5px;font-weight:600;color:var(--text)">Enter OTP</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Sent to <span id="auth-phone-display" style="color:var(--accent2);font-weight:600"></span></div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px">
+          <input class="fi otp-digit" maxlength="1" type="tel" style="width:48px;height:52px;text-align:center;font-size:22px;font-weight:700;border-radius:10px">
+          <input class="fi otp-digit" maxlength="1" type="tel" style="width:48px;height:52px;text-align:center;font-size:22px;font-weight:700;border-radius:10px">
+          <input class="fi otp-digit" maxlength="1" type="tel" style="width:48px;height:52px;text-align:center;font-size:22px;font-weight:700;border-radius:10px">
+          <input class="fi otp-digit" maxlength="1" type="tel" style="width:48px;height:52px;text-align:center;font-size:22px;font-weight:700;border-radius:10px">
+          <input class="fi otp-digit" maxlength="1" type="tel" style="width:48px;height:52px;text-align:center;font-size:22px;font-weight:700;border-radius:10px">
+          <input class="fi otp-digit" maxlength="1" type="tel" style="width:48px;height:52px;text-align:center;font-size:22px;font-weight:700;border-radius:10px">
+        </div>
+        <div id="auth-otp-err" style="color:var(--a3);font-size:12px;margin-bottom:10px;text-align:center;display:none"></div>
+        <button id="auth-verify-btn" onclick="verifyOTP()" class="btn bp" style="width:100%;height:40px;font-size:13.5px;font-weight:700">
+          Verify &amp; Continue &#8594;
+        </button>
+        <div style="margin-top:12px;text-align:center;font-size:12px;color:var(--muted)">
+          Didn't receive? <button onclick="sendOTP()" style="color:var(--accent2);background:none;border:none;cursor:pointer;font-size:12px;font-family:var(--fb);font-weight:600">Resend OTP</button>
+          &nbsp;&#183;&nbsp; <button onclick="backToPhone()" style="color:var(--muted);background:none;border:none;cursor:pointer;font-size:12px;font-family:var(--fb)">Change number</button>
+        </div>
+      </div>
+
     </div>
+  </div>
+</div>
   </div>
 </div>
 
@@ -3651,45 +3686,7 @@ function selectBiz(id) {
 
 
 // ── Login flow ────────────────────────────────────────
-async function doLogin() {
-  const btn = document.getElementById('li-btn');
-  const err = document.getElementById('li-err');
-  if (err) err.style.display = 'none';
-  const email = document.getElementById('li-email')?.value.trim();
-  const pw    = document.getElementById('li-pw')?.value;
-  if (!email || !pw) {
-    if (err) { err.textContent = 'Email and password required'; err.style.display = 'block'; }
-    return;
-  }
-  if (btn) { btn.textContent = 'Logging in…'; btn.disabled = true; }
-  const data = await req('POST', '/api/auth/login', {email, password: pw});
-  if (btn) { btn.textContent = 'Login →'; btn.disabled = false; }
-
-  if (!data.token) {
-    if (err) { err.textContent = data.detail || 'Login failed'; err.style.display = 'block'; }
-    return;
-  }
-
-  localStorage.setItem('mpilot_token', data.token);
-  localStorage.setItem('mpilot_user',  JSON.stringify(data));
-  USER = data;
-
-  const bizList = await req('GET', '/api/businesses/');
-  const arr = Array.isArray(bizList) ? bizList : [];
-
-  if (arr.length === 0) {
-    closeAuthModal();
-    initUserUI();
-    await loadBizList();
-    // New user — go to setup
-    goTo('setup'); switchSetupTab('profile');
-    toast('Welcome! Let\'s set up your business in 5 minutes 👋');
-    return;
-  }
-
-  // Has businesses — show picker
-  _showLoginBizPicker(arr, data.name || data.email);
-}
+async /* doLogin replaced by phone+OTP flow */
 
 function _showLoginBizPicker(businesses, userName) {
   // Close auth modal first
@@ -5520,11 +5517,24 @@ async function loadDashQR() {
 }
 
 function printQR() {
-  var img = document.querySelector('#dash-qr-wrap img');
-  if (!img) { toast('Generate a QR first in Setup', 'err'); return; }
-  var w = window.open('', '_blank');
-  w.document.write('<html><body style="text-align:center;padding:40px"><img src="' + img.src + '" style="width:300px"><br><p style="font-family:sans-serif;font-size:16px">Scan to connect on WhatsApp</p><script>window.print()<\/script></body></html>');
+  var wrap = document.getElementById('dash-qr-wrap');
+  var img  = wrap ? wrap.querySelector('img') : null;
+  if (!img) { toast('No QR found. Complete setup first.', 'err'); return; }
+  var src  = img.src;
+  var w    = window.open('', '_blank');
+  if (!w) return;
+  var parts = [
+    '<!DOCTYPE html><html><head><title>MPilot QR</title></head>',
+    '<body style="text-align:center;padding:60px;font-family:sans-serif">',
+    '<h2 style="color:#333;margin-bottom:20px">Scan to Connect on WhatsApp</h2>',
+    '<img src="' + src + '" style="width:260px;height:260px;margin:0 auto;display:block">',
+    '<p style="color:#888;margin-top:20px;font-size:14px">Powered by MPilot AI</p>',
+    '</body></html>'
+  ];
+  w.document.open();
+  w.document.write(parts.join(''));
   w.document.close();
+  setTimeout(function(){ w.print(); }, 600);
 }
 
 // ─── Nav active state ────────────────────────────────────────────
@@ -5545,6 +5555,191 @@ var PAGE_TITLES = {
 
 // Patch goTo to update nav active state and page title
 var _origGoTo = typeof goTo === 'function' ? goTo : null;
+
+
+// ─── Auth: Phone + OTP flow ──────────────────────────────────────
+var _authMode = 'login'; // 'login' | 'signup'
+
+function showAuthModal() {
+  var m = document.getElementById('auth-modal');
+  if (m) { m.style.display = 'flex'; switchAuthTab('login'); }
+}
+function closeAuthModal() {
+  var m = document.getElementById('auth-modal');
+  if (m) m.style.display = 'none';
+}
+
+function switchAuthTab(tab) {
+  _authMode = tab;
+  var tabs = {login: document.getElementById('auth-tab-login'), signup: document.getElementById('auth-tab-signup')};
+  var nameRow = document.getElementById('auth-name-row');
+  Object.entries(tabs).forEach(function(kv) {
+    var isActive = kv[0] === tab;
+    if (kv[1]) {
+      kv[1].style.borderBottomColor = isActive ? 'var(--accent)' : 'transparent';
+      kv[1].style.color = isActive ? 'var(--accent)' : 'var(--muted)';
+    }
+  });
+  if (nameRow) nameRow.style.display = tab === 'signup' ? '' : 'none';
+  var titleEl = document.getElementById('auth-modal-title');
+  var subEl   = document.getElementById('auth-modal-sub');
+  if (titleEl) titleEl.textContent = tab === 'login' ? 'Welcome back' : 'Create your account';
+  if (subEl)   subEl.textContent   = 'Enter your phone number to continue';
+  backToPhone();
+}
+
+async function sendOTP() {
+  var phone = (document.getElementById('auth-phone') || {value:''}).value.trim();
+  var errEl = document.getElementById('auth-phone-err');
+  if (errEl) errEl.style.display = 'none';
+  if (!phone || phone.length < 10) {
+    if (errEl) { errEl.textContent = 'Enter a valid 10-digit phone number'; errEl.style.display = 'block'; }
+    return;
+  }
+  var btn = document.getElementById('auth-otp-btn');
+  if (btn) { btn.textContent = 'Sending...'; btn.disabled = true; }
+
+  var endpoint = _authMode === 'signup' ? '/api/auth/send-otp' : '/api/auth/send-otp';
+  var name = (document.getElementById('auth-name') || {value:''}).value.trim();
+  try {
+    var r = await req('POST', endpoint, {phone: '91'+phone, name: name, mode: _authMode});
+    // Show OTP input regardless (dev/prod)
+    var pd = document.getElementById('auth-phone-display');
+    if (pd) pd.textContent = '+91 ' + phone;
+    document.getElementById('auth-phase-phone').style.display = 'none';
+    document.getElementById('auth-phase-otp').style.display = '';
+    // Focus first digit
+    var first = document.querySelector('.otp-digit');
+    if (first) first.focus();
+    // Wire digit auto-advance
+    wireOTPInputs();
+  } catch(ex) {
+    if (errEl) { errEl.textContent = 'Failed to send OTP. Try again.'; errEl.style.display = 'block'; }
+  }
+  if (btn) { btn.textContent = 'Send OTP →'; btn.disabled = false; }
+}
+
+function wireOTPInputs() {
+  var digits = Array.from(document.querySelectorAll('.otp-digit'));
+  digits.forEach(function(inp, idx) {
+    inp.oninput = function() {
+      inp.value = inp.value.slice(-1);
+      if (inp.value && idx < digits.length - 1) digits[idx+1].focus();
+      if (digits.every(function(d){ return d.value; })) verifyOTP();
+    };
+    inp.onkeydown = function(e) {
+      if (e.key === 'Backspace' && !inp.value && idx > 0) digits[idx-1].focus();
+    };
+  });
+}
+
+async function verifyOTP() {
+  var digits = Array.from(document.querySelectorAll('.otp-digit'));
+  var otp = digits.map(function(d){ return d.value; }).join('');
+  var errEl = document.getElementById('auth-otp-err');
+  if (errEl) errEl.style.display = 'none';
+  if (otp.length < 6) { if(errEl){errEl.textContent='Enter 6-digit OTP';errEl.style.display='';} return; }
+  var phone = (document.getElementById('auth-phone')||{value:''}).value.trim();
+  var name  = (document.getElementById('auth-name') ||{value:''}).value.trim();
+  var btn   = document.getElementById('auth-verify-btn');
+  if (btn) { btn.textContent = 'Verifying...'; btn.disabled = true; }
+  try {
+    var endpoint = _authMode === 'signup' ? '/api/auth/verify-otp' : '/api/auth/verify-otp';
+    var r = await req('POST', endpoint, {phone:'91'+phone, otp:otp, name:name, mode:_authMode});
+    if (r && r.token) {
+      localStorage.setItem('mpilot_token', r.token);
+      localStorage.setItem('mpilot_user',  JSON.stringify(r));
+      USER = r;
+      closeAuthModal();
+      initUserUI();
+      var bizList = await req('GET', '/api/businesses/');
+      var arr = Array.isArray(bizList) ? bizList : [];
+      if (arr.length === 0) {
+        goTo('setup'); wizGo(1);
+        toast('Welcome! Setup your business to get started &#128640;');
+      } else {
+        _showLoginBizPicker(arr, r.name || r.phone || '');
+      }
+    } else {
+      var msg = (r && r.detail) || 'Invalid OTP. Try again.';
+      if (errEl) { errEl.textContent = msg; errEl.style.display = ''; }
+    }
+  } catch(ex) {
+    if (errEl) { errEl.textContent = 'Verification failed. Try again.'; errEl.style.display = ''; }
+  }
+  if (btn) { btn.textContent = 'Verify & Continue →'; btn.disabled = false; }
+}
+
+function backToPhone() {
+  document.getElementById('auth-phase-phone').style.display = '';
+  document.getElementById('auth-phase-otp').style.display = 'none';
+  document.querySelectorAll('.otp-digit').forEach(function(d){ d.value=''; });
+  var errEl = document.getElementById('auth-phone-err');
+  if (errEl) errEl.style.display = 'none';
+}
+
+function doLogout() {
+  localStorage.removeItem('mpilot_token');
+  localStorage.removeItem('mpilot_user');
+  USER = null; BIZ = null; BIZ_OBJ = null;
+  // Hide app, show login
+  document.getElementById('main-sidebar') && (document.getElementById('main-sidebar').style.display = 'none');
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('on'); });
+  showAuthModal();
+  toast('Logged out successfully');
+}
+
+// ─── My Account ──────────────────────────────────────────────────
+async function loadMyAccount() {
+  if (!USER) return;
+  var fn = USER.name || USER.email || USER.phone || '?';
+  var el = document.getElementById('acc-name');    if(el) el.textContent = fn;
+  var av = document.getElementById('acc-avatar');  if(av) av.textContent = fn[0].toUpperCase();
+  var ep = document.getElementById('acc-phone');   if(ep) ep.textContent = USER.phone ? '+91 '+USER.phone.replace(/^91/,'') : '\u2014';
+  var ee = document.getElementById('acc-email');   if(ee) ee.textContent = USER.email || '\u2014';
+  var sn = document.getElementById('sb-user-name');if(sn) sn.textContent = fn;
+  try {
+    var bizList = await req('GET', '/api/businesses/');
+    var arr = Array.isArray(bizList) ? bizList : [];
+    var bc = document.getElementById('acc-biz-count'); if(bc) bc.textContent = arr.length;
+    var cc = document.getElementById('acc-cust-count');
+    var listEl = document.getElementById('acc-biz-list');
+    var icons = {petcare:'&#128062;',salon:'&#9986;',clinic:'&#129514;',retail:'&#128717;',other:'&#127983;'};
+    if (listEl) {
+      if (arr.length === 0) {
+        listEl.innerHTML = '<div style="text-align:center;padding:20px;font-size:12px;color:var(--muted)">No businesses yet.</div>';
+      } else {
+        var frag = document.createDocumentFragment();
+        arr.forEach(function(b) {
+          var row = document.createElement('div');
+          var isActive = b.business_id === BIZ;
+          row.className = 'acc-biz-row' + (isActive ? ' active-biz' : '');
+          row.dataset.bid = b.business_id;
+          row.dataset.bname = b.name || '';
+          row.innerHTML = '<div class="acc-biz-icon">' + (icons[b.category]||'&#127983;') + '</div>'
+            + '<div style="flex:1;min-width:0">'
+            + '<div style="font-size:13px;font-weight:600;color:var(--text)">' + (b.name||'') + '</div>'
+            + '<div style="font-size:11px;color:var(--muted);margin-top:2px">' + (b.location||b.city||'') + '</div>'
+            + '</div>'
+            + (isActive
+              ? '<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(108,99,255,.12);color:var(--accent2);font-weight:600">Active</span>'
+              : '<span style="font-size:12px;color:var(--muted)">&#8250;</span>');
+          row.onclick = function() { _pickBizAndEnter(this.dataset.bid, this.dataset.bname); };
+          frag.appendChild(row);
+        });
+        listEl.innerHTML = '';
+        listEl.appendChild(frag);
+      }
+      var total = arr.reduce(function(s,b){ return s+(b.lead_count||0); }, 0);
+      if (cc) cc.textContent = total;
+    }
+    var ms = document.getElementById('acc-since');
+    if (ms && USER.created_at) ms.textContent = new Date(USER.created_at).toLocaleDateString('en-IN',{month:'short',year:'numeric'});
+  } catch(e) { console.log('account load err', e); }
+}
+
+function editAccountProfile() { toast('Edit profile — coming soon'); }
+function showInvoices()       { toast('Invoices — coming soon'); }
 
 </script>
 
@@ -5573,5 +5768,59 @@ var _origGoTo = typeof goTo === 'function' ? goTo : null;
   </div>
 </div>
 
+<div class="page" id="p-myaccount">
+  <div class="ph">
+    <div><div class="pt">My Account</div><div class="ps">Manage your profile, businesses and billing</div></div>
+    <button class="btn bs sm" onclick="doLogout()">Logout &#8594;</button>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+        <div id="acc-avatar" style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--a2));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;flex-shrink:0">?</div>
+        <div style="flex:1"><div id="acc-name" style="font-size:15px;font-weight:700;color:var(--text)">&#8212;</div><div id="acc-role" style="font-size:12px;color:var(--muted);margin-top:2px">Owner</div></div>
+        <button class="btn bs sm" onclick="toast('Edit profile &#8212; coming soon')">Edit</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div><div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px">Phone / WhatsApp</div><div id="acc-phone" style="font-size:13px;color:var(--text);margin-top:3px">&#8212;</div></div>
+        <div><div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px">Email</div><div id="acc-email" style="font-size:13px;color:var(--text);margin-top:3px">&#8212;</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div style="font-size:14px;font-weight:600;color:var(--text)">Plan &amp; Billing</div>
+        <button class="btn bp sm" onclick="toast('Upgrade &#8212; coming soon')">Upgrade &#8599;</button>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(108,99,255,.15),rgba(108,99,255,.05));border:1px solid rgba(108,99,255,.2);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div><div id="acc-plan" style="font-size:16px;font-weight:700;color:var(--text)">MPilot Pro</div><div style="font-size:11px;color:var(--muted);margin-top:3px">Renews <span id="acc-renew">May 25, 2026</span></div></div>
+          <div style="font-size:11px;font-weight:600;padding:4px 10px;background:rgba(16,185,129,.12);color:#10b981;border-radius:20px">Active</div>
+        </div>
+      </div>
+      <div onclick="toast('Invoices &#8212; coming soon')" style="font-size:12px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px">&#128196; View invoices &amp; payment history</div>
+    </div>
+    <div class="card" style="grid-column:1/-1">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div style="font-size:14px;font-weight:600;color:var(--text)">My Businesses</div>
+        <button class="btn bs sm" onclick="addNewBusinessQuick()">+ Add Business</button>
+      </div>
+      <div id="acc-biz-list" style="display:flex;flex-direction:column;gap:8px"><div style="font-size:12px;color:var(--muted);text-align:center;padding:16px">Loading...</div></div>
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">Security</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--s2);border:1px solid var(--border);border-radius:8px"><div><div style="font-size:12.5px;font-weight:500;color:var(--text)">Phone Verification</div><div style="font-size:11px;color:#10b981;margin-top:2px">&#10003; Verified</div></div><button class="btn bs sm" onclick="toast('Change phone &#8212; coming soon')">Change</button></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--s2);border:1px solid var(--border);border-radius:8px"><div><div style="font-size:12.5px;font-weight:500;color:var(--text)">Active Sessions</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Logged in on this device</div></div><button class="btn bs sm" onclick="doLogout()">Logout All</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">Account Overview</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:12px;color:var(--muted)">Total Businesses</span><span id="acc-biz-count" style="font-size:13px;font-weight:700;color:var(--text)">&#8212;</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:12px;color:var(--muted)">Total Customers</span><span id="acc-cust-count" style="font-size:13px;font-weight:700;color:var(--accent)">&#8212;</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0"><span style="font-size:12px;color:var(--muted)">Member Since</span><span id="acc-since" style="font-size:12px;color:var(--text)">Apr 2026</span></div>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
