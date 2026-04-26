@@ -2104,75 +2104,106 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
   </div>
 </div>
 
-<!-- AUTH MODAL -->
-<!-- AUTH MODAL (Phone + OTP) -->
+<!-- AUTH MODAL — Email/Password + Phone/OTP -->
 <div id="auth-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closeAuthModal()">
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;width:420px;max-width:100%;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.5)">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;width:440px;max-width:100%;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.5)">
 
     <!-- Header -->
-    <div style="padding:24px 28px 20px;border-bottom:1px solid var(--border);text-align:center">
+    <div style="padding:22px 28px 16px;border-bottom:1px solid var(--border);text-align:center">
       <div style="font-family:var(--fh);font-size:20px;font-weight:800;color:var(--accent);margin-bottom:4px">&#9889; MPilot</div>
       <div id="auth-modal-title" style="font-size:15px;font-weight:600;color:var(--text)">Welcome back</div>
-      <div id="auth-modal-sub" style="font-size:12px;color:var(--muted);margin-top:3px">Enter your phone number to continue</div>
     </div>
 
-    <!-- Tab switcher -->
-    <div style="display:flex;padding:16px 28px 0;gap:0">
-      <button id="auth-tab-login"  onclick="switchAuthTab('login')"  style="flex:1;padding:8px;font-size:13px;font-weight:600;border:none;background:transparent;border-bottom:2px solid var(--accent);color:var(--accent);cursor:pointer;font-family:var(--fb)">Login</button>
-      <button id="auth-tab-signup" onclick="switchAuthTab('signup')" style="flex:1;padding:8px;font-size:13px;font-weight:500;border:none;background:transparent;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;font-family:var(--fb)">Sign Up</button>
+    <!-- Login / Sign Up tabs -->
+    <div style="display:flex;border-bottom:1px solid var(--border)">
+      <button id="auth-tab-login"  onclick="switchAuthTab('login')"  style="flex:1;padding:10px;font-size:13px;font-weight:600;border:none;background:transparent;border-bottom:2px solid var(--accent);color:var(--accent);cursor:pointer;font-family:var(--fb);margin-bottom:-1px">Login</button>
+      <button id="auth-tab-signup" onclick="switchAuthTab('signup')" style="flex:1;padding:10px;font-size:13px;font-weight:500;border:none;background:transparent;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;font-family:var(--fb);margin-bottom:-1px">Sign Up</button>
     </div>
 
-    <!-- Body -->
-    <div style="padding:20px 28px 28px">
+    <div style="padding:20px 28px 24px">
 
-      <!-- Phase 1: Phone entry -->
-      <div id="auth-phase-phone">
-        <!-- Signup-only name field -->
-        <div id="auth-name-row" style="display:none;margin-bottom:14px">
+      <!-- METHOD SWITCHER (Login only) -->
+      <div id="auth-method-switcher" style="display:flex;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:3px;gap:2px;margin-bottom:18px">
+        <button id="auth-meth-email" onclick="switchAuthMethod('email')" style="flex:1;height:28px;border-radius:6px;border:none;background:var(--s3);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--fb);box-shadow:0 1px 4px rgba(0,0,0,.3)">&#128231; Email</button>
+        <button id="auth-meth-phone" onclick="switchAuthMethod('phone')" style="flex:1;height:28px;border-radius:6px;border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;font-family:var(--fb)">&#128241; Phone OTP</button>
+      </div>
+
+      <!-- ═══ EMAIL / PASSWORD FORM ═══════════════════════════ -->
+      <div id="auth-email-form">
+        <!-- Signup name (signup only) -->
+        <div id="auth-signup-name" style="display:none;margin-bottom:13px">
           <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Your Name</label>
           <input id="auth-name" class="fi" placeholder="Full Name" type="text">
         </div>
-        <div style="margin-bottom:14px">
-          <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Phone / WhatsApp <span style="color:var(--a3)">*</span></label>
-          <div style="display:flex;gap:8px">
-            <div style="display:flex;align-items:center;gap:6px;background:var(--s2);border:1px solid var(--border2);border-radius:8px;padding:0 12px;height:38px;font-size:13px;flex-shrink:0">&#127470;&#127475; +91</div>
-            <input id="auth-phone" class="fi" placeholder="9XXXXXXXXX" type="tel" maxlength="10" style="flex:1" onkeydown="if(event.key==='Enter')sendOTP()">
+        <div style="margin-bottom:13px">
+          <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Email Address <span style="color:var(--a3)">*</span></label>
+          <input id="li-email" class="fi" placeholder="your@email.com" type="email" onkeydown="if(event.key==='Enter')authEmailSubmit()">
+        </div>
+        <div style="margin-bottom:6px">
+          <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Password <span style="color:var(--a3)">*</span></label>
+          <div style="position:relative">
+            <input id="li-pw" class="fi" placeholder="Your password" type="password" style="padding-right:40px" onkeydown="if(event.key==='Enter')authEmailSubmit()">
+            <button onclick="togglePwVis()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px" title="Show/hide">&#128065;</button>
           </div>
         </div>
-        <div id="auth-phone-err" style="color:var(--a3);font-size:12px;margin-bottom:10px;display:none"></div>
-        <button id="auth-otp-btn" onclick="sendOTP()" class="btn bp" style="width:100%;height:40px;font-size:13.5px;font-weight:700">
-          Send OTP &#8594;
-        </button>
-        <div style="margin-top:14px;text-align:center;font-size:11.5px;color:var(--muted)">
-          &#9745; We never post without your permission
+        <div id="auth-forgot-row" style="text-align:right;margin-bottom:14px">
+          <button onclick="showForgotPw()" style="font-size:11.5px;color:var(--accent2);background:none;border:none;cursor:pointer;font-family:var(--fb)">Forgot password?</button>
+        </div>
+        <div id="auth-signup-pw2" style="display:none;margin-bottom:13px">
+          <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Confirm Password <span style="color:var(--a3)">*</span></label>
+          <input id="li-pw2" class="fi" placeholder="Repeat password" type="password">
+        </div>
+        <div id="li-err" style="color:var(--a3);font-size:12px;margin-bottom:10px;display:none"></div>
+        <button id="li-btn" onclick="authEmailSubmit()" class="btn bp" style="width:100%;height:40px;font-size:13.5px;font-weight:700">Login &#8594;</button>
+      </div>
+
+      <!-- ═══ PHONE / OTP FORM ═══════════════════════════════ -->
+      <div id="auth-phone-form" style="display:none">
+
+        <!-- Phase 1: Phone entry -->
+        <div id="auth-phase-phone">
+          <div id="auth-otp-name-row" style="display:none;margin-bottom:13px">
+            <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Your Name</label>
+            <input id="auth-otp-name" class="fi" placeholder="Full Name" type="text">
+          </div>
+          <div style="margin-bottom:13px">
+            <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Phone / WhatsApp <span style="color:var(--a3)">*</span></label>
+            <div style="display:flex;gap:8px">
+              <div style="display:flex;align-items:center;gap:6px;background:var(--s2);border:1px solid var(--border2);border-radius:8px;padding:0 12px;height:38px;font-size:13px;flex-shrink:0">&#127470;&#127475; +91</div>
+              <input id="auth-phone" class="fi" placeholder="9XXXXXXXXX" type="tel" maxlength="10" style="flex:1" onkeydown="if(event.key==='Enter')sendOTP()">
+            </div>
+          </div>
+          <div id="auth-phone-err" style="color:var(--a3);font-size:12px;margin-bottom:10px;display:none"></div>
+          <button id="auth-otp-btn" onclick="sendOTP()" class="btn bp" style="width:100%;height:40px;font-size:13.5px;font-weight:700">Send OTP &#8594;</button>
+        </div>
+
+        <!-- Phase 2: OTP entry -->
+        <div id="auth-phase-otp" style="display:none">
+          <div style="text-align:center;margin-bottom:18px">
+            <div style="font-size:28px;margin-bottom:8px">&#128241;</div>
+            <div style="font-size:13.5px;font-weight:600;color:var(--text)">Enter OTP</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:3px">Sent to <span id="auth-phone-display" style="color:var(--accent2);font-weight:600"></span></div>
+          </div>
+          <div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px">
+            <input class="fi otp-digit" maxlength="1" type="tel" style="width:46px;height:50px;text-align:center;font-size:20px;font-weight:700;border-radius:10px;padding:0">
+            <input class="fi otp-digit" maxlength="1" type="tel" style="width:46px;height:50px;text-align:center;font-size:20px;font-weight:700;border-radius:10px;padding:0">
+            <input class="fi otp-digit" maxlength="1" type="tel" style="width:46px;height:50px;text-align:center;font-size:20px;font-weight:700;border-radius:10px;padding:0">
+            <input class="fi otp-digit" maxlength="1" type="tel" style="width:46px;height:50px;text-align:center;font-size:20px;font-weight:700;border-radius:10px;padding:0">
+            <input class="fi otp-digit" maxlength="1" type="tel" style="width:46px;height:50px;text-align:center;font-size:20px;font-weight:700;border-radius:10px;padding:0">
+            <input class="fi otp-digit" maxlength="1" type="tel" style="width:46px;height:50px;text-align:center;font-size:20px;font-weight:700;border-radius:10px;padding:0">
+          </div>
+          <div id="auth-otp-err" style="color:var(--a3);font-size:12px;margin-bottom:10px;text-align:center;display:none"></div>
+          <button id="auth-verify-btn" onclick="verifyOTP()" class="btn bp" style="width:100%;height:40px;font-size:13.5px;font-weight:700">Verify &amp; Continue &#8594;</button>
+          <div style="margin-top:12px;text-align:center;font-size:12px;color:var(--muted)">
+            Didn't receive? <button onclick="sendOTP()" style="color:var(--accent2);background:none;border:none;cursor:pointer;font-size:12px;font-family:var(--fb);font-weight:600">Resend</button>
+            &nbsp;&bull;&nbsp;
+            <button onclick="backToPhone()" style="color:var(--muted);background:none;border:none;cursor:pointer;font-size:12px;font-family:var(--fb)">Change number</button>
+          </div>
         </div>
       </div>
 
-      <!-- Phase 2: OTP entry -->
-      <div id="auth-phase-otp" style="display:none">
-        <div style="text-align:center;margin-bottom:20px">
-          <div style="font-size:32px;margin-bottom:8px">&#128241;</div>
-          <div style="font-size:13.5px;font-weight:600;color:var(--text)">Enter OTP</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:4px">Sent to <span id="auth-phone-display" style="color:var(--accent2);font-weight:600"></span></div>
-        </div>
-        <div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px">
-          <input class="fi otp-digit" maxlength="1" type="tel" style="width:48px;height:52px;text-align:center;font-size:22px;font-weight:700;border-radius:10px">
-          <input class="fi otp-digit" maxlength="1" type="tel" style="width:48px;height:52px;text-align:center;font-size:22px;font-weight:700;border-radius:10px">
-          <input class="fi otp-digit" maxlength="1" type="tel" style="width:48px;height:52px;text-align:center;font-size:22px;font-weight:700;border-radius:10px">
-          <input class="fi otp-digit" maxlength="1" type="tel" style="width:48px;height:52px;text-align:center;font-size:22px;font-weight:700;border-radius:10px">
-          <input class="fi otp-digit" maxlength="1" type="tel" style="width:48px;height:52px;text-align:center;font-size:22px;font-weight:700;border-radius:10px">
-          <input class="fi otp-digit" maxlength="1" type="tel" style="width:48px;height:52px;text-align:center;font-size:22px;font-weight:700;border-radius:10px">
-        </div>
-        <div id="auth-otp-err" style="color:var(--a3);font-size:12px;margin-bottom:10px;text-align:center;display:none"></div>
-        <button id="auth-verify-btn" onclick="verifyOTP()" class="btn bp" style="width:100%;height:40px;font-size:13.5px;font-weight:700">
-          Verify &amp; Continue &#8594;
-        </button>
-        <div style="margin-top:12px;text-align:center;font-size:12px;color:var(--muted)">
-          Didn't receive? <button onclick="sendOTP()" style="color:var(--accent2);background:none;border:none;cursor:pointer;font-size:12px;font-family:var(--fb);font-weight:600">Resend OTP</button>
-          &nbsp;&#183;&nbsp; <button onclick="backToPhone()" style="color:var(--muted);background:none;border:none;cursor:pointer;font-size:12px;font-family:var(--fb)">Change number</button>
-        </div>
-      </div>
-
+      <!-- Safety note -->
+      <div style="margin-top:14px;text-align:center;font-size:11px;color:var(--muted)">&#9745; 100% Safe. We never post without your permission.</div>
     </div>
   </div>
 </div>
@@ -5059,8 +5090,8 @@ async function loadSetup() {
   if (!biz || !biz.business_id) return;
 
   // Header
-  document.getElementById('setup-title').textContent = biz.name + ' — Setup';
-  document.getElementById('setup-sub').textContent   = (biz.category||'') + (biz.location ? ' · ' + biz.location : '');
+  var _st = document.getElementById('setup-title'); if (_st) _st.textContent = biz.name + ' — Setup';
+  var _ss = document.getElementById('setup-sub'); if (_ss) _ss.textContent = (biz.category||'') + (biz.location ? ' · ' + biz.location : '');
 
   // Profile tab fields
   const set = (id, v) => { const e = document.getElementById(id); if(e) e.value = v || ''; };
@@ -5466,76 +5497,34 @@ async function spAutoFill() {
 function spLoadTog() {}
 
 
-// ─── Dashboard loader v2 ────────────────────────────────────────
+// ─── Dashboard loader v2 (uses real backend endpoints) ────────
 async function loadDash() {
   if (!BIZ) return;
+  // Date display
+  var d = new Date();
+  setText2('dash-date', d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'}));
   try {
     var r = await req('GET', '/api/dashboard/' + BIZ);
     if (!r) return;
-    setText2('s-leads',   r.total_leads   || '0');
-    setText2('s-optin',   r.opted_in      || '0');
-    setText2('s-camps',   r.campaigns_sent|| '0');
-    setText2('s-rating',  r.google_rating ? r.google_rating + ' &#9733;' : '—');
     // Funnel
-    setText2('f-scans',    r.qr_scans     || '0');
-    setText2('f-chats',    r.total_leads  || '0');
-    setText2('f-offers',   r.campaigns_sent||'0');
-    setText2('f-bookings', r.bookings     || '0');
-    setText2('f-reviews',  r.reviews_count|| '0');
-    setText2('f-repeat',   r.repeat_customers||'0');
-    // Action sub-labels
+    setText2('f-scans',    r.qr_scans          || '0');
+    setText2('f-chats',    r.total_leads        || r.total_customers || '0');
+    setText2('f-offers',   r.campaigns_sent     || '0');
+    setText2('f-bookings', r.bookings           || '0');
+    setText2('f-reviews',  r.reviews_count      || '0');
+    setText2('f-repeat',   r.repeat_customers   || '0');
+    // Stats
+    setText2('s-leads',   r.total_leads    || r.total_customers || '0');
+    setText2('s-optin',   r.opted_in       || r.total_customers || '0');
+    setText2('s-camps',   r.campaigns_sent || '0');
+    setText2('s-rating',  r.google_rating  ? r.google_rating + ' ★' : '—');
+    // Action labels
     setText2('ac-winback', (r.churn_risk||0) + ' customers need win-back');
     setText2('ac-review',  'You have ' + (r.review_eligible||0) + ' customers to request');
-    // Biz name in header
-    if (r.business_name) setText2('dash-biz-name', r.business_name);
+    // Biz name
+    if (r.business_name || r.name) setText2('dash-biz-name', r.business_name || r.name);
   } catch(e) { console.log('dash error', e); }
-  // Date
-  var d = new Date();
-  setText2('dash-date', d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'}));
-  // Load QR
   loadDashQR();
-}
-
-function setText2(id, val) {
-  var e = document.getElementById(id);
-  if (e) e.innerHTML = val;
-}
-
-async function loadDashQR() {
-  if (!BIZ) return;
-  try {
-    var qrData = await req('GET', '/api/qr/' + BIZ + '/list');
-    var wrap = document.getElementById('dash-qr');
-    if (!wrap) return;
-    if (qrData && qrData.length > 0 && qrData[0].qr_url) {
-      wrap.innerHTML = '<img src="' + qrData[0].qr_url + '" style="width:140px;height:140px;border-radius:8px;object-fit:contain">';
-    } else if (qrData && qrData.length > 0 && qrData[0].qr_data_url) {
-      wrap.innerHTML = '<img src="' + qrData[0].qr_data_url + '" style="width:140px;height:140px;border-radius:8px;object-fit:contain">';
-    } else {
-      wrap.innerHTML = '<div style="font-size:11px;color:var(--muted);padding:20px">No QR yet.<br>Go to Setup.</div>';
-    }
-  } catch(e) { console.log('QR load error', e); }
-}
-
-function printQR() {
-  var wrap = document.getElementById('dash-qr-wrap');
-  var img  = wrap ? wrap.querySelector('img') : null;
-  if (!img) { toast('No QR found. Complete setup first.', 'err'); return; }
-  var src  = img.src;
-  var w    = window.open('', '_blank');
-  if (!w) return;
-  var parts = [
-    '<!DOCTYPE html><html><head><title>MPilot QR</title></head>',
-    '<body style="text-align:center;padding:60px;font-family:sans-serif">',
-    '<h2 style="color:#333;margin-bottom:20px">Scan to Connect on WhatsApp</h2>',
-    '<img src="' + src + '" style="width:260px;height:260px;margin:0 auto;display:block">',
-    '<p style="color:#888;margin-top:20px;font-size:14px">Powered by MPilot AI</p>',
-    '</body></html>'
-  ];
-  w.document.open();
-  w.document.write(parts.join(''));
-  w.document.close();
-  setTimeout(function(){ w.print(); }, 600);
 }
 
 // ─── Nav active state ────────────────────────────────────────────
@@ -5558,137 +5547,6 @@ var PAGE_TITLES = {
 var _origGoTo = typeof goTo === 'function' ? goTo : null;
 
 
-// ─── Auth: Phone + OTP flow ──────────────────────────────────────
-var _authMode = 'login'; // 'login' | 'signup'
-
-function showAuthModal() {
-  var m = document.getElementById('auth-modal');
-  if (m) { m.style.display = 'flex'; switchAuthTab('login'); }
-}
-function closeAuthModal() {
-  var m = document.getElementById('auth-modal');
-  if (m) m.style.display = 'none';
-}
-
-function switchAuthTab(tab) {
-  _authMode = tab;
-  var tabs = {login: document.getElementById('auth-tab-login'), signup: document.getElementById('auth-tab-signup')};
-  var nameRow = document.getElementById('auth-name-row');
-  Object.entries(tabs).forEach(function(kv) {
-    var isActive = kv[0] === tab;
-    if (kv[1]) {
-      kv[1].style.borderBottomColor = isActive ? 'var(--accent)' : 'transparent';
-      kv[1].style.color = isActive ? 'var(--accent)' : 'var(--muted)';
-    }
-  });
-  if (nameRow) nameRow.style.display = tab === 'signup' ? '' : 'none';
-  var titleEl = document.getElementById('auth-modal-title');
-  var subEl   = document.getElementById('auth-modal-sub');
-  if (titleEl) titleEl.textContent = tab === 'login' ? 'Welcome back' : 'Create your account';
-  if (subEl)   subEl.textContent   = 'Enter your phone number to continue';
-  backToPhone();
-}
-
-async function sendOTP() {
-  var phone = (document.getElementById('auth-phone') || {value:''}).value.trim();
-  var errEl = document.getElementById('auth-phone-err');
-  if (errEl) errEl.style.display = 'none';
-  if (!phone || phone.length < 10) {
-    if (errEl) { errEl.textContent = 'Enter a valid 10-digit phone number'; errEl.style.display = 'block'; }
-    return;
-  }
-  var btn = document.getElementById('auth-otp-btn');
-  if (btn) { btn.textContent = 'Sending...'; btn.disabled = true; }
-
-  var endpoint = _authMode === 'signup' ? '/api/auth/send-otp' : '/api/auth/send-otp';
-  var name = (document.getElementById('auth-name') || {value:''}).value.trim();
-  try {
-    var r = await req('POST', endpoint, {phone: '91'+phone, name: name, mode: _authMode});
-    // Show OTP input regardless (dev/prod)
-    var pd = document.getElementById('auth-phone-display');
-    if (pd) pd.textContent = '+91 ' + phone;
-    document.getElementById('auth-phase-phone').style.display = 'none';
-    document.getElementById('auth-phase-otp').style.display = '';
-    // Focus first digit
-    var first = document.querySelector('.otp-digit');
-    if (first) first.focus();
-    // Wire digit auto-advance
-    wireOTPInputs();
-  } catch(ex) {
-    if (errEl) { errEl.textContent = 'Failed to send OTP. Try again.'; errEl.style.display = 'block'; }
-  }
-  if (btn) { btn.textContent = 'Send OTP →'; btn.disabled = false; }
-}
-
-function wireOTPInputs() {
-  var digits = Array.from(document.querySelectorAll('.otp-digit'));
-  digits.forEach(function(inp, idx) {
-    inp.oninput = function() {
-      inp.value = inp.value.slice(-1);
-      if (inp.value && idx < digits.length - 1) digits[idx+1].focus();
-      if (digits.every(function(d){ return d.value; })) verifyOTP();
-    };
-    inp.onkeydown = function(e) {
-      if (e.key === 'Backspace' && !inp.value && idx > 0) digits[idx-1].focus();
-    };
-  });
-}
-
-async function verifyOTP() {
-  var digits = Array.from(document.querySelectorAll('.otp-digit'));
-  var otp = digits.map(function(d){ return d.value; }).join('');
-  var errEl = document.getElementById('auth-otp-err');
-  if (errEl) errEl.style.display = 'none';
-  if (otp.length < 6) { if(errEl){errEl.textContent='Enter 6-digit OTP';errEl.style.display='';} return; }
-  var phone = (document.getElementById('auth-phone')||{value:''}).value.trim();
-  var name  = (document.getElementById('auth-name') ||{value:''}).value.trim();
-  var btn   = document.getElementById('auth-verify-btn');
-  if (btn) { btn.textContent = 'Verifying...'; btn.disabled = true; }
-  try {
-    var endpoint = _authMode === 'signup' ? '/api/auth/verify-otp' : '/api/auth/verify-otp';
-    var r = await req('POST', endpoint, {phone:'91'+phone, otp:otp, name:name, mode:_authMode});
-    if (r && r.token) {
-      localStorage.setItem('mpilot_token', r.token);
-      localStorage.setItem('mpilot_user',  JSON.stringify(r));
-      USER = r;
-      closeAuthModal();
-      initUserUI();
-      var bizList = await req('GET', '/api/businesses/');
-      var arr = Array.isArray(bizList) ? bizList : [];
-      if (arr.length === 0) {
-        goTo('setup'); wizGo(1);
-        toast('Welcome! Setup your business to get started &#128640;');
-      } else {
-        _showLoginBizPicker(arr, r.name || r.phone || '');
-      }
-    } else {
-      var msg = (r && r.detail) || 'Invalid OTP. Try again.';
-      if (errEl) { errEl.textContent = msg; errEl.style.display = ''; }
-    }
-  } catch(ex) {
-    if (errEl) { errEl.textContent = 'Verification failed. Try again.'; errEl.style.display = ''; }
-  }
-  if (btn) { btn.textContent = 'Verify & Continue →'; btn.disabled = false; }
-}
-
-function backToPhone() {
-  document.getElementById('auth-phase-phone').style.display = '';
-  document.getElementById('auth-phase-otp').style.display = 'none';
-  document.querySelectorAll('.otp-digit').forEach(function(d){ d.value=''; });
-  var errEl = document.getElementById('auth-phone-err');
-  if (errEl) errEl.style.display = 'none';
-}
-
-function doLogout() {
-  localStorage.removeItem('mpilot_token');
-  localStorage.removeItem('mpilot_user');
-  USER = null; BIZ = null; BIZ_OBJ = null;
-  // Hide app, show login
-  document.getElementById('main-sidebar') && (document.getElementById('main-sidebar').style.display = 'none');
-  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('on'); });
-  showAuthModal();
-  toast('Logged out successfully');
-}
 
 // ─── My Account ──────────────────────────────────────────────────
 async function loadMyAccount() {
@@ -5741,6 +5599,231 @@ async function loadMyAccount() {
 
 function editAccountProfile() { toast('Edit profile — coming soon'); }
 function showInvoices()       { toast('Invoices — coming soon'); }
+
+
+// ─── Auth modal helpers ────────────────────────────────────────────
+var _authMode   = 'login';   // 'login' | 'signup'
+var _authMethod = 'email';   // 'email' | 'phone'
+
+function showAuthModal(tab) {
+  var m = document.getElementById('auth-modal');
+  if (m) { m.style.display = 'flex'; switchAuthTab(tab || 'login'); }
+}
+function openAuthModal(tab) { showAuthModal(tab || 'login'); }
+function closeAuthModal() {
+  var m = document.getElementById('auth-modal');
+  if (m) m.style.display = 'none';
+}
+
+function switchAuthTab(tab) {
+  _authMode = tab;
+  // Tab buttons
+  var tabs = ['login','signup'];
+  tabs.forEach(function(t) {
+    var btn = document.getElementById('auth-tab-' + t);
+    if (!btn) return;
+    var on = t === tab;
+    btn.style.borderBottomColor = on ? 'var(--accent)' : 'transparent';
+    btn.style.color = on ? 'var(--accent)' : 'var(--muted)';
+    btn.style.fontWeight = on ? '600' : '500';
+  });
+  // Show/hide signup-only fields
+  var nameRow  = document.getElementById('auth-signup-name');
+  var pw2Row   = document.getElementById('auth-signup-pw2');
+  var forgotRow = document.getElementById('auth-forgot-row');
+  var otpNameRow = document.getElementById('auth-otp-name-row');
+  var isSignup = tab === 'signup';
+  if (nameRow)   nameRow.style.display   = isSignup ? '' : 'none';
+  if (pw2Row)    pw2Row.style.display    = isSignup ? '' : 'none';
+  if (forgotRow) forgotRow.style.display = isSignup ? 'none' : '';
+  if (otpNameRow) otpNameRow.style.display = isSignup ? '' : 'none';
+  // Title
+  var titleEl = document.getElementById('auth-modal-title');
+  if (titleEl) titleEl.textContent = isSignup ? 'Create your account' : 'Welcome back';
+  // Button label
+  var liBtn = document.getElementById('li-btn');
+  if (liBtn) liBtn.innerHTML = isSignup ? 'Create Account &#8594;' : 'Login &#8594;';
+  // Method switcher only for login
+  var switcher = document.getElementById('auth-method-switcher');
+  if (switcher) switcher.style.display = isSignup ? 'none' : '';
+  // Reset errors
+  backToPhone();
+  var errEl = document.getElementById('li-err');
+  if (errEl) errEl.style.display = 'none';
+  // Keep current method for signup (email only)
+  if (isSignup) switchAuthMethod('email');
+}
+
+function switchAuthMethod(method) {
+  _authMethod = method;
+  var emailForm = document.getElementById('auth-email-form');
+  var phoneForm = document.getElementById('auth-phone-form');
+  var btnEmail  = document.getElementById('auth-meth-email');
+  var btnPhone  = document.getElementById('auth-meth-phone');
+  if (emailForm) emailForm.style.display = method === 'email' ? '' : 'none';
+  if (phoneForm) phoneForm.style.display = method === 'phone' ? '' : 'none';
+  if (btnEmail) {
+    btnEmail.style.background   = method === 'email' ? 'var(--s3)' : 'transparent';
+    btnEmail.style.color        = method === 'email' ? 'var(--text)' : 'var(--muted)';
+    btnEmail.style.fontWeight   = method === 'email' ? '600' : '500';
+    btnEmail.style.boxShadow    = method === 'email' ? '0 1px 4px rgba(0,0,0,.3)' : 'none';
+  }
+  if (btnPhone) {
+    btnPhone.style.background   = method === 'phone' ? 'var(--s3)' : 'transparent';
+    btnPhone.style.color        = method === 'phone' ? 'var(--text)' : 'var(--muted)';
+    btnPhone.style.fontWeight   = method === 'phone' ? '600' : '500';
+    btnPhone.style.boxShadow    = method === 'phone' ? '0 1px 4px rgba(0,0,0,.3)' : 'none';
+  }
+}
+
+function togglePwVis() {
+  var pw = document.getElementById('li-pw');
+  if (pw) pw.type = pw.type === 'password' ? 'text' : 'password';
+}
+
+function showForgotPw() {
+  toast('Password reset — coming soon. Use phone OTP login for now.');
+}
+
+// ── Email / password submit ─────────────────────────────────────
+async function authEmailSubmit() {
+  var email = (document.getElementById('li-email') || {value:''}).value.trim();
+  var pw    = (document.getElementById('li-pw')    || {value:''}).value;
+  var errEl = document.getElementById('li-err');
+  if (errEl) errEl.style.display = 'none';
+  if (!email) { if(errEl){errEl.textContent='Email is required';errEl.style.display='';} return; }
+  if (!pw)    { if(errEl){errEl.textContent='Password is required';errEl.style.display='';} return; }
+  var btn = document.getElementById('li-btn');
+  if (btn) { btn.textContent = _authMode === 'signup' ? 'Creating...' : 'Logging in...'; btn.disabled = true; }
+  try {
+    var endpoint = _authMode === 'signup' ? '/api/auth/signup' : '/api/auth/login';
+    var name = (document.getElementById('auth-name') || {value:''}).value.trim();
+    var payload = {email: email, password: pw};
+    if (_authMode === 'signup' && name) payload.name = name;
+    // Confirm password check
+    if (_authMode === 'signup') {
+      var pw2 = (document.getElementById('li-pw2') || {value:''}).value;
+      if (pw !== pw2) {
+        if(errEl){errEl.textContent='Passwords do not match';errEl.style.display='';}
+        if(btn){btn.textContent='Create Account →';btn.disabled=false;}
+        return;
+      }
+    }
+    var data = await req('POST', endpoint, payload);
+    if (!data || !data.token) {
+      var msg = (data && data.detail) || (_authMode === 'signup' ? 'Signup failed' : 'Invalid email or password');
+      if(errEl){errEl.textContent=msg;errEl.style.display='';}
+      return;
+    }
+    localStorage.setItem('mpilot_token', data.token);
+    localStorage.setItem('mpilot_user',  JSON.stringify(data));
+    USER = data;
+    closeAuthModal();
+    initUserUI();
+    var bizList = await req('GET', '/api/businesses/');
+    var arr = Array.isArray(bizList) ? bizList : [];
+    if (arr.length === 0) {
+      goTo('setup'); wizGo(1);
+      toast('Welcome! Set up your business to get started ??');
+    } else {
+      _showLoginBizPicker(arr, data.name || data.email || '');
+    }
+  } catch(ex) {
+    if(errEl){errEl.textContent='Login error: ' + ex.message;errEl.style.display='';}
+  } finally {
+    if (btn) { btn.innerHTML = _authMode === 'signup' ? 'Create Account →' : 'Login →'; btn.disabled = false; }
+  }
+}
+
+// Keep doLogin as alias for older calls
+async function doLogin() { await authEmailSubmit(); }
+
+// ── Phone / OTP submit ─────────────────────────────────────────
+async function sendOTP() {
+  var phone = (document.getElementById('auth-phone') || {value:''}).value.trim();
+  var errEl = document.getElementById('auth-phone-err');
+  if (errEl) errEl.style.display = 'none';
+  if (!phone || phone.length < 10) {
+    if(errEl){errEl.textContent='Enter a valid 10-digit number';errEl.style.display='';}
+    return;
+  }
+  var btn = document.getElementById('auth-otp-btn');
+  if (btn) { btn.textContent = 'Sending...'; btn.disabled = true; }
+  try {
+    var name = (document.getElementById('auth-otp-name') || {value:''}).value.trim();
+    await req('POST', '/api/auth/send-otp', {phone: '91'+phone, name: name, mode: _authMode});
+    var pd = document.getElementById('auth-phone-display');
+    if (pd) pd.textContent = '+91 ' + phone;
+    document.getElementById('auth-phase-phone').style.display = 'none';
+    document.getElementById('auth-phase-otp').style.display = '';
+    var first = document.querySelector('.otp-digit');
+    if (first) first.focus();
+    wireOTPInputs();
+  } catch(ex) {
+    if(errEl){errEl.textContent='Failed to send OTP. Try again.';errEl.style.display='';}
+  }
+  if (btn) { btn.textContent = 'Send OTP →'; btn.disabled = false; }
+}
+
+function wireOTPInputs() {
+  var digits = Array.from(document.querySelectorAll('.otp-digit'));
+  digits.forEach(function(inp, idx) {
+    inp.oninput = function() {
+      inp.value = inp.value.replace(/[^0-9]/g,'').slice(-1);
+      if (inp.value && idx < digits.length - 1) digits[idx+1].focus();
+      if (digits.every(function(d){ return d.value; })) verifyOTP();
+    };
+    inp.onkeydown = function(e) {
+      if (e.key === 'Backspace' && !inp.value && idx > 0) digits[idx-1].focus();
+    };
+  });
+}
+
+async function verifyOTP() {
+  var digits = Array.from(document.querySelectorAll('.otp-digit'));
+  var otp = digits.map(function(d){ return d.value; }).join('');
+  var errEl = document.getElementById('auth-otp-err');
+  if (errEl) errEl.style.display = 'none';
+  if (otp.length < 6) { if(errEl){errEl.textContent='Enter 6-digit OTP';errEl.style.display='';} return; }
+  var phone = (document.getElementById('auth-phone')||{value:''}).value.trim();
+  var name  = (document.getElementById('auth-otp-name')||{value:''}).value.trim();
+  var btn   = document.getElementById('auth-verify-btn');
+  if (btn) { btn.textContent = 'Verifying...'; btn.disabled = true; }
+  try {
+    var r = await req('POST', '/api/auth/verify-otp', {phone:'91'+phone, otp:otp, name:name, mode:_authMode});
+    if (r && r.token) {
+      localStorage.setItem('mpilot_token', r.token);
+      localStorage.setItem('mpilot_user',  JSON.stringify(r));
+      USER = r;
+      closeAuthModal();
+      initUserUI();
+      var bizList = await req('GET', '/api/businesses/');
+      var arr = Array.isArray(bizList) ? bizList : [];
+      if (arr.length === 0) {
+        goTo('setup'); wizGo(1);
+        toast('Welcome! ??');
+      } else {
+        _showLoginBizPicker(arr, r.name || r.phone || '');
+      }
+    } else {
+      var msg = (r && r.detail) || 'Invalid OTP. Try again.';
+      if(errEl){errEl.textContent=msg;errEl.style.display='';}
+    }
+  } catch(ex) {
+    if(errEl){errEl.textContent='Verification failed.';errEl.style.display='';}
+  }
+  if (btn) { btn.textContent = 'Verify & Continue →'; btn.disabled = false; }
+}
+
+function backToPhone() {
+  var pp = document.getElementById('auth-phase-phone');
+  var po = document.getElementById('auth-phase-otp');
+  if (pp) pp.style.display = '';
+  if (po) po.style.display = 'none';
+  document.querySelectorAll('.otp-digit').forEach(function(d){ d.value=''; });
+  var errEl = document.getElementById('auth-phone-err');
+  if (errEl) errEl.style.display = 'none';
+}
 
 </script>
 
