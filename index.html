@@ -2341,6 +2341,7 @@ function loadPage(page) {
     qr:         loadQR,    // legacy QR page still works
     inbox:      loadInbox,
     setup:      loadSetup,
+    myaccount:  loadMyAccount,
     wizard:     () => {},
   };
   if (fn[page]) fn[page]();
@@ -3686,7 +3687,7 @@ function selectBiz(id) {
 
 
 // ── Login flow ────────────────────────────────────────
-async /* doLogin replaced by phone+OTP flow */
+/* doLogin replaced by phone+OTP flow */
 
 function _showLoginBizPicker(businesses, userName) {
   // Close auth modal first
