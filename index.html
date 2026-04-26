@@ -627,8 +627,81 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
 .acc-biz-row:hover{border-color:var(--accent);background:rgba(108,99,255,.05)}
 .acc-biz-row.active-biz{border-color:var(--accent);background:rgba(108,99,255,.08)}
 .acc-biz-icon{width:40px;height:40px;border-radius:9px;background:rgba(108,99,255,.12);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+
+/* ── My Account ────────────────────────────────────────────────── */
+.acc-section{margin-bottom:6px}
+.acc-section-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.acc-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.acc-profile-avatar{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#8b7cf8);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#fff;flex-shrink:0;letter-spacing:-.5px}
+.acc-field{padding:11px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.acc-field-lbl{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.acc-field-val{font-size:13.5px;font-weight:500;color:var(--text)}
+.acc-biz-row{display:flex;align-items:center;gap:12px;padding:13px 15px;background:var(--s2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .12s;margin-bottom:8px}
+.acc-biz-row:hover{border-color:var(--accent);background:rgba(108,99,255,.05)}
+.acc-biz-row.active-biz{border-color:var(--accent);background:rgba(108,99,255,.07)}
+.acc-biz-icon{width:42px;height:42px;border-radius:9px;background:rgba(108,99,255,.12);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.acc-action-btn{display:flex;align-items:center;gap:9px;padding:13px 16px;background:var(--s2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .12s;font-size:13px;font-weight:500;color:var(--text);width:100%;font-family:var(--fb);text-align:left}
+.acc-action-btn:hover{border-color:var(--accent);background:rgba(108,99,255,.05);color:var(--accent)}
+.acc-action-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.acc-smart-empty{background:linear-gradient(135deg,rgba(108,99,255,.08),rgba(0,212,170,.05));border:1px solid rgba(108,99,255,.15);border-radius:var(--r);padding:20px;text-align:center}
+.acc-progress-bar{height:6px;background:var(--s3);border-radius:3px;overflow:hidden;margin-top:8px}
+.acc-progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),#8b7cf8);transition:width .4s ease}
+.acc-stat-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)}
+.acc-stat-row:last-child{border-bottom:none}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js">
+function showUpgradePage() {
+  var ex=document.getElementById('upgrade-modal'); if(ex) ex.remove();
+  var plans=[
+    {n:'Starter',p:'&#8377;999/mo', f:['1 Business','500 customers','WhatsApp AI','QR capture','Basic campaigns'],pop:false},
+    {n:'Pro',    p:'&#8377;1,999/mo',f:['3 Businesses','5,000 customers','All AI features','Google reviews','Win-back campaigns','Priority support'],pop:true},
+    {n:'Growth', p:'&#8377;3,999/mo',f:['10 Businesses','Unlimited customers','All Pro features','Custom AI training','Dedicated support'],pop:false}
+  ];
+  var overlay=document.createElement('div');
+  overlay.id='upgrade-modal';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:900;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
+  var box=document.createElement('div');
+  box.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px;max-width:760px;width:100%;max-height:90vh;overflow-y:auto';
+  var topRow=document.createElement('div');
+  topRow.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:22px';
+  var title=document.createElement('div');
+  title.style.cssText='font-size:20px;font-weight:700;color:var(--text);font-family:var(--fh)';
+  title.textContent='Choose Your Plan';
+  var xBtn=document.createElement('button');
+  xBtn.innerHTML='&#10005;';
+  xBtn.style.cssText='background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer';
+  xBtn.onclick=function(){overlay.remove();};
+  topRow.appendChild(title); topRow.appendChild(xBtn);
+  box.appendChild(topRow);
+  var cardsRow=document.createElement('div');
+  cardsRow.style.cssText='display:flex;gap:12px;flex-wrap:wrap';
+  plans.forEach(function(p){
+    var card=document.createElement('div');
+    card.style.cssText='flex:1;min-width:200px;background:var(--s2);border:1px solid '+(p.pop?'var(--accent)':'var(--border)')+';border-radius:12px;padding:20px';
+    var nm=document.createElement('div'); nm.style.cssText='font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px'; nm.textContent=p.n;
+    var pr=document.createElement('div'); pr.style.cssText='font-size:24px;font-weight:800;color:var(--accent);margin-bottom:14px'; pr.innerHTML=p.p;
+    card.appendChild(nm); card.appendChild(pr);
+    p.f.forEach(function(feat){
+      var fi=document.createElement('div'); fi.style.cssText='font-size:12px;color:var(--text2);margin-bottom:5px';
+      fi.textContent='\u2713 '+feat; card.appendChild(fi);
+    });
+    var btn=document.createElement('button');
+    btn.textContent='Choose '+p.n;
+    btn.dataset.plan=p.n;
+    btn.style.cssText='width:100%;margin-top:14px;height:36px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);'+(p.pop?'background:var(--accent);color:#fff':'background:var(--s3);color:var(--text)');
+    btn.onclick=function(){ toast('Upgrade to '+this.dataset.plan+' — coming soon'); };
+    card.appendChild(btn);
+    cardsRow.appendChild(card);
+  });
+  box.appendChild(cardsRow);
+  var note=document.createElement('div'); note.style.cssText='text-align:center;margin-top:14px;font-size:12px;color:var(--muted)';
+  note.textContent='14-day free trial. No credit card required. Cancel anytime.';
+  box.appendChild(note);
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+}
+</script>
 </head>
 <body>
 
@@ -5445,92 +5518,94 @@ var _origGoTo = typeof goTo === 'function' ? goTo : null;
 
 // ─── My Account ──────────────────────────────────────────────────
 async function loadMyAccount() {
-  var fn  = USER.name  || '';
-  var em  = USER.email || '';
-  var pln = USER.plan  || 'pro';
-  var rol = USER.role  || 'owner';
-  var initials = fn ? fn[0].toUpperCase() : (em ? em[0].toUpperCase() : 'A');
-  var setT = function(id,v){ var e=document.getElementById(id); if(e) e.textContent=v||''; };
-  var setH = function(id,v){ var e=document.getElementById(id); if(e) e.innerHTML=v||''; };
-  setT('acc-name',  fn || em || 'Account');
-  setT('acc-role',  rol.charAt(0).toUpperCase()+rol.slice(1));
-  setT('acc-email', em || '—');
-  setT('acc-phone', '—');
-  var av=document.getElementById('acc-avatar'); if(av) av.textContent=initials;
-  var sn=document.getElementById('sb-user-name'); if(sn) sn.textContent=fn||em||'Account';
-  var sp=document.getElementById('sb-plan-label'); if(sp) sp.textContent=pln+' plan';
+  var fn=USER.name||''; var em=USER.email||''; var pln=USER.plan||'pro'; var rol=USER.role||'owner';
+  var ini=fn?fn.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase():(em?em[0].toUpperCase():'A');
+  var setT=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v||'';};
+  var setH=function(id,v){var e=document.getElementById(id);if(e)e.innerHTML=v||'';};
+  setT('acc-name',fn||em||'Account'); setT('acc-role',rol.charAt(0).toUpperCase()+rol.slice(1));
+  setT('acc-email',em||'—'); setT('acc-phone','—');
+  var av=document.getElementById('acc-avatar'); if(av)av.textContent=ini;
+  var sn=document.getElementById('sb-user-name'); if(sn)sn.textContent=fn||em||'Account';
+  var sp=document.getElementById('sb-plan-label'); if(sp)sp.textContent=pln+' plan';
   var planNames={free:'Free',starter:'Starter',growth:'Growth',pro:'Pro',agency:'Agency'};
-  setH('acc-plan','MPilot '+(planNames[pln]||'Pro')+' &#128081;');
+  var planLabel=planNames[pln]||'Pro';
+  setH('acc-plan','MPilot '+planLabel+' &#128081;');
+  setT('acc-plan-badge','MPilot '+planLabel);
   try {
-    var bizList = await req('GET', '/api/businesses/');
-    var arr = Array.isArray(bizList) ? bizList : [];
-    setT('acc-biz-count', String(arr.length));
-    // Phone from active business
-    var activeBiz = arr.find(function(b){ return b.business_id===BIZ; }) || arr[0];
-    if (activeBiz) {
-      var ph = String(activeBiz.phone||activeBiz.whatsapp||'').replace(/^91/,'');
-      if (ph) setT('acc-phone', '+91 '+ph);
-    }
+    var bizList=await req('GET','/api/businesses/'); var arr=Array.isArray(bizList)?bizList:[];
+    var activeBiz=arr.find(function(b){return b.business_id===BIZ;})||arr[0];
+    if(activeBiz){var ph=String(activeBiz.phone||activeBiz.whatsapp||'').replace(/^91/,''); if(ph)setT('acc-phone','+91 '+ph);}
     var icons={petcare:'&#128062;',salon:'&#9986;',clinic:'&#129514;',retail:'&#128717;',restaurant:'&#127829;',cafe:'&#9749;',gym:'&#127947;',other:'&#127983;'};
     var listEl=document.getElementById('acc-biz-list');
-    if (listEl) {
-      if (arr.length===0) {
-        listEl.innerHTML='<div style="text-align:center;padding:24px;font-size:13px;color:var(--muted)">No businesses yet.</div>';
-      } else {
+    if(listEl){
+      if(!arr.length){listEl.innerHTML='<div style="text-align:center;padding:24px;font-size:13px;color:var(--muted)">No businesses yet.</div>';}
+      else{
         var frag=document.createDocumentFragment();
         arr.forEach(function(b){
-          var isActive=b.business_id===BIZ;
+          var isA=b.business_id===BIZ;
           var row=document.createElement('div');
-          row.className='acc-biz-row'+(isActive?' active-biz':'');
-          row.dataset.bid=b.business_id;
-          row.dataset.bname=b.name||'';
-          var icon=icons[b.category]||'&#127983;';
-          var loc=b.location||b.city||'';
+          row.className='acc-biz-row'+(isA?' active-biz':'');
+          row.dataset.bid=b.business_id; row.dataset.bname=b.name||'';
+          var icon=icons[b.category]||'&#127983;'; var loc=b.location||b.city||'';
           row.innerHTML='<div class="acc-biz-icon">'+icon+'</div>'
             +'<div style="flex:1;min-width:0">'
-            +'<div style="font-size:13.5px;font-weight:600;color:var(--text)">'+( b.name||'')+'</div>'
+            +'<div style="font-size:13.5px;font-weight:600;color:var(--text)">'+(b.name||'')+'</div>'
             +(loc?'<div style="font-size:12px;color:var(--muted);margin-top:2px">'+loc+'</div>':'')
+            +'<div style="font-size:11px;color:var(--muted);margin-top:3px">'+(b.lead_count||0)+' customers</div>'
             +'</div>'
-            +(isActive
-              ?'<span style="font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(108,99,255,.14);color:var(--accent);font-weight:600">Active</span>'
-              :'<span style="font-size:14px;color:var(--muted)">&#8250;</span>');
-          row.onclick=function(){ _pickBizAndEnter(this.dataset.bid,this.dataset.bname); };
+            +(isA?'<span style="font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(108,99,255,.14);color:var(--accent);font-weight:600">Active</span>'
+                 :'<span class="btn bs" style="font-size:11.5px;height:28px;padding:0 11px;flex-shrink:0">Switch</span>');
+          row.onclick=function(){if(!this.classList.contains('active-biz'))_pickBizAndEnter(this.dataset.bid,this.dataset.bname);};
           frag.appendChild(row);
         });
-        listEl.innerHTML='';
-        listEl.appendChild(frag);
+        listEl.innerHTML=''; listEl.appendChild(frag);
       }
-      var total=arr.reduce(function(s,b){ return s+(b.lead_count||0); },0);
-      setT('acc-cust-count',String(total));
+    }
+    setT('acc-biz-count',String(arr.length));
+    var total=arr.reduce(function(s,b){return s+(b.lead_count||0);},0);
+    setT('acc-cust-count',String(total));
+    var emptyEl=document.getElementById('acc-empty-state'); var statsEl=document.getElementById('acc-stats-state');
+    if(total>0){if(emptyEl)emptyEl.style.display='none';if(statsEl)statsEl.style.display='';}
+    else{if(emptyEl)emptyEl.style.display='';if(statsEl)statsEl.style.display='none';
+      var prog=10;
+      if(arr.length>0)prog+=30;
+      if(activeBiz&&(activeBiz.address||activeBiz.maps_url))prog+=20;
+      if(activeBiz&&activeBiz.whatsapp_connected)prog+=30;
+      var fill=document.getElementById('acc-progress-fill'); if(fill)fill.style.width=prog+'%';
+      var lbl=document.getElementById('acc-progress-label');
+      if(lbl)lbl.textContent=prog<30?'Start by setting up your business':prog<60?'Connect WhatsApp to capture customers':'Almost ready! Print your QR code to start';
     }
     var ms=document.getElementById('acc-since');
-    if (ms) ms.textContent=USER.created_at?new Date(USER.created_at).toLocaleDateString('en-IN',{month:'short',year:'numeric'}):'Apr 2026';
-  } catch(e){ console.log('loadMyAccount err:',e); }
+    if(ms)ms.textContent=USER.created_at?new Date(USER.created_at).toLocaleDateString('en-IN',{month:'short',year:'numeric'}):'Apr 2026';
+    if(BIZ){try{var stats=await req('GET','/api/dashboard/stats/'+BIZ);if(stats)setT('acc-camp-count',String(stats.campaigns_sent||0));}catch(e){}}
+  }catch(e){console.log('loadMyAccount:',e);}
 }
 
-function editAccountProfile() {
-  var existing=document.getElementById('edit-profile-modal');
-  if (existing) existing.remove();
-  var nameVal=(document.getElementById('acc-name')||{textContent:''}).textContent;
-  var emailVal=(document.getElementById('acc-email')||{textContent:''}).textContent;
-  if (emailVal==='—') emailVal='';
-  var modal=document.createElement('div');
-  modal.id='edit-profile-modal';
-  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:900;display:flex;align-items:center;justify-content:center;padding:20px';
-  modal.onclick=function(e){ if(e.target===modal) modal.remove(); };
-  var inner=document.createElement('div');
-  inner.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;width:400px;max-width:100%';
-  inner.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">'
-    +'<div style="font-size:16px;font-weight:700;color:var(--text)">Edit Profile</div>'
-    +'<button onclick="document.getElementById(\"edit-profile-modal\").remove()" style="background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer">&#10005;</button>'
-    +'</div>'
-    +'<label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">Full Name</label>'
-    +'<input id="ep-name" class="fi" value="'+nameVal+'" placeholder="Your name" style="margin-bottom:14px">'
+function editAccountProfile(){
+  var ex=document.getElementById('edit-profile-modal'); if(ex)ex.remove();
+  var nv=(document.getElementById('acc-name')||{textContent:''}).textContent||'';
+  var ev=(document.getElementById('acc-email')||{textContent:''}).textContent||'';
+  if(ev==='—')ev='';
+  var overlay=document.createElement('div'); overlay.id='edit-profile-modal';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:900;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
+  var box=document.createElement('div');
+  box.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;width:420px;max-width:100%';
+  var hd=document.createElement('div'); hd.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:22px';
+  var ht=document.createElement('div'); ht.style.cssText='font-size:17px;font-weight:700;color:var(--text);font-family:var(--fh)'; ht.textContent='Edit Profile';
+  var xb=document.createElement('button'); xb.innerHTML='&#10005;'; xb.style.cssText='background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:4px'; xb.onclick=function(){overlay.remove();};
+  hd.appendChild(ht); hd.appendChild(xb); box.appendChild(hd);
+  var f=document.createElement('div');
+  f.innerHTML='<label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">Full Name</label>'
+    +'<input id="ep-name" class="fi" value="'+nv+'" placeholder="Your name" style="margin-bottom:16px">'
     +'<label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">Email Address</label>'
-    +'<input id="ep-email" class="fi" value="'+emailVal+'" placeholder="your@email.com" type="email" style="margin-bottom:22px">'
-    +'<button onclick="saveProfileEdit()" style="width:100%;height:38px;border-radius:8px;background:var(--accent);color:#fff;border:none;font-size:13.5px;font-weight:700;cursor:pointer;font-family:var(--fb)">Save Changes</button>';
-  modal.appendChild(inner);
-  document.body.appendChild(modal);
+    +'<input id="ep-email" class="fi" value="'+ev+'" placeholder="your@email.com" type="email" style="margin-bottom:22px">';
+  box.appendChild(f);
+  var sb=document.createElement('button'); sb.textContent='Save Changes';
+  sb.style.cssText='width:100%;height:40px;border-radius:9px;background:var(--accent);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--fb)';
+  sb.onclick=saveProfileEdit; box.appendChild(sb);
+  overlay.appendChild(box); document.body.appendChild(overlay);
+  setTimeout(function(){var n=document.getElementById('ep-name');if(n)n.focus();},80);
 }
 
 async function saveProfileEdit() {
@@ -5784,191 +5859,140 @@ function doLogout() {
   window.location.href = '/landing.html';
 }
 
-function showUpgradePage() {
-  var plans = [
-    {name:'Starter',  price:'&#8377;999/mo',  features:['1 Business','500 customers','WhatsApp AI','QR capture','Basic campaigns'], popular:false},
-    {name:'Pro',      price:'&#8377;1,999/mo', features:['3 Businesses','5,000 customers','All AI features','Google reviews','Advanced campaigns','Priority support'], popular:true},
-    {name:'Growth',   price:'&#8377;3,999/mo', features:['10 Businesses','Unlimited customers','All Pro features','Custom AI','Dedicated support'], popular:false}
-  ];
-  var existing = document.getElementById('upgrade-modal');
-  if (existing) existing.remove();
-  var modal = document.createElement('div');
-  modal.id = 'upgrade-modal';
-  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:900;display:flex;align-items:center;justify-content:center;padding:20px';
-  modal.onclick = function(e){ if(e.target===modal) modal.remove(); };
-  var cards = plans.map(function(p) {
-    var brd = p.popular ? 'border-color:var(--accent);' : '';
-    var badge = p.popular ? '<div style="font-size:10px;font-weight:700;padding:2px 10px;background:var(--accent);color:#fff;border-radius:20px;margin-bottom:10px;display:inline-block">Most Popular</div><br>' : '';
-    var feats = p.features.map(function(f){ return '<div style="font-size:12px;color:var(--text2);margin-bottom:5px">&#10003; '+f+'</div>'; }).join('');
-    var btnStyle = p.popular ? 'background:var(--accent);color:#fff' : 'background:var(--s3);color:var(--text)';
-    var div = document.createElement('div');
-    div.style.cssText = 'background:var(--s2);border:1px solid var(--border);'+brd+'border-radius:12px;padding:20px;flex:1;min-width:180px';
-    div.innerHTML = badge
-      + '<div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px">'+p.name+'</div>'
-      + '<div style="font-size:24px;font-weight:800;color:var(--accent);margin-bottom:14px">'+p.price+'</div>'
-      + feats;
-    var btn = document.createElement('button');
-    btn.textContent = 'Choose ' + p.name;
-    btn.dataset.plan = p.name;
-    btn.style.cssText = 'width:100%;margin-top:14px;height:36px;border-radius:8px;'+btnStyle+';border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb)';
-    btn.onclick = function(){ toast('Upgrading to '+this.dataset.plan+' - coming soon'); };
-    div.appendChild(btn);
-    return div;
-  });
-  var inner = document.createElement('div');
-  inner.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px;max-width:760px;width:100%;max-height:90vh;overflow-y:auto';
-  var header = document.createElement('div');
-  header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:20px';
-  header.innerHTML = '<div style="font-family:var(--fh);font-size:20px;font-weight:700;color:var(--text)">Choose Your Plan &#128081;</div>';
-  var closeBtn = document.createElement('button');
-  closeBtn.innerHTML = '&#10005;';
-  closeBtn.style.cssText = 'background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer';
-  closeBtn.onclick = function(){ document.getElementById('upgrade-modal').remove(); };
-  header.appendChild(closeBtn);
-  inner.appendChild(header);
-  var cardsWrap = document.createElement('div');
-  cardsWrap.style.cssText = 'display:flex;gap:12px;flex-wrap:wrap';
-  cards.forEach(function(c){ cardsWrap.appendChild(c); });
-  inner.appendChild(cardsWrap);
-  var note = document.createElement('div');
-  note.style.cssText = 'text-align:center;margin-top:16px;font-size:12px;color:var(--muted)';
-  note.textContent = '14-day free trial. No credit card required. Cancel anytime.';
-  inner.appendChild(note);
-  modal.appendChild(inner);
-  document.body.appendChild(modal);
-}
 
-function showInvoices() {
-  toast('Invoices — coming soon. Contact support for billing queries.');
-}
-
-function editAccountProfile() {
-  toast('Edit profile — coming soon');
-}
 </script>
-
-
-<!-- PRICING MODAL -->
-<div id="pricing-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:600;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto" onclick="if(event.target===this)closePricingModal()">
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;width:100%;max-width:860px;padding:32px;position:relative;margin:auto">
-    <button onclick="closePricingModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1">×</button>
-
-    <div style="text-align:center;margin-bottom:28px">
-      <div style="font-size:22px;font-weight:700;font-family:var(--fh);margin-bottom:6px">Choose your plan</div>
-      <div style="font-size:13px;color:var(--muted)">All plans include 1 branch · No setup fee · Cancel anytime</div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:24px" id="pricing-cards">
-      <!-- filled by JS -->
-    </div>
-
-    <div style="background:rgba(79,70,229,.07);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:12px">
-      <span style="font-size:22px">🏪</span>
-      <div>
-        <div style="font-size:12.5px;font-weight:600">Need multiple branches?</div>
-        <div style="font-size:11px;color:var(--muted)">Upgrade to Pro — first branch included, ₹499/month per extra branch. Add branches any time.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="page" id="p-myaccount">
   <div class="ph">
-    <div><div class="pt">My Account</div><div class="ps">Manage your profile, businesses and billing</div></div>
-    <button onclick="doLogout()" style="height:34px;padding:0 16px;border-radius:8px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.25);color:var(--a3);font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--fb);display:flex;align-items:center;gap:6px">&#8594; Logout</button>
+    <div><div class="pt">My Account</div><div class="ps">Your control centre — profile, businesses and billing</div></div>
+    <button onclick="doLogout()" style="height:34px;padding:0 16px;border-radius:8px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--a3);font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--fb);display:flex;align-items:center;gap:7px">&#8594; Logout</button>
   </div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start">
+  <div style="display:grid;grid-template-columns:320px 1fr;gap:16px;align-items:start">
 
-    <!-- Profile Card -->
-    <div class="card" style="padding:20px">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
-        <div id="acc-avatar" style="width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--a2));display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0">P</div>
-        <div style="flex:1;min-width:0">
-          <div id="acc-name" style="font-size:16px;font-weight:700;color:var(--text)">PetsWoof Admin</div>
-          <div id="acc-role" style="font-size:12px;color:var(--muted);margin-top:2px">Owner</div>
-        </div>
-        <button onclick="editAccountProfile()" style="height:30px;padding:0 13px;border-radius:7px;background:var(--s2);border:1px solid var(--border2);color:var(--text);font-size:12px;font-weight:500;cursor:pointer;font-family:var(--fb)">Edit</button>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <div style="padding:10px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">
-          <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Phone / WhatsApp</div>
-          <div id="acc-phone" style="font-size:13.5px;color:var(--text);font-weight:500">&#8212;</div>
-        </div>
-        <div style="padding:10px 12px;background:var(--s2);border-radius:8px;border:1px solid var(--border)">
-          <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Email Address</div>
-          <div id="acc-email" style="font-size:13.5px;color:var(--text);font-weight:500">&#8212;</div>
-        </div>
-      </div>
-    </div>
+    <!-- LEFT -->
+    <div style="display:flex;flex-direction:column;gap:14px">
 
-    <!-- Billing Card -->
-    <div class="card" style="padding:20px">
-      <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:16px">Plan &amp; Billing</div>
-      <div style="background:linear-gradient(135deg,rgba(108,99,255,.15),rgba(108,99,255,.05));border:1px solid rgba(108,99,255,.25);border-radius:10px;padding:16px;margin-bottom:14px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-          <div>
-            <div id="acc-plan" style="font-size:17px;font-weight:700;color:var(--text)">MPilot Pro &#128081;</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:4px">Renews on <span id="acc-renew" style="color:var(--text2);font-weight:500">May 25, 2026</span></div>
+      <!-- Profile -->
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
+          <div id="acc-avatar" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#6c63ff,#8b7cf8);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;flex-shrink:0">A</div>
+          <div style="flex:1;min-width:0">
+            <div id="acc-name" style="font-size:16px;font-weight:700;color:var(--text)">Account</div>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap">
+              <span id="acc-role" style="font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:20px;background:rgba(108,99,255,.12);color:var(--accent)">Owner</span>
+              <span id="acc-plan-badge" style="font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:20px;background:rgba(16,185,129,.1);color:#10b981">Pro</span>
+            </div>
           </div>
-          <div style="font-size:11px;font-weight:600;padding:4px 11px;background:rgba(16,185,129,.12);color:#10b981;border-radius:20px;border:1px solid rgba(16,185,129,.2)">Active</div>
+          <button onclick="editAccountProfile()" class="btn bs sm" style="flex-shrink:0;height:30px;padding:0 13px;font-size:12px">Edit</button>
         </div>
-      </div>
-      <button onclick="showUpgradePage()" style="width:100%;height:36px;border-radius:8px;background:var(--accent);color:#fff;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fb);margin-bottom:10px;box-shadow:0 4px 12px rgba(108,99,255,.3)">
-        &#8599; Upgrade Plan
-      </button>
-      <button onclick="showInvoices()" style="width:100%;height:34px;border-radius:8px;background:var(--s2);color:var(--text2);border:1px solid var(--border);font-size:12.5px;font-weight:500;cursor:pointer;font-family:var(--fb);display:flex;align-items:center;justify-content:center;gap:7px">
-        &#128196; View Invoices
-      </button>
-    </div>
-
-    <!-- My Businesses (full width) -->
-    <div class="card" style="grid-column:1/-1;padding:20px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-        <div style="font-size:14px;font-weight:600;color:var(--text)">My Businesses</div>
-        <button onclick="addNewBusinessQuick()" style="height:30px;padding:0 13px;border-radius:7px;background:var(--accent);border:none;color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--fb)">+ Add Business</button>
-      </div>
-      <div id="acc-biz-list" style="display:flex;flex-direction:column;gap:8px">
-        <div style="text-align:center;padding:20px;font-size:12px;color:var(--muted)">Loading...</div>
-      </div>
-    </div>
-
-    <!-- Security -->
-    <div class="card" style="padding:20px">
-      <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:16px">Security</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
-          <div>
-            <div style="font-size:13px;font-weight:500;color:var(--text)">Phone Verification</div>
-            <div style="font-size:11px;color:#10b981;margin-top:2px">&#10003; Verified</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="padding:10px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:space-between">
+            <div><div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Phone / WhatsApp</div><div id="acc-phone" style="font-size:13.5px;font-weight:500;color:var(--text)">&#8212;</div></div>
+            <span style="font-size:18px">&#128241;</span>
           </div>
-          <button onclick="toast('Change phone — coming soon')" style="height:28px;padding:0 12px;border-radius:6px;background:var(--s3);border:1px solid var(--border);color:var(--text2);font-size:11.5px;cursor:pointer;font-family:var(--fb)">Change</button>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
-          <div>
-            <div style="font-size:13px;font-weight:500;color:var(--text)">Active Sessions</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px">Logged in on this device</div>
+          <div style="padding:10px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:space-between">
+            <div><div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Email Address</div><div id="acc-email" style="font-size:13.5px;font-weight:500;color:var(--text)">&#8212;</div></div>
+            <span style="font-size:18px">&#128231;</span>
           </div>
-          <button onclick="doLogout()" style="height:28px;padding:0 12px;border-radius:6px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.2);color:var(--a3);font-size:11.5px;cursor:pointer;font-family:var(--fb)">Logout All</button>
+        </div>
+      </div>
+
+      <!-- Security -->
+      <div class="card">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px">Security</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="padding:10px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:space-between">
+            <div><div style="font-size:12.5px;font-weight:500;color:var(--text)">Phone Verification</div><div style="font-size:11.5px;color:#10b981;margin-top:2px;font-weight:600">&#10003; Verified</div></div>
+            <button onclick="toast('Change number — coming soon')" class="btn bs sm" style="height:28px;padding:0 11px;font-size:11.5px">Change</button>
+          </div>
+          <div style="padding:10px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:space-between">
+            <div><div style="font-size:12.5px;font-weight:500;color:var(--text)">Active Sessions</div><div style="font-size:11.5px;color:var(--muted);margin-top:2px">This device</div></div>
+            <button onclick="doLogout()" style="height:28px;padding:0 11px;border-radius:6px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.2);color:var(--a3);font-size:11.5px;font-weight:600;cursor:pointer;font-family:var(--fb)">Logout All</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px">Quick Actions</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <button onclick="goTo('dashboard')" style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:all .12s;font-size:13px;font-weight:500;color:var(--text);width:100%;font-family:var(--fb);text-align:left" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+            <span style="width:32px;height:32px;border-radius:8px;background:rgba(108,99,255,.12);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">&#128202;</span>
+            <div><div style="font-size:13px;font-weight:600">Go to Dashboard</div><div style="font-size:11px;color:var(--muted);margin-top:1px">See AI performance</div></div>
+            <span style="margin-left:auto;color:var(--muted)">&#8250;</span>
+          </button>
+          <button onclick="goTo('dashboard');setTimeout(function(){printQR();},500)" style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:all .12s;font-size:13px;font-weight:500;color:var(--text);width:100%;font-family:var(--fb);text-align:left" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+            <span style="width:32px;height:32px;border-radius:8px;background:rgba(0,212,170,.1);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">&#128247;</span>
+            <div><div style="font-size:13px;font-weight:600">Print QR Code</div><div style="font-size:11px;color:var(--muted);margin-top:1px">Place in store, get customers</div></div>
+            <span style="margin-left:auto;color:var(--muted)">&#8250;</span>
+          </button>
+          <button onclick="goTo('campaigns')" style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:all .12s;font-size:13px;font-weight:500;color:var(--text);width:100%;font-family:var(--fb);text-align:left" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+            <span style="width:32px;height:32px;border-radius:8px;background:rgba(245,158,11,.1);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">&#128293;</span>
+            <div><div style="font-size:13px;font-weight:600">Run Campaign</div><div style="font-size:11px;color:var(--muted);margin-top:1px">Win back or attract customers</div></div>
+            <span style="margin-left:auto;color:var(--muted)">&#8250;</span>
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Overview -->
-    <div class="card" style="padding:20px">
-      <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:16px">Account Overview</div>
-      <div style="display:flex;flex-direction:column;gap:2px">
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
-          <span style="font-size:12.5px;color:var(--muted)">Total Businesses</span>
-          <span id="acc-biz-count" style="font-size:15px;font-weight:700;color:var(--text)">&#8212;</span>
+    <!-- RIGHT -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+
+      <!-- My Businesses -->
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px">My Businesses</div>
+          <button onclick="addNewBusinessQuick()" class="btn bp sm" style="height:30px;padding:0 13px;font-size:12px">+ Add Business</button>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
-          <span style="font-size:12.5px;color:var(--muted)">Total Customers</span>
-          <span id="acc-cust-count" style="font-size:15px;font-weight:700;color:var(--accent)">&#8212;</span>
+        <div id="acc-biz-list"><div style="text-align:center;padding:20px;font-size:13px;color:var(--muted)">Loading...</div></div>
+      </div>
+
+      <!-- Billing -->
+      <div class="card">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px">Plan &amp; Billing</div>
+        <div style="background:linear-gradient(135deg,rgba(108,99,255,.12),rgba(108,99,255,.04));border:1px solid rgba(108,99,255,.2);border-radius:10px;padding:16px;margin-bottom:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div id="acc-plan" style="font-size:18px;font-weight:800;color:var(--text);font-family:var(--fh)">MPilot Pro &#128081;</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:5px">Renews on <span id="acc-renew" style="color:var(--text2);font-weight:500">May 25, 2026</span></div>
+            </div>
+            <div style="font-size:11px;font-weight:700;padding:5px 12px;background:rgba(16,185,129,.12);color:#10b981;border-radius:20px;border:1px solid rgba(16,185,129,.2)">Active</div>
+          </div>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0">
-          <span style="font-size:12.5px;color:var(--muted)">Member Since</span>
-          <span id="acc-since" style="font-size:13px;color:var(--text2);font-weight:500">Apr 2026</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button onclick="showUpgradePage()" class="btn bp" style="height:38px;font-size:13px;display:flex;align-items:center;justify-content:center;gap:7px">&#8599; Upgrade</button>
+          <button onclick="showInvoices()" class="btn bs" style="height:38px;font-size:13px;display:flex;align-items:center;justify-content:center;gap:7px">&#128196; Invoices</button>
+        </div>
+      </div>
+
+      <!-- Account Overview — Smart Empty State -->
+      <div class="card">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px">Account Overview</div>
+
+        <div id="acc-empty-state">
+          <div style="background:linear-gradient(135deg,rgba(108,99,255,.08),rgba(0,212,170,.05));border:1px solid rgba(108,99,255,.15);border-radius:12px;padding:20px;text-align:center;margin-bottom:14px">
+            <div style="font-size:34px;margin-bottom:10px">&#128247;</div>
+            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">No customers captured yet</div>
+            <div style="font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:16px">Print your QR code and place it in your store.<br>Customers scan it — AI converts them automatically.</div>
+            <button onclick="goTo('dashboard')" class="btn bp" style="height:36px;padding:0 18px;font-size:13px;display:inline-flex;align-items:center;gap:7px">&#128247; Print QR &amp; Get Customers</button>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:600">Setup progress</div>
+            <div style="height:6px;background:var(--s3);border-radius:3px;overflow:hidden">
+              <div id="acc-progress-fill" style="height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),#8b7cf8);width:30%;transition:width .4s ease"></div>
+            </div>
+            <div id="acc-progress-label" style="font-size:11px;color:var(--muted);margin-top:5px">Complete setup to unlock full AI power</div>
+          </div>
+        </div>
+
+        <div id="acc-stats-state" style="display:none">
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px;color:var(--muted)">Total Customers</span><span id="acc-cust-count" style="font-size:16px;font-weight:700;color:var(--accent)">0</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px;color:var(--muted)">Businesses</span><span id="acc-biz-count" style="font-size:16px;font-weight:700;color:var(--text)">1</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px;color:var(--muted)">Campaigns Sent</span><span id="acc-camp-count" style="font-size:16px;font-weight:700;color:var(--text)">0</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0"><span style="font-size:13px;color:var(--muted)">Member Since</span><span id="acc-since" style="font-size:13px;color:var(--text2)">Apr 2026</span></div>
+          </div>
+          <button onclick="goTo('dashboard')" class="btn bp" style="width:100%;height:36px;margin-top:14px;font-size:13px;display:flex;align-items:center;justify-content:center;gap:7px">&#128202; View Full Dashboard</button>
         </div>
       </div>
     </div>
