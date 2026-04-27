@@ -3,97 +3,108 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MPilot — AI Growth Engine for Small Businesses</title>
+<title>MPilot AI — Turn WhatsApp, Instagram & Google into a Revenue Machine</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:#080b12;color:#e2e8f0;line-height:1.6}
-.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 60px;border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;background:rgba(8,11,18,.95);backdrop-filter:blur(12px);z-index:100}
+:root{--accent:#6c63ff;--a2:#00d4aa;--dark:#080b12;--surface:#0f1420;--s2:#13171f;--border:rgba(255,255,255,.07);--text:#f0f2f8;--muted:#64748b;--fb:'DM Sans',sans-serif;--fh:'Syne',sans-serif}
+body{font-family:var(--fb);background:var(--dark);color:var(--text);line-height:1.6;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(8,11,18,.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 60px;height:60px;display:flex;align-items:center;justify-content:space-between}
 .nav-logo{display:flex;align-items:center;gap:10px}
-.nav-logo-mark{width:32px;height:32px;border-radius:8px;background:#6c63ff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff}
-.nav-logo-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:#818cf8}
-.nav-logo-sub{font-size:9px;color:#64748b;letter-spacing:1px;text-transform:uppercase}
+.nav-logo-icon{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;color:#fff}
+.nav-logo-name{font-family:var(--fh);font-size:18px;font-weight:800;color:#818cf8}
 .nav-links{display:flex;align-items:center;gap:28px}
-.nav-links a{font-size:13.5px;color:#94a3b8;text-decoration:none;font-weight:500;transition:color .15s}
-.nav-links a:hover{color:#e2e8f0}
-.btn-p{height:38px;padding:0 20px;border-radius:8px;background:#6c63ff;color:#fff;border:none;font-size:13.5px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none;display:inline-flex;align-items:center;gap:7px;box-shadow:0 4px 14px rgba(108,99,255,.4);transition:all .15s}
+.nav-links a{font-size:13.5px;color:var(--muted);font-weight:500;transition:color .15s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{display:flex;align-items:center;gap:10px}
+.btn-p{height:38px;padding:0 20px;border-radius:9px;background:var(--accent);color:#fff;border:none;font-size:13.5px;font-weight:600;cursor:pointer;font-family:var(--fb);box-shadow:0 4px 14px rgba(108,99,255,.4);transition:all .15s;display:inline-flex;align-items:center;gap:7px}
 .btn-p:hover{background:#5254cc;transform:translateY(-1px)}
-.btn-s{height:38px;padding:0 20px;border-radius:8px;background:transparent;color:#e2e8f0;border:1px solid rgba(255,255,255,.15);font-size:13.5px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none;display:inline-flex;align-items:center;gap:7px;transition:all .15s}
+.btn-s{height:38px;padding:0 20px;border-radius:9px;background:transparent;color:var(--text);border:1px solid rgba(255,255,255,.12);font-size:13.5px;font-weight:500;cursor:pointer;font-family:var(--fb);transition:all .15s;display:inline-flex;align-items:center;gap:7px}
 .btn-s:hover{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.04)}
-
-/* Hero */
-.hero{text-align:center;padding:80px 20px 70px;max-width:760px;margin:0 auto}
-.hero-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.25);border-radius:20px;padding:5px 14px;font-size:12px;color:#818cf8;font-weight:600;margin-bottom:24px}
-.hero h1{font-family:'Syne',sans-serif;font-size:48px;font-weight:800;color:#f1f5f9;line-height:1.15;margin-bottom:18px;letter-spacing:-.5px}
-.hero h1 span{color:#818cf8}
-.hero p{font-size:17px;color:#94a3b8;margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto}
-.hero-btns{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
-.hero-trust{margin-top:36px;font-size:12px;color:#475569;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap}
+/* HERO */
+.hero{text-align:center;padding:100px 20px 80px;max-width:820px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.22);border-radius:20px;padding:5px 14px;font-size:12px;color:#818cf8;font-weight:600;margin-bottom:26px;letter-spacing:.3px}
+.hero h1{font-family:var(--fh);font-size:52px;font-weight:800;line-height:1.13;letter-spacing:-.5px;margin-bottom:20px;color:#f1f5f9}
+.hero h1 span{background:linear-gradient(135deg,#818cf8,#00d4aa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:17px;color:var(--muted);max-width:520px;margin:0 auto 36px;line-height:1.75}
+.hero-cta{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:44px}
+.hero-trust{display:flex;align-items:center;justify-content:center;gap:22px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
 .hero-trust span{display:flex;align-items:center;gap:5px}
-
-/* How it works */
-.section{padding:64px 60px;max-width:1100px;margin:0 auto}
-.section-label{font-size:11px;font-weight:700;color:#6c63ff;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
-.section-title{font-family:'Syne',sans-serif;font-size:32px;font-weight:700;color:#f1f5f9;margin-bottom:10px}
-.section-sub{font-size:15px;color:#64748b;margin-bottom:40px;max-width:480px}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.step-card{background:#0f1420;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:24px}
-.step-num{width:36px;height:36px;border-radius:50%;background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.3);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#818cf8;margin-bottom:14px}
-.step-title{font-size:15px;font-weight:600;color:#f1f5f9;margin-bottom:6px}
-.step-desc{font-size:13px;color:#64748b;line-height:1.6}
-.step-icon{font-size:28px;margin-bottom:10px}
-
-/* Benefits */
-.benefits-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-.benefit-card{background:#0f1420;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:22px;display:flex;align-items:flex-start;gap:14px;transition:border-color .2s}
-.benefit-card:hover{border-color:rgba(108,99,255,.3)}
-.benefit-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.benefit-title{font-size:14px;font-weight:600;color:#f1f5f9;margin-bottom:5px}
-.benefit-desc{font-size:12.5px;color:#64748b;line-height:1.6}
-
-/* Results strip */
-.results-strip{background:#0f1420;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);padding:36px 60px}
-.results-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
-.result-val{font-family:'Syne',sans-serif;font-size:34px;font-weight:800;color:#818cf8;margin-bottom:4px}
-.result-lbl{font-size:12.5px;color:#64748b}
-
-/* Pricing */
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.price-card{background:#0f1420;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:26px;position:relative;transition:all .2s}
-.price-card.popular{border-color:rgba(108,99,255,.5);box-shadow:0 0 40px rgba(108,99,255,.15)}
-.popular-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#6c63ff;color:#fff;font-size:11px;font-weight:700;padding:4px 14px;border-radius:20px;white-space:nowrap}
-.price-name{font-size:15px;font-weight:600;color:#94a3b8;margin-bottom:8px}
-.price-amount{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:#f1f5f9;margin-bottom:4px}
-.price-period{font-size:12px;color:#64748b;margin-bottom:20px}
-.price-feat{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#94a3b8;margin-bottom:9px}
-.price-feat-tick{color:#10b981;flex-shrink:0;margin-top:2px}
-.price-cta{width:100%;height:40px;border-radius:9px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:20px;border:none;transition:all .15s}
-.price-cta.primary{background:#6c63ff;color:#fff;box-shadow:0 4px 14px rgba(108,99,255,.35)}
-.price-cta.primary:hover{background:#5254cc}
-.price-cta.secondary{background:rgba(255,255,255,.06);color:#e2e8f0}
-.price-cta.secondary:hover{background:rgba(255,255,255,.1)}
-
-/* CTA section */
-.cta-section{text-align:center;padding:64px 20px;background:linear-gradient(135deg,rgba(108,99,255,.08),rgba(108,99,255,.02));border-top:1px solid rgba(108,99,255,.12)}
-.cta-section h2{font-family:'Syne',sans-serif;font-size:34px;font-weight:700;color:#f1f5f9;margin-bottom:12px}
-.cta-section p{font-size:15px;color:#64748b;margin-bottom:28px}
-
-/* Footer */
-.footer{padding:28px 60px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.footer-copy{font-size:12.5px;color:#475569}
-.footer-links{display:flex;gap:20px}
-.footer-links a{font-size:12.5px;color:#475569;text-decoration:none}
-.footer-links a:hover{color:#94a3b8}
-
-@media(max-width:768px){
-  .nav{padding:14px 20px}
+/* STATS */
+.stats-bar{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:36px 60px}
+.stats-inner{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
+.stat-val{font-family:var(--fh);font-size:36px;font-weight:800;color:#818cf8;margin-bottom:4px}
+.stat-lbl{font-size:12.5px;color:var(--muted)}
+/* SECTIONS */
+.section{padding:80px 60px;max-width:1140px;margin:0 auto}
+.section-chip{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
+.section-title{font-family:var(--fh);font-size:34px;font-weight:700;color:#f1f5f9;margin-bottom:12px;line-height:1.25}
+.section-sub{font-size:15px;color:var(--muted);margin-bottom:44px;max-width:500px;line-height:1.7}
+/* PROBLEM */
+.problem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.problem-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;transition:border-color .2s}
+.problem-card:hover{border-color:rgba(255,107,107,.3)}
+.problem-icon{font-size:28px;margin-bottom:12px}
+.problem-title{font-size:14px;font-weight:600;color:#f1f5f9;margin-bottom:6px}
+.problem-desc{font-size:12.5px;color:var(--muted);line-height:1.65}
+/* HOW IT WORKS */
+.flow-steps{display:flex;align-items:flex-start;gap:0;overflow:hidden;border:1px solid var(--border);border-radius:14px;background:var(--surface)}
+.flow-step{flex:1;padding:24px 20px;text-align:center;border-right:1px solid var(--border);position:relative}
+.flow-step:last-child{border-right:none}
+.flow-step-num{width:32px;height:32px;border-radius:50%;background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.3);color:#818cf8;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.flow-step-icon{font-size:24px;margin-bottom:8px}
+.flow-step-title{font-size:13px;font-weight:600;color:#f1f5f9;margin-bottom:4px}
+.flow-step-desc{font-size:11.5px;color:var(--muted);line-height:1.6}
+/* FEATURES */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.feature-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;transition:all .2s}
+.feature-card:hover{border-color:rgba(108,99,255,.3);transform:translateY(-2px)}
+.feature-icon{width:46px;height:46px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px;flex-shrink:0}
+.feature-title{font-size:15px;font-weight:700;color:#f1f5f9;margin-bottom:7px}
+.feature-desc{font-size:13px;color:var(--muted);line-height:1.65}
+.feature-tag{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:10px;margin-top:12px}
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.price-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:26px;position:relative;transition:all .2s}
+.price-card.popular{border-color:rgba(108,99,255,.5);box-shadow:0 0 40px rgba(108,99,255,.12)}
+.price-card:hover{border-color:rgba(108,99,255,.4)}
+.popular-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:10.5px;font-weight:700;padding:3px 13px;border-radius:20px;white-space:nowrap}
+.price-name{font-size:14px;font-weight:600;color:var(--muted);margin-bottom:10px}
+.price-amount{font-family:var(--fh);font-size:34px;font-weight:800;color:#f1f5f9;margin-bottom:4px}
+.price-period{font-size:12px;color:var(--muted);margin-bottom:20px}
+.price-feat{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:#94a3b8;margin-bottom:8px;line-height:1.5}
+.price-tick{color:#10b981;flex-shrink:0;font-size:13px;margin-top:1px}
+.price-btn{width:100%;height:40px;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:var(--fb);margin-top:20px;border:none;transition:all .15s}
+.price-btn.primary{background:var(--accent);color:#fff;box-shadow:0 4px 14px rgba(108,99,255,.3)}
+.price-btn.primary:hover{background:#5254cc}
+.price-btn.secondary{background:rgba(255,255,255,.05);color:var(--text)}
+.price-btn.secondary:hover{background:rgba(255,255,255,.09)}
+/* CTA */
+.cta-section{text-align:center;padding:90px 20px;background:linear-gradient(135deg,rgba(108,99,255,.08),rgba(108,99,255,.02));border-top:1px solid rgba(108,99,255,.1)}
+.cta-section h2{font-family:var(--fh);font-size:38px;font-weight:700;color:#f1f5f9;margin-bottom:14px;letter-spacing:-.3px}
+.cta-section p{font-size:16px;color:var(--muted);margin-bottom:32px}
+/* FOOTER */
+.footer{padding:36px 60px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.footer-copy{font-size:12.5px;color:var(--muted)}
+.footer-links{display:flex;gap:22px}
+.footer-links a{font-size:12.5px;color:var(--muted);transition:color .15s}
+.footer-links a:hover{color:var(--text)}
+/* RESPONSIVE */
+@media(max-width:900px){
+  .nav{padding:0 20px}
   .nav-links{display:none}
-  .hero{padding:50px 20px 50px}
-  .hero h1{font-size:32px}
-  .section{padding:48px 20px}
-  .steps,.benefits-grid,.pricing-grid,.results-inner{grid-template-columns:1fr}
-  .results-strip{padding:28px 20px}
-  .footer{padding:20px}
+  .hero{padding:70px 20px 60px}
+  .hero h1{font-size:34px}
+  .section{padding:60px 20px}
+  .problem-grid,.features-grid,.pricing-grid{grid-template-columns:1fr}
+  .flow-steps{flex-direction:column;border-radius:12px}
+  .flow-step{border-right:none;border-bottom:1px solid var(--border)}
+  .flow-step:last-child{border-bottom:none}
+  .stats-inner{grid-template-columns:repeat(2,1fr)}
+  .stats-bar{padding:28px 20px}
+  .footer{padding:24px 20px}
 }
 </style>
 </head>
@@ -102,18 +113,18 @@ body{font-family:'DM Sans',sans-serif;background:#080b12;color:#e2e8f0;line-heig
 <!-- NAV -->
 <nav class="nav">
   <div class="nav-logo">
-    <div class="nav-logo-mark">&#9889;</div>
+    <div class="nav-logo-icon">&#9889;</div>
     <div>
-      <div class="nav-logo-title">MPilot</div>
-      <div class="nav-logo-sub">AI Growth Engine</div>
+      <div class="nav-logo-name">MPilot AI</div>
+      <div style="font-size:8.5px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-top:-1px">by Clink AI</div>
     </div>
   </div>
   <div class="nav-links">
+    <a href="#features">Features</a>
     <a href="#how-it-works">How It Works</a>
-    <a href="#benefits">Benefits</a>
     <a href="#pricing">Pricing</a>
   </div>
-  <div style="display:flex;gap:10px;align-items:center">
+  <div class="nav-cta">
     <a href="/index.html" class="btn-s">Login</a>
     <a href="/index.html" class="btn-p">&#9889; Start Free Trial</a>
   </div>
@@ -121,176 +132,184 @@ body{font-family:'DM Sans',sans-serif;background:#080b12;color:#e2e8f0;line-heig
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-badge">&#127381; AI-Powered Growth for Indian SMBs</div>
-  <h1>Get More Customers<br><span>Automatically with AI</span></h1>
-  <p>Turn QR scans into WhatsApp conversations, bookings, and repeat customers — without lifting a finger.</p>
-  <div class="hero-btns">
-    <a href="/index.html" class="btn-p" style="font-size:15px;height:44px;padding:0 26px">&#9889; Start Free Trial</a>
-    <a href="#how-it-works" class="btn-s" style="height:44px">See How It Works</a>
+  <div class="hero-badge">&#127381; AI-Powered Revenue Engine for SMBs</div>
+  <h1>Turn WhatsApp, Instagram &amp;<br><span>Google into a Revenue Machine</span></h1>
+  <p>AI replies to customers instantly. AI brings them back. AI runs your marketing — all automatically, 24/7.</p>
+  <div class="hero-cta">
+    <a href="/index.html" class="btn-p" style="height:48px;padding:0 28px;font-size:15px;box-shadow:0 6px 22px rgba(108,99,255,.45)">&#9889; Start Free Trial</a>
+    <a href="#how-it-works" class="btn-s" style="height:48px">See How It Works</a>
   </div>
   <div class="hero-trust">
     <span>&#9989; No credit card needed</span>
     <span>&#9989; Setup in 2 minutes</span>
     <span>&#9989; Works on WhatsApp</span>
-    <span>&#9989; 100% Safe</span>
+    <span>&#9989; 100% safe</span>
   </div>
 </div>
 
-<!-- RESULTS STRIP -->
-<div class="results-strip">
-  <div class="results-inner">
-    <div><div class="result-val">3&#10005;</div><div class="result-lbl">More Walk-ins</div></div>
-    <div><div class="result-val">5&#10005;</div><div class="result-lbl">More Google Reviews</div></div>
-    <div><div class="result-val">40%</div><div class="result-lbl">Customers Return</div></div>
-    <div><div class="result-val">24&#47;7</div><div class="result-lbl">AI Handles Queries</div></div>
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div><div class="stat-val">3&#10005;</div><div class="stat-lbl">More Walk-ins</div></div>
+    <div><div class="stat-val">5&#10005;</div><div class="stat-lbl">More Google Reviews</div></div>
+    <div><div class="stat-val">40%</div><div class="stat-lbl">Higher Retention</div></div>
+    <div><div class="stat-val">24/7</div><div class="stat-lbl">AI Handles Everything</div></div>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<div class="section">
+  <div class="section-chip">The Problem</div>
+  <div class="section-title">SMBs are losing customers silently</div>
+  <div class="section-sub">Every missed WhatsApp message, unanswered DM, and forgotten follow-up is lost revenue.</div>
+  <div class="problem-grid">
+    <div class="problem-card"><div class="problem-icon">&#128241;</div><div class="problem-title">Missed WhatsApp Leads</div><div class="problem-desc">70% of customers who don't get an instant reply go to a competitor.</div></div>
+    <div class="problem-card"><div class="problem-icon">&#128562;</div><div class="problem-title">No Follow-ups</div><div class="problem-desc">Customers visit once and never return — because no one reminded them.</div></div>
+    <div class="problem-card"><div class="problem-icon">&#11088;</div><div class="problem-title">Low Google Reviews</div><div class="problem-desc">Businesses with fewer reviews get buried in search results.</div></div>
+    <div class="problem-card"><div class="problem-icon">&#128247;</div><div class="problem-title">No Instagram Conversions</div><div class="problem-desc">Followers see your posts but never become paying customers.</div></div>
+    <div class="problem-card"><div class="problem-icon">&#128200;</div><div class="problem-title">No Marketing Consistency</div><div class="problem-desc">Campaigns run once, then stop. No system, no repeat business.</div></div>
+    <div class="problem-card"><div class="problem-icon">&#128336;</div><div class="problem-title">No Time for All of This</div><div class="problem-desc">You're running the business — you can't also be the marketer.</div></div>
   </div>
 </div>
 
 <!-- HOW IT WORKS -->
-<div class="section" id="how-it-works">
-  <div style="max-width:1100px;margin:0 auto">
-    <div class="section-label">How It Works</div>
-    <div class="section-title">Three simple steps to more customers</div>
-    <div class="section-sub">No training required. Your AI starts working from day one.</div>
-    <div class="steps">
-      <div class="step-card">
-        <div class="step-icon">&#128247;</div>
-        <div class="step-num">1</div>
-        <div class="step-title">Place Your QR in Store</div>
-        <div class="step-desc">Print your unique QR code and place it at your counter, entrance, or table. Customers scan it instantly.</div>
-      </div>
-      <div class="step-card">
-        <div class="step-icon">&#128172;</div>
-        <div class="step-num">2</div>
-        <div class="step-title">Customers Chat on WhatsApp</div>
-        <div class="step-desc">One scan opens WhatsApp with a greeting ready. Your AI responds instantly — 24&#47;7, in their language.</div>
-      </div>
-      <div class="step-card">
-        <div class="step-icon">&#128176;</div>
-        <div class="step-num">3</div>
-        <div class="step-title">AI Converts Them to Customers</div>
-        <div class="step-desc">AI shares offers, takes bookings, asks for reviews, and brings them back again. Automatically.</div>
-      </div>
+<div style="background:var(--surface);padding:80px 60px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)" id="how-it-works">
+  <div style="max-width:1140px;margin:0 auto">
+    <div class="section-chip">How It Works</div>
+    <div class="section-title">One platform, infinite customers</div>
+    <div class="section-sub">Your AI employee works every channel simultaneously — without breaks, without mistakes.</div>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-icon">&#128247;</div><div class="flow-step-title">Scan QR / Open Channel</div><div class="flow-step-desc">Customer scans your store QR, DMs on Instagram, or finds you on Google</div></div>
+      <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-icon">&#129302;</div><div class="flow-step-title">AI Replies Instantly</div><div class="flow-step-desc">WhatsApp AI answers queries, shares prices, books appointments — 24/7</div></div>
+      <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-icon">&#128101;</div><div class="flow-step-title">CRM Captures Lead</div><div class="flow-step-desc">Customer data saved automatically with source, tags, and score</div></div>
+      <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-icon">&#9889;</div><div class="flow-step-title">AI Runs Follow-ups</div><div class="flow-step-desc">Offers, reminders, win-backs, and review requests — automated</div></div>
+      <div class="flow-step"><div class="flow-step-num">5</div><div class="flow-step-icon">&#128176;</div><div class="flow-step-title">Revenue Grows</div><div class="flow-step-desc">More visits, more reviews, more referrals — without any extra effort</div></div>
     </div>
   </div>
 </div>
 
-<!-- BENEFITS -->
-<div style="background:#0a0d16;padding:64px 60px" id="benefits">
-  <div style="max-width:1100px;margin:0 auto">
-    <div class="section-label">Why MPilot</div>
-    <div class="section-title">Everything your business needs to grow</div>
-    <div class="section-sub">Built for salons, clinics, restaurants, retail shops, and every local business.</div>
-    <div class="benefits-grid">
-      <div class="benefit-card">
-        <div class="benefit-icon" style="background:rgba(108,99,255,.12)">&#128205;</div>
-        <div>
-          <div class="benefit-title">More Walk-ins &amp; Footfall</div>
-          <div class="benefit-desc">AI sends timely offers to bring customers back on slow days. Win-back campaigns run automatically.</div>
-        </div>
-      </div>
-      <div class="benefit-card">
-        <div class="benefit-icon" style="background:rgba(16,185,129,.1)">&#11088;</div>
-        <div>
-          <div class="benefit-title">More Google Reviews</div>
-          <div class="benefit-desc">After every visit, AI requests a review at the perfect moment. Grow your Google rating on autopilot.</div>
-        </div>
-      </div>
-      <div class="benefit-card">
-        <div class="benefit-icon" style="background:rgba(0,212,170,.1)">&#128260;</div>
-        <div>
-          <div class="benefit-title">Repeat Customers</div>
-          <div class="benefit-desc">AI remembers every customer and sends personalised offers, reminders, and loyalty rewards automatically.</div>
-        </div>
-      </div>
-      <div class="benefit-card">
-        <div class="benefit-icon" style="background:rgba(245,158,11,.1)">&#129302;</div>
-        <div>
-          <div class="benefit-title">AI Handles All Conversations</div>
-          <div class="benefit-desc">Booking queries, pricing, location, hours — AI answers everything instantly so you can focus on your business.</div>
-        </div>
-      </div>
-      <div class="benefit-card">
-        <div class="benefit-icon" style="background:rgba(59,130,246,.1)">&#128247;</div>
-        <div>
-          <div class="benefit-title">QR-to-Customer in Seconds</div>
-          <div class="benefit-desc">Place one QR code and watch customers walk in. No app download, no friction — just scan and connect.</div>
-        </div>
-      </div>
-      <div class="benefit-card">
-        <div class="benefit-icon" style="background:rgba(236,72,153,.1)">&#128197;</div>
-        <div>
-          <div class="benefit-title">Smart Booking &amp; Scheduling</div>
-          <div class="benefit-desc">Customers book appointments through WhatsApp. AI confirms, reminds, and reduces no-shows automatically.</div>
-        </div>
-      </div>
+<!-- FEATURES -->
+<div class="section" id="features">
+  <div class="section-chip">Features</div>
+  <div class="section-title">Everything your business needs to grow</div>
+  <div class="section-sub">Built for salons, clinics, restaurants, retail and every local business.</div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(37,211,102,.1)">&#128172;</div>
+      <div class="feature-title">WhatsApp AI Assistant</div>
+      <div class="feature-desc">Replies to every customer instantly. Handles pricing, bookings, FAQs. Captures lead data automatically.</div>
+      <div class="feature-tag" style="background:rgba(37,211,102,.1);color:#25d366">Primary Channel</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:linear-gradient(135deg,rgba(225,48,108,.12),rgba(131,58,180,.08))">&#128247;</div>
+      <div class="feature-title">InstaFlow AI</div>
+      <div class="feature-desc">Comment triggers, story reply DMs, keyword auto-replies, AI conversation mode. Turn followers into customers.</div>
+      <div class="feature-tag" style="background:rgba(225,48,108,.1);color:#e1306c">&#128293; Instagram Engine</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(66,133,244,.1)">&#128205;</div>
+      <div class="feature-title">Google Business AI</div>
+      <div class="feature-desc">Auto-reply to reviews, post offers and events, track calls and direction requests. Rank higher locally.</div>
+      <div class="feature-tag" style="background:rgba(66,133,244,.1);color:#4285f4">Google SEO</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(108,99,255,.12)">&#9711;</div>
+      <div class="feature-title">QR Lead Funnel</div>
+      <div class="feature-desc">One QR. Customer scans → WhatsApp opens → AI greets → lead captured. Place it at counter, table, or window.</div>
+      <div class="feature-tag" style="background:rgba(108,99,255,.1);color:#818cf8">Offline to Online</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(245,158,11,.1)">&#128293;</div>
+      <div class="feature-title">Campaign Engine</div>
+      <div class="feature-desc">Win-back campaigns, seasonal offers, loyalty rewards. Target the right customers at the right moment.</div>
+      <div class="feature-tag" style="background:rgba(245,158,11,.1);color:#f59e0b">Revenue Driver</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(0,212,170,.1)">&#128101;</div>
+      <div class="feature-title">Smart CRM</div>
+      <div class="feature-desc">Customer lifecycle tracking. Lead scoring (Hot/Warm/Cold). Visit history, spend estimate, source attribution.</div>
+      <div class="feature-tag" style="background:rgba(0,212,170,.1);color:#00d4aa">Retention</div>
     </div>
   </div>
 </div>
 
 <!-- PRICING -->
-<div class="section" id="pricing">
-  <div style="max-width:900px;margin:0 auto">
-    <div class="section-label">Pricing</div>
+<div style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 60px" id="pricing">
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="section-chip">Pricing</div>
     <div class="section-title">Simple, honest pricing</div>
-    <div class="section-sub">No hidden fees. Cancel anytime. Start free for 14 days.</div>
+    <div class="section-sub">Start free. No credit card. Upgrade as you grow.</div>
     <div class="pricing-grid">
       <div class="price-card">
         <div class="price-name">Starter</div>
+        <div class="price-amount">&#8377;499</div>
+        <div class="price-period">per month &middot; 1 business</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>QR lead capture</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>WhatsApp AI replies</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>Up to 200 customers</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>Google review requests</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>Basic campaigns</div>
+        <button class="price-btn secondary" onclick="window.location.href='/index.html'">Start Free Trial</button>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Growth</div>
         <div class="price-amount">&#8377;999</div>
-        <div class="price-period">per month, 1 business</div>
-        <div class="price-feat"><span class="price-feat-tick">&#10003;</span>QR customer capture</div>
-        <div class="price-feat"><span class="price-feat-tick">&#10003;</span>WhatsApp AI replies</div>
-        <div class="price-feat"><span class="price-feat-tick">&#10003;</span>Up to 500 customers</div>
-        <div class="price-feat"><span class="price-feat-tick">&#10003;</span>Google review requests</div>
-        <div class="price-feat"><span class="price-feat-tick">&#10003;</span>Basic campaigns</div>
-        <button class="price-cta secondary" onclick="window.location.href='/index.html'">Start Free Trial</button>
+        <div class="price-period">per month &middot; 2 businesses</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>Everything in Starter</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>Up to 2,000 customers</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>Win-back campaigns</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>InstaFlow AI (Instagram)</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>Booking management</div>
+        <button class="price-btn secondary" onclick="window.location.href='/index.html'">Start Free Trial</button>
       </div>
       <div class="price-card popular">
         <div class="popular-badge">&#128293; Most Popular</div>
         <div class="price-name">Pro</div>
         <div class="price-amount">&#8377;1,999</div>
-        <div class="price-period">per month, up to 3 businesses</div>
-        <div class="price-feat"><span class="price-feat-tick">&#10003;</span>Everything in Starter</div>
-        <div class="price-feat"><span class="price-feat-tick">&#10003;</span>Up to 5,000 customers</div>
-        <div class="price-feat"><span class="price-feat-tick">&#10003;</span>Win-back campaigns</div>
-        <div class="price-feat"><span class="price-feat-tick">&#10003;</span>Booking management</div>
-        <div class="price-feat"><span class="price-feat-tick">&#10003;</span>Priority support</div>
-        <div class="price-feat"><span class="price-feat-tick">&#10003;</span>AI performance reports</div>
-        <button class="price-cta primary" onclick="window.location.href='/index.html'">&#9889; Start Free Trial</button>
+        <div class="price-period">per month &middot; 5 businesses</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>Everything in Growth</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>Up to 10,000 customers</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>Google Business full suite</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>AI campaign automation</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>Priority support</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>Analytics dashboard</div>
+        <button class="price-btn primary" onclick="window.location.href='/index.html'">&#9889; Start Free Trial</button>
       </div>
       <div class="price-card">
-        <div class="price-name">Growth</div>
+        <div class="price-name">Business+</div>
         <div class="price-amount">&#8377;3,999</div>
-        <div class="price-period">per month, up to 10 businesses</div>
-        <div class="price-feat"><span class="price-feat-tick">&#10003;</span>Everything in Pro</div>
-        <div class="price-feat"><span class="price-feat-tick">&#10003;</span>Unlimited customers</div>
-        <div class="price-feat"><span class="price-feat-tick">&#10003;</span>Multi-location dashboard</div>
-        <div class="price-feat"><span class="price-feat-tick">&#10003;</span>Custom AI training</div>
-        <div class="price-feat"><span class="price-feat-tick">&#10003;</span>Dedicated account manager</div>
-        <button class="price-cta secondary" onclick="window.location.href='/index.html'">Start Free Trial</button>
+        <div class="price-period">per month &middot; unlimited</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>Everything in Pro</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>Unlimited customers</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>Custom AI training</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>Dedicated account manager</div>
+        <div class="price-feat"><span class="price-tick">&#10003;</span>White-label option</div>
+        <button class="price-btn secondary" onclick="window.location.href='/index.html'">Start Free Trial</button>
       </div>
     </div>
-    <div style="text-align:center;margin-top:20px;font-size:12.5px;color:#475569">
-      All plans include a 14-day free trial. No credit card required.
-    </div>
+    <div style="text-align:center;margin-top:22px;font-size:12.5px;color:var(--muted)">All plans include a 14-day free trial &middot; No credit card required &middot; Cancel anytime</div>
   </div>
 </div>
 
 <!-- CTA -->
 <div class="cta-section">
   <h2>Ready to grow your business?</h2>
-  <p>Join thousands of small businesses using MPilot to get more customers automatically.</p>
-  <a href="/index.html" class="btn-p" style="font-size:15px;height:46px;padding:0 28px">&#9889; Start Free Trial — It's Free</a>
+  <p>Join thousands of SMBs using MPilot AI to get more customers automatically.</p>
+  <a href="/index.html" class="btn-p" style="height:50px;padding:0 32px;font-size:16px;box-shadow:0 6px 24px rgba(108,99,255,.45)">&#9889; Start Free Trial — It's Free</a>
+  <div style="margin-top:18px;font-size:12.5px;color:var(--muted)">&#9745; 2-minute setup &nbsp;&nbsp; &#9745; No technical knowledge needed &nbsp;&nbsp; &#9745; Cancel anytime</div>
 </div>
 
 <!-- FOOTER -->
 <footer class="footer">
-  <div class="footer-copy">&#169; 2026 Clink Online Pvt Ltd. All rights reserved.</div>
+  <div>
+    <div style="font-family:var(--fh);font-size:15px;font-weight:700;color:#818cf8;margin-bottom:4px">MPilot AI</div>
+    <div class="footer-copy">&#169; 2026 Clink Online Pvt Ltd. All rights reserved.</div>
+  </div>
   <div class="footer-links">
     <a href="#">Privacy Policy</a>
     <a href="#">Terms of Service</a>
     <a href="#">Contact</a>
+    <a href="/index.html">Login</a>
   </div>
 </footer>
 

@@ -46,8 +46,9 @@ select.biz-sel:focus{border-color:var(--accent)}
 .powered a:hover{color:var(--accent)}
 
 /* ─── MAIN ─── */
-.main{margin-left:228px;flex:1;padding:22px 26px;max-width:calc(100vw - 228px)}
-.page{display:none}
+.main{margin-left:228px;flex:1;padding:22px 26px;max-width:calc(100vw - 228px);position:relative;overflow:hidden}
+.page{display:none;position:absolute;top:0;left:0;right:0;min-height:100%;}
+.page.on{display:block;position:relative;}
 .page.on{display:block}
 .ph{margin-bottom:20px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px}
 .pt{font-family:var(--fh);font-size:22px;font-weight:700}
@@ -249,7 +250,7 @@ code{background:var(--s2);padding:1px 5px;border-radius:4px;font-size:11px;color
   .sb{transform:translateX(-100%);transition:transform .25s ease;z-index:160}
   
   
-  .main{margin-left:0;max-width:100vw;padding:74px 14px 20px}
+  .main{margin-left:0;max-width:100vw;padding:74px 14px 20px;position:relative;overflow:hidden}
 
   /* Tighter grids */
   .g4{grid-template-columns:1fr 1fr}
@@ -2412,6 +2413,277 @@ function showUpgradePage() {
 
 </div>
 
+
+
+<!-- MY ACCOUNT -->
+<div class="page" id="p-myaccount">
+  <div class="ph">
+    <div><div class="pt">My Account</div><div class="ps">Profile, businesses and billing</div></div>
+    <button onclick="doLogout()" style="height:34px;padding:0 16px;border-radius:8px;background:rgba(255,107,107,.07);border:1px solid rgba(255,107,107,.2);color:var(--a3);font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--fb)">&#8594; Logout</button>
+  </div>
+
+  <!-- PROFILE ────────────────────────────────────── -->
+  <div class="card" style="margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+      <div id="acc-avatar" style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#8b7cf8);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;flex-shrink:0">A</div>
+      <div style="flex:1;min-width:0">
+        <div id="acc-name" style="font-size:16px;font-weight:700;color:var(--text)">&#8212;</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+          <span id="acc-role" style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(108,99,255,.1);color:var(--accent)">Owner</span>
+          <span id="acc-plan-badge" style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(16,185,129,.1);color:#10b981">Pro</span>
+        </div>
+      </div>
+      <button onclick="editAccountProfile()" class="btn bs sm">Edit Profile</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+      <div style="padding:10px 13px;background:var(--s2);border:1px solid var(--border);border-radius:8px">
+        <div style="font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">&#128241; Phone / WhatsApp</div>
+        <div id="acc-phone" style="font-size:13.5px;font-weight:500;color:var(--text)">&#8212;</div>
+      </div>
+      <div style="padding:10px 13px;background:var(--s2);border:1px solid var(--border);border-radius:8px">
+        <div style="font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">&#128231; Email</div>
+        <div id="acc-email" style="font-size:13.5px;font-weight:500;color:var(--text)">&#8212;</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MY BUSINESSES ───────────────────────────────── -->
+  <div class="card" style="margin-bottom:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div style="font-size:13px;font-weight:700;color:var(--text)">&#127968; My Businesses</div>
+      <button onclick="addNewBusinessQuick()" class="btn bp sm" style="height:30px;font-size:12px">+ Add Business</button>
+    </div>
+    <div id="acc-biz-list">
+      <div class="skel skel-block" style="height:52px;margin-bottom:8px;border-radius:9px"></div>
+      <div class="skel skel-block" style="height:52px;border-radius:9px"></div>
+    </div>
+  </div>
+
+  <!-- BILLING ─────────────────────────────────────── -->
+  <div class="card" style="margin-bottom:12px">
+    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px">&#128179; Billing</div>
+    <div style="background:linear-gradient(135deg,rgba(108,99,255,.1),rgba(108,99,255,.03));border:1px solid rgba(108,99,255,.2);border-radius:10px;padding:16px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div id="acc-plan" style="font-size:17px;font-weight:800;color:var(--text);font-family:var(--fh)">MPilot Pro &#128081;</div>
+          <div style="font-size:11.5px;color:var(--muted);margin-top:5px">Renews <span id="acc-renew" style="color:var(--text2)">May 25, 2026</span></div>
+        </div>
+        <span style="font-size:10.5px;font-weight:700;padding:4px 10px;background:rgba(16,185,129,.1);color:#10b981;border-radius:20px;border:1px solid rgba(16,185,129,.18)">Active</span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+      <button onclick="showUpgradePage()" class="btn bp" style="height:38px;font-size:13px">&#8599; Upgrade Plan</button>
+      <button onclick="toast('Contact support@mpilot.in for invoices')" class="btn bs" style="height:38px;font-size:13px">&#128196; View Invoices</button>
+    </div>
+  </div>
+
+  <!-- SECURITY ────────────────────────────────────── -->
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px">&#128274; Security</div>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
+        <div>
+          <div style="font-size:13px;font-weight:500;color:var(--text)">Phone Verified</div>
+          <div style="font-size:11.5px;color:#10b981;margin-top:2px;font-weight:600">&#10003; Verified</div>
+        </div>
+        <button onclick="toast('Change number — coming soon')" class="btn bs sm" style="height:28px;font-size:11.5px">Change</button>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
+        <div>
+          <div style="font-size:13px;font-weight:500;color:var(--text)">Active Sessions</div>
+          <div style="font-size:11.5px;color:var(--muted);margin-top:2px">Logged in on this device</div>
+        </div>
+        <button onclick="doLogout()" style="height:28px;padding:0 12px;border-radius:7px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.18);color:var(--a3);font-size:11.5px;font-weight:600;cursor:pointer;font-family:var(--fb)">Logout All</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- INSTAFLOW -->
+<div class="page" id="p-instaflow">
+  <div class="ph">
+    <div>
+      <div class="pt" style="display:flex;align-items:center;gap:10px">
+        InstaFlow
+        <span style="font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;background:linear-gradient(135deg,rgba(225,48,108,.15),rgba(131,58,180,.12));color:#e1306c;border:1px solid rgba(225,48,108,.2)">&#128293; AI Instagram Engine</span>
+      </div>
+      <div class="ps">Convert Instagram engagement into leads, conversations and customers</div>
+    </div>
+    <button onclick="goTo('setup')" class="btn bs sm">&#8592; Back to Setup</button>
+  </div>
+
+  <!-- Connection Status -->
+  <div class="card" style="margin-bottom:14px;display:flex;align-items:center;gap:14px;padding:16px 20px">
+    <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,rgba(225,48,108,.15),rgba(131,58,180,.1));display:flex;align-items:center;justify-content:center;font-size:22px">&#128247;</div>
+    <div style="flex:1">
+      <div style="font-size:14px;font-weight:600;color:var(--text)">Instagram Business Account</div>
+      <div id="if-ig-status" style="font-size:12px;color:var(--muted);margin-top:2px">Not connected</div>
+    </div>
+    <button onclick="connectMeta()" class="btn bp sm" style="height:34px">Connect Instagram</button>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+
+    <!-- Trigger 1: Comment → DM -->
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:36px;height:36px;border-radius:8px;background:rgba(225,48,108,.1);display:flex;align-items:center;justify-content:center;font-size:18px">&#128172;</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text)">Comment &#8594; DM</div>
+          <div style="font-size:11px;color:var(--muted)">Auto-DM when someone comments a keyword</div>
+        </div>
+        <div style="margin-left:auto">
+          <label style="position:relative;display:inline-block;width:38px;height:20px">
+            <input type="checkbox" id="if-comment-toggle" style="opacity:0;width:0;height:0" onchange="toggleInstaFlow('comment',this.checked)">
+            <span id="if-comment-slider" style="position:absolute;cursor:pointer;inset:0;background:var(--s3);border-radius:20px;transition:.2s"></span>
+          </label>
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">Trigger Keywords</label>
+        <input class="fi" id="if-comment-kw" placeholder="price, offer, info, link" style="font-size:12.5px">
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">Auto-DM Message</label>
+        <textarea class="fi" id="if-comment-msg" rows="3" style="height:auto;padding:8px 11px;font-size:12px;resize:none" placeholder="Hi! Thanks for your interest. Here's our offer: [link]"></textarea>
+      </div>
+      <button onclick="saveInstaFlowTrigger('comment')" class="btn bp" style="width:100%;height:36px;font-size:13px">Save Trigger</button>
+    </div>
+
+    <!-- Trigger 2: Story Reply → DM -->
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:36px;height:36px;border-radius:8px;background:rgba(131,58,180,.1);display:flex;align-items:center;justify-content:center;font-size:18px">&#9654;&#65039;</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text)">Story Reply &#8594; DM</div>
+          <div style="font-size:11px;color:var(--muted)">Auto-DM when someone reacts to your story</div>
+        </div>
+        <div style="margin-left:auto">
+          <label style="position:relative;display:inline-block;width:38px;height:20px">
+            <input type="checkbox" id="if-story-toggle" style="opacity:0;width:0;height:0" onchange="toggleInstaFlow('story',this.checked)">
+            <span id="if-story-slider" style="position:absolute;cursor:pointer;inset:0;background:var(--s3);border-radius:20px;transition:.2s"></span>
+          </label>
+        </div>
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">Auto-DM Message</label>
+        <textarea class="fi" id="if-story-msg" rows="3" style="height:auto;padding:8px 11px;font-size:12px;resize:none" placeholder="Thanks for reacting to our story! Tap here to get your exclusive offer: [link]"></textarea>
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">Booking Link (optional)</label>
+        <input class="fi" id="if-story-link" placeholder="https://yourbooking.link" style="font-size:12.5px">
+      </div>
+      <button onclick="saveInstaFlowTrigger('story')" class="btn bp" style="width:100%;height:36px;font-size:13px">Save Trigger</button>
+    </div>
+
+    <!-- Trigger 3: DM Keywords -->
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:36px;height:36px;border-radius:8px;background:rgba(245,158,11,.1);display:flex;align-items:center;justify-content:center;font-size:18px">&#128291;</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text)">DM Keyword Reply</div>
+          <div style="font-size:11px;color:var(--muted)">AI replies when someone DMs a keyword</div>
+        </div>
+        <div style="margin-left:auto">
+          <label style="position:relative;display:inline-block;width:38px;height:20px">
+            <input type="checkbox" id="if-dm-toggle" style="opacity:0;width:0;height:0" onchange="toggleInstaFlow('dm',this.checked)">
+            <span id="if-dm-slider" style="position:absolute;cursor:pointer;inset:0;background:var(--s3);border-radius:20px;transition:.2s"></span>
+          </label>
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">DM Keywords</label>
+        <input class="fi" id="if-dm-kw" placeholder="price, offer, location, hours" style="font-size:12.5px">
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">AI Reply</label>
+        <textarea class="fi" id="if-dm-msg" rows="2" style="height:auto;padding:8px 11px;font-size:12px;resize:none" placeholder="Hi! Here are our prices / location / offer details..."></textarea>
+      </div>
+      <button onclick="saveInstaFlowTrigger('dm')" class="btn bp" style="width:100%;height:36px;font-size:13px">Save Trigger</button>
+    </div>
+
+    <!-- AI Mode -->
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:36px;height:36px;border-radius:8px;background:rgba(108,99,255,.12);display:flex;align-items:center;justify-content:center;font-size:18px">&#129302;</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text)">AI Conversation Mode</div>
+          <div style="font-size:11px;color:var(--muted)">AI understands intent and qualifies leads</div>
+        </div>
+        <div style="margin-left:auto">
+          <label style="position:relative;display:inline-block;width:38px;height:20px">
+            <input type="checkbox" id="if-ai-toggle" style="opacity:0;width:0;height:0" checked onchange="toggleInstaFlow('ai',this.checked)">
+            <span id="if-ai-slider" style="position:absolute;cursor:pointer;inset:0;background:var(--accent);border-radius:20px;transition:.2s"></span>
+          </label>
+        </div>
+      </div>
+      <div style="background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:14px;margin-bottom:12px">
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)"><span style="color:#10b981">&#10003;</span> Detect intent (booking, pricing, location)</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)"><span style="color:#10b981">&#10003;</span> Ask qualifying questions</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)"><span style="color:#10b981">&#10003;</span> Share booking link at right moment</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)"><span style="color:#10b981">&#10003;</span> Capture lead data automatically</div>
+        </div>
+      </div>
+      <div style="font-size:11.5px;color:var(--muted);text-align:center">
+        When OFF: uses template replies only
+      </div>
+    </div>
+
+    <!-- Lead Capture Stats -->
+    <div class="card" style="grid-column:1/-1">
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:14px">InstaFlow Performance</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        <div style="text-align:center;padding:14px;background:var(--s2);border-radius:9px">
+          <div style="font-size:22px;font-weight:800;color:var(--accent)" id="if-stat-triggers">0</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">Triggers Fired</div>
+        </div>
+        <div style="text-align:center;padding:14px;background:var(--s2);border-radius:9px">
+          <div style="font-size:22px;font-weight:800;color:#10b981" id="if-stat-dms">0</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">DMs Sent</div>
+        </div>
+        <div style="text-align:center;padding:14px;background:var(--s2);border-radius:9px">
+          <div style="font-size:22px;font-weight:800;color:var(--amber)" id="if-stat-leads">0</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">Leads Captured</div>
+        </div>
+        <div style="text-align:center;padding:14px;background:var(--s2);border-radius:9px">
+          <div style="font-size:22px;font-weight:800;color:var(--accent)" id="if-stat-conv">0%</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">Conversion Rate</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ONBOARDING -->
+<div class="page" id="p-onboarding" style="display:flex;align-items:center;justify-content:center;min-height:80vh">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:44px 40px;max-width:480px;width:100%;text-align:center">
+    <div style="font-size:52px;margin-bottom:16px">&#9889;</div>
+    <div style="font-family:var(--fh);font-size:26px;font-weight:800;color:var(--text);margin-bottom:10px;letter-spacing:-.3px">Welcome to MPilot!</div>
+    <div style="font-size:14px;color:var(--muted);line-height:1.75;margin-bottom:28px">Set up your business in 2 minutes and start getting customers automatically via WhatsApp AI.</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:28px;text-align:left">
+      <div style="display:flex;align-items:center;gap:13px;padding:12px 16px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
+        <div style="width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>
+        <div style="font-size:13px;color:var(--text)">Tell us your business name &amp; category</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:13px;padding:12px 16px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
+        <div style="width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>
+        <div style="font-size:13px;color:var(--text)">AI auto-fills address, hours &amp; Google details</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:13px;padding:12px 16px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
+        <div style="width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>
+        <div style="font-size:13px;color:var(--text)">Customers come via WhatsApp automatically</div>
+      </div>
+    </div>
+    <button onclick="goTo('setup');wizGo(1);" class="btn bp" style="width:100%;height:48px;font-size:15px;font-weight:800;box-shadow:0 6px 20px rgba(108,99,255,.4);border-radius:12px">
+      &#9889; Set Up My Business — Free
+    </button>
+    <div style="margin-top:14px;font-size:12px;color:var(--muted)">&#10003; 2 minutes &nbsp; &#10003; No credit card &nbsp; &#10003; Works on WhatsApp</div>
+  </div>
+</div>
 </main>
 
 <div class="toastwrap" id="toasts"></div>
@@ -2691,33 +2963,42 @@ function goTo(page) {
   // Guard: pages that need a business
   var freePages = ['setup','myaccount','onboarding','instaflow'];
   if (!BIZ && freePages.indexOf(page) === -1) {
-    // If no businesses at all → onboarding
     var sel = document.getElementById('biz-sel');
-    var hasBiz = sel && Array.from(sel.options).some(function(o){return o.value && o.value !== '';});
+    var hasBiz = sel && Array.from(sel.options).some(function(o){ return o.value && o.value !== ''; });
     if (!hasBiz) {
-      document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on');});
-      document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on');});
-      var ob = document.getElementById('p-onboarding'); if(ob) ob.classList.add('on');
+      _showPage('onboarding');
       return;
     }
-    // Has businesses but none active → show guard
-    var guard = document.getElementById('biz-guard'); if(guard) guard.classList.add('show');
+    var guard = document.getElementById('biz-guard');
+    if (guard) guard.style.display = 'flex';
     return;
   }
-  var guard = document.getElementById('biz-guard'); if(guard) guard.classList.remove('show');
-  closeMobileNav();
-  document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
-  const ni = document.querySelector(`.ni[data-p="${page}"]`);
-  const pg = document.getElementById(`p-${page}`);
-  if (ni) ni.classList.add('on');
+  var guard = document.getElementById('biz-guard');
+  if (guard) guard.style.display = 'none';
+  _showPage(page);
+}
+
+function _showPage(page) {
+  // Hide ALL pages
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('on'); });
+  // Deactivate all nav items
+  document.querySelectorAll('.ni').forEach(function(n) { n.classList.remove('on'); });
+  // Show target page
+  var pg = document.getElementById('p-' + page);
   if (pg) {
     pg.classList.add('on');
-    loadPage(page);
-    if (window.innerWidth < 900) window.scrollTo({top:0,behavior:'smooth'});
   } else {
-    toast('Page not found: ' + page, 'err');
+    console.warn('Page not found: p-' + page);
+    return;
   }
+  // Activate nav item
+  var ni = document.querySelector('.ni[data-p="' + page + '"]');
+  if (ni) ni.classList.add('on');
+  // Load page data
+  loadPage(page);
+  // Mobile: scroll to top
+  if (window.innerWidth < 900) window.scrollTo({ top: 0, behavior: 'smooth' });
+  closeMobileNav();
 }
 
 document.querySelectorAll('.ni[data-p]').forEach(item => {
@@ -2725,33 +3006,17 @@ document.querySelectorAll('.ni[data-p]').forEach(item => {
 });
 
 function loadPage(page) {
-  const fn = {
+  var fn = {
     dashboard:  loadDash,
-    analytics:  loadAnalytics,
-    revenue:    loadRevenue,
-    ai:         loadSuggestions,
-    channels:   loadChannels,
-    connect:    loadConnectPage,
-    social:     loadPosts,
-    ads:        loadAds,
-    seo:        loadSEO,
-    customers:  () => loadCusts(''),
-    loyalty:    loadLoyalty,
-    footfall:   loadFootfall,
-    campaigns:  () => { loadCamps(); loadFestivals(); },
-    content:    () => { if(typeof loadCal==='function') loadCal(); if(typeof loadFestivals==='function') loadFestivals(); },
-    influencer: loadInfluencer,
-    reviews:    loadRevs,
-    competitors:loadComps,
-    automation:  loadAutomation,
-    qr:         loadQR,    // legacy QR page still works
-    inbox:      loadInbox,
+    customers:  function(){ if(typeof loadCusts==='function') loadCusts(); },
+    campaigns:  function(){ if(typeof loadCampaigns==='function') loadCampaigns(); },
+    reviews:    function(){ if(typeof loadReviews==='function') loadReviews(); },
     setup:      loadSetup,
     myaccount:  loadMyAccount,
-    instaflow:  function(){ /* InstaFlow loads on nav */ },
-    wizard:     () => {},
-  };
-  if (fn[page]) fn[page]();
+    instaflow:  function(){},
+    onboarding: function(){}
+  }[page];
+  if (fn) { try { fn(); } catch(e) { console.log('loadPage err:', page, e); } }
 }
 
 // ─── Business Selector ────────────────────────────────────
@@ -3906,12 +4171,7 @@ async function loadBizList() {
     BIZ = '';
     localStorage.removeItem('mpilot_biz');
     // Rule 1: No business → show onboarding screen
-    setTimeout(function() {
-      document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('on'); });
-      document.querySelectorAll('.ni').forEach(function(n){ n.classList.remove('on'); });
-      var ob = document.getElementById('p-onboarding');
-      if (ob) ob.classList.add('on');
-    }, 50);
+    setTimeout(function(){ _showPage('onboarding'); }, 50);
   }
 
   _renderBizSwitcher(_bizCache);
@@ -6417,246 +6677,23 @@ async function loadMyAccount() {
   }
 }
 </script>
-<div class="page" id="p-myaccount">
-  <div class="ph">
-    <div><div class="pt">My Account</div><div class="ps">Profile, businesses and billing</div></div>
-    <button onclick="doLogout()" style="height:34px;padding:0 16px;border-radius:8px;background:rgba(255,107,107,.07);border:1px solid rgba(255,107,107,.2);color:var(--a3);font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--fb)">&#8594; Logout</button>
-  </div>
-
-  <!-- PROFILE ────────────────────────────────────── -->
-  <div class="card" style="margin-bottom:12px">
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-      <div id="acc-avatar" style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#8b7cf8);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;flex-shrink:0">A</div>
-      <div style="flex:1;min-width:0">
-        <div id="acc-name" style="font-size:16px;font-weight:700;color:var(--text)">&#8212;</div>
-        <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
-          <span id="acc-role" style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(108,99,255,.1);color:var(--accent)">Owner</span>
-          <span id="acc-plan-badge" style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(16,185,129,.1);color:#10b981">Pro</span>
-        </div>
-      </div>
-      <button onclick="editAccountProfile()" class="btn bs sm">Edit Profile</button>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
-      <div style="padding:10px 13px;background:var(--s2);border:1px solid var(--border);border-radius:8px">
-        <div style="font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">&#128241; Phone / WhatsApp</div>
-        <div id="acc-phone" style="font-size:13.5px;font-weight:500;color:var(--text)">&#8212;</div>
-      </div>
-      <div style="padding:10px 13px;background:var(--s2);border:1px solid var(--border);border-radius:8px">
-        <div style="font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">&#128231; Email</div>
-        <div id="acc-email" style="font-size:13.5px;font-weight:500;color:var(--text)">&#8212;</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MY BUSINESSES ───────────────────────────────── -->
-  <div class="card" style="margin-bottom:12px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <div style="font-size:13px;font-weight:700;color:var(--text)">&#127968; My Businesses</div>
-      <button onclick="addNewBusinessQuick()" class="btn bp sm" style="height:30px;font-size:12px">+ Add Business</button>
-    </div>
-    <div id="acc-biz-list">
-      <div class="skel skel-block" style="height:52px;margin-bottom:8px;border-radius:9px"></div>
-      <div class="skel skel-block" style="height:52px;border-radius:9px"></div>
-    </div>
-  </div>
-
-  <!-- BILLING ─────────────────────────────────────── -->
-  <div class="card" style="margin-bottom:12px">
-    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px">&#128179; Billing</div>
-    <div style="background:linear-gradient(135deg,rgba(108,99,255,.1),rgba(108,99,255,.03));border:1px solid rgba(108,99,255,.2);border-radius:10px;padding:16px;margin-bottom:14px">
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <div id="acc-plan" style="font-size:17px;font-weight:800;color:var(--text);font-family:var(--fh)">MPilot Pro &#128081;</div>
-          <div style="font-size:11.5px;color:var(--muted);margin-top:5px">Renews <span id="acc-renew" style="color:var(--text2)">May 25, 2026</span></div>
-        </div>
-        <span style="font-size:10.5px;font-weight:700;padding:4px 10px;background:rgba(16,185,129,.1);color:#10b981;border-radius:20px;border:1px solid rgba(16,185,129,.18)">Active</span>
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
-      <button onclick="showUpgradePage()" class="btn bp" style="height:38px;font-size:13px">&#8599; Upgrade Plan</button>
-      <button onclick="toast('Contact support@mpilot.in for invoices')" class="btn bs" style="height:38px;font-size:13px">&#128196; View Invoices</button>
-    </div>
-  </div>
-
-  <!-- SECURITY ────────────────────────────────────── -->
-  <div class="card">
-    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px">&#128274; Security</div>
-    <div style="display:flex;flex-direction:column;gap:9px">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
-        <div>
-          <div style="font-size:13px;font-weight:500;color:var(--text)">Phone Verified</div>
-          <div style="font-size:11.5px;color:#10b981;margin-top:2px;font-weight:600">&#10003; Verified</div>
-        </div>
-        <button onclick="toast('Change number — coming soon')" class="btn bs sm" style="height:28px;font-size:11.5px">Change</button>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
-        <div>
-          <div style="font-size:13px;font-weight:500;color:var(--text)">Active Sessions</div>
-          <div style="font-size:11.5px;color:var(--muted);margin-top:2px">Logged in on this device</div>
-        </div>
-        <button onclick="doLogout()" style="height:28px;padding:0 12px;border-radius:7px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.18);color:var(--a3);font-size:11.5px;font-weight:600;cursor:pointer;font-family:var(--fb)">Logout All</button>
-      </div>
-    </div>
-  </div>
 
 </div>
+
+<!-- BIZ GUARD -->
+<div id="biz-guard" style="display:none;position:fixed;inset:0;background:rgba(8,11,18,.92);z-index:400;align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:420px;width:100%;text-align:center">
+    <div style="font-size:36px;margin-bottom:12px">&#127983;</div>
+    <div style="font-family:var(--fh);font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px">Select a Business</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:22px">Choose which business to manage from the sidebar.</div>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <button onclick="document.getElementById('biz-sel')?.focus();document.getElementById('biz-guard').style.display='none'" class="btn bp" style="width:100%;height:42px">Select Business</button>
+      <button onclick="addNewBusinessQuick();document.getElementById('biz-guard').style.display='none'" class="btn bs" style="width:100%;height:42px">+ Add New Business</button>
+    </div>
+  </div>
 </div>
 </body>
 </html>
 
 <!-- INSTAFLOW PAGE -->
-<div class="page" id="p-instaflow">
-  <div class="ph">
-    <div>
-      <div class="pt" style="display:flex;align-items:center;gap:10px">
-        InstaFlow
-        <span style="font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;background:linear-gradient(135deg,rgba(225,48,108,.15),rgba(131,58,180,.12));color:#e1306c;border:1px solid rgba(225,48,108,.2)">&#128293; AI Instagram Engine</span>
-      </div>
-      <div class="ps">Convert Instagram engagement into leads, conversations and customers</div>
-    </div>
-    <button onclick="goTo('setup')" class="btn bs sm">&#8592; Back to Setup</button>
-  </div>
 
-  <!-- Connection Status -->
-  <div class="card" style="margin-bottom:14px;display:flex;align-items:center;gap:14px;padding:16px 20px">
-    <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,rgba(225,48,108,.15),rgba(131,58,180,.1));display:flex;align-items:center;justify-content:center;font-size:22px">&#128247;</div>
-    <div style="flex:1">
-      <div style="font-size:14px;font-weight:600;color:var(--text)">Instagram Business Account</div>
-      <div id="if-ig-status" style="font-size:12px;color:var(--muted);margin-top:2px">Not connected</div>
-    </div>
-    <button onclick="connectMeta()" class="btn bp sm" style="height:34px">Connect Instagram</button>
-  </div>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-
-    <!-- Trigger 1: Comment → DM -->
-    <div class="card">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-        <div style="width:36px;height:36px;border-radius:8px;background:rgba(225,48,108,.1);display:flex;align-items:center;justify-content:center;font-size:18px">&#128172;</div>
-        <div>
-          <div style="font-size:13px;font-weight:700;color:var(--text)">Comment &#8594; DM</div>
-          <div style="font-size:11px;color:var(--muted)">Auto-DM when someone comments a keyword</div>
-        </div>
-        <div style="margin-left:auto">
-          <label style="position:relative;display:inline-block;width:38px;height:20px">
-            <input type="checkbox" id="if-comment-toggle" style="opacity:0;width:0;height:0" onchange="toggleInstaFlow('comment',this.checked)">
-            <span id="if-comment-slider" style="position:absolute;cursor:pointer;inset:0;background:var(--s3);border-radius:20px;transition:.2s"></span>
-          </label>
-        </div>
-      </div>
-      <div style="margin-bottom:10px">
-        <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">Trigger Keywords</label>
-        <input class="fi" id="if-comment-kw" placeholder="price, offer, info, link" style="font-size:12.5px">
-      </div>
-      <div style="margin-bottom:12px">
-        <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">Auto-DM Message</label>
-        <textarea class="fi" id="if-comment-msg" rows="3" style="height:auto;padding:8px 11px;font-size:12px;resize:none" placeholder="Hi! Thanks for your interest. Here's our offer: [link]"></textarea>
-      </div>
-      <button onclick="saveInstaFlowTrigger('comment')" class="btn bp" style="width:100%;height:36px;font-size:13px">Save Trigger</button>
-    </div>
-
-    <!-- Trigger 2: Story Reply → DM -->
-    <div class="card">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-        <div style="width:36px;height:36px;border-radius:8px;background:rgba(131,58,180,.1);display:flex;align-items:center;justify-content:center;font-size:18px">&#9654;&#65039;</div>
-        <div>
-          <div style="font-size:13px;font-weight:700;color:var(--text)">Story Reply &#8594; DM</div>
-          <div style="font-size:11px;color:var(--muted)">Auto-DM when someone reacts to your story</div>
-        </div>
-        <div style="margin-left:auto">
-          <label style="position:relative;display:inline-block;width:38px;height:20px">
-            <input type="checkbox" id="if-story-toggle" style="opacity:0;width:0;height:0" onchange="toggleInstaFlow('story',this.checked)">
-            <span id="if-story-slider" style="position:absolute;cursor:pointer;inset:0;background:var(--s3);border-radius:20px;transition:.2s"></span>
-          </label>
-        </div>
-      </div>
-      <div style="margin-bottom:12px">
-        <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">Auto-DM Message</label>
-        <textarea class="fi" id="if-story-msg" rows="3" style="height:auto;padding:8px 11px;font-size:12px;resize:none" placeholder="Thanks for reacting to our story! Tap here to get your exclusive offer: [link]"></textarea>
-      </div>
-      <div style="margin-bottom:12px">
-        <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">Booking Link (optional)</label>
-        <input class="fi" id="if-story-link" placeholder="https://yourbooking.link" style="font-size:12.5px">
-      </div>
-      <button onclick="saveInstaFlowTrigger('story')" class="btn bp" style="width:100%;height:36px;font-size:13px">Save Trigger</button>
-    </div>
-
-    <!-- Trigger 3: DM Keywords -->
-    <div class="card">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-        <div style="width:36px;height:36px;border-radius:8px;background:rgba(245,158,11,.1);display:flex;align-items:center;justify-content:center;font-size:18px">&#128291;</div>
-        <div>
-          <div style="font-size:13px;font-weight:700;color:var(--text)">DM Keyword Reply</div>
-          <div style="font-size:11px;color:var(--muted)">AI replies when someone DMs a keyword</div>
-        </div>
-        <div style="margin-left:auto">
-          <label style="position:relative;display:inline-block;width:38px;height:20px">
-            <input type="checkbox" id="if-dm-toggle" style="opacity:0;width:0;height:0" onchange="toggleInstaFlow('dm',this.checked)">
-            <span id="if-dm-slider" style="position:absolute;cursor:pointer;inset:0;background:var(--s3);border-radius:20px;transition:.2s"></span>
-          </label>
-        </div>
-      </div>
-      <div style="margin-bottom:10px">
-        <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">DM Keywords</label>
-        <input class="fi" id="if-dm-kw" placeholder="price, offer, location, hours" style="font-size:12.5px">
-      </div>
-      <div style="margin-bottom:12px">
-        <label style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px">AI Reply</label>
-        <textarea class="fi" id="if-dm-msg" rows="2" style="height:auto;padding:8px 11px;font-size:12px;resize:none" placeholder="Hi! Here are our prices / location / offer details..."></textarea>
-      </div>
-      <button onclick="saveInstaFlowTrigger('dm')" class="btn bp" style="width:100%;height:36px;font-size:13px">Save Trigger</button>
-    </div>
-
-    <!-- AI Mode -->
-    <div class="card">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-        <div style="width:36px;height:36px;border-radius:8px;background:rgba(108,99,255,.12);display:flex;align-items:center;justify-content:center;font-size:18px">&#129302;</div>
-        <div>
-          <div style="font-size:13px;font-weight:700;color:var(--text)">AI Conversation Mode</div>
-          <div style="font-size:11px;color:var(--muted)">AI understands intent and qualifies leads</div>
-        </div>
-        <div style="margin-left:auto">
-          <label style="position:relative;display:inline-block;width:38px;height:20px">
-            <input type="checkbox" id="if-ai-toggle" style="opacity:0;width:0;height:0" checked onchange="toggleInstaFlow('ai',this.checked)">
-            <span id="if-ai-slider" style="position:absolute;cursor:pointer;inset:0;background:var(--accent);border-radius:20px;transition:.2s"></span>
-          </label>
-        </div>
-      </div>
-      <div style="background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:14px;margin-bottom:12px">
-        <div style="display:flex;flex-direction:column;gap:7px">
-          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)"><span style="color:#10b981">&#10003;</span> Detect intent (booking, pricing, location)</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)"><span style="color:#10b981">&#10003;</span> Ask qualifying questions</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)"><span style="color:#10b981">&#10003;</span> Share booking link at right moment</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)"><span style="color:#10b981">&#10003;</span> Capture lead data automatically</div>
-        </div>
-      </div>
-      <div style="font-size:11.5px;color:var(--muted);text-align:center">
-        When OFF: uses template replies only
-      </div>
-    </div>
-
-    <!-- Lead Capture Stats -->
-    <div class="card" style="grid-column:1/-1">
-      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:14px">InstaFlow Performance</div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
-        <div style="text-align:center;padding:14px;background:var(--s2);border-radius:9px">
-          <div style="font-size:22px;font-weight:800;color:var(--accent)" id="if-stat-triggers">0</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:3px">Triggers Fired</div>
-        </div>
-        <div style="text-align:center;padding:14px;background:var(--s2);border-radius:9px">
-          <div style="font-size:22px;font-weight:800;color:#10b981" id="if-stat-dms">0</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:3px">DMs Sent</div>
-        </div>
-        <div style="text-align:center;padding:14px;background:var(--s2);border-radius:9px">
-          <div style="font-size:22px;font-weight:800;color:var(--amber)" id="if-stat-leads">0</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:3px">Leads Captured</div>
-        </div>
-        <div style="text-align:center;padding:14px;background:var(--s2);border-radius:9px">
-          <div style="font-size:22px;font-weight:800;color:var(--accent)" id="if-stat-conv">0%</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:3px">Conversion Rate</div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
