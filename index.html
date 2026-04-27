@@ -3896,9 +3896,9 @@ async function loadBizList() {
   }
 
   // Restore last active business, or default to first
-  const stored = localStorage.getItem('mpilot_biz');
-  if (stored && _bizCache.find(b => b.business_id === stored)) {
-    BIZ = stored;
+  var _stored = localStorage.getItem('mpilot_biz');
+  if (_stored && _bizCache.find(function(b){ return b.business_id === _stored; })) {
+    BIZ = _stored;
   } else if (_bizCache.length) {
     BIZ = _bizCache[0].business_id;
     localStorage.setItem('mpilot_biz', BIZ);
@@ -3918,14 +3918,59 @@ async function loadBizList() {
   return _bizCache;
 }
 
+// Map raw API data to normalised shape
+function mapBusiness(api) {
+  return {
+    id:       api.business_id || api.id || '',
+    name:     api.name        || 'Unnamed',
+    city:     api.city        || api.location || '',
+    phone:    api.phone       || api.whatsapp || '',
+    category: api.category    || 'other',
+    leads:    api.lead_count  || 0,
+    isActive: (api.business_id || api.id) === BIZ
+  };
+}
+
 function _renderBizSwitcher(arr) {
-  const sel = document.getElementById('biz-sel');
+  var sel = document.getElementById('biz-sel');
   if (!sel) return;
-  const prev = sel.value;
-  sel.innerHTML = arr.length
-    ? arr.map(b => `<option value="${b.business_id}">${b.name}</option>`).join('')
-    : '<option value="" disabled>Select a business...</option>';
-  sel.value = BIZ || '';
+
+  // Normalise + set default active
+  var businesses = arr.map(mapBusiness);
+  if (businesses.length > 0 && !BIZ) {
+    var def = businesses.find(function(b){ return b.isActive; }) || businesses[0];
+    BIZ = def.id;
+    localStorage.setItem('mpilot_biz', BIZ);
+    businesses = businesses.map(function(b){ return Object.assign({}, b, {isActive: b.id === BIZ}); });
+  }
+
+  // Build options using DOM (not innerHTML) to avoid encoding issues
+  sel.innerHTML = '';
+  if (!businesses.length) {
+    var opt0 = document.createElement('option');
+    opt0.value = ''; opt0.disabled = true; opt0.textContent = 'No businesses yet';
+    sel.appendChild(opt0);
+  } else {
+    businesses.forEach(function(b) {
+      var opt = document.createElement('option');
+      opt.value = b.id;
+      opt.textContent = b.name + (b.city ? ' — ' + b.city : '');
+      sel.appendChild(opt);
+    });
+  }
+
+  // Force value after DOM tick so browser registers the options
+  (function setBizValue() {
+    var target = BIZ || (businesses[0] ? businesses[0].id : '');
+    sel.value = target;
+    if (sel.value !== target && businesses.length > 0) {
+      // Retry once if browser hasn't committed yet
+      setTimeout(function() { sel.value = target; }, 20);
+    }
+    // Sync mobile selector
+    var mob = document.getElementById('mob-biz-sel');
+    if (mob) { mob.innerHTML = sel.innerHTML; mob.value = target; }
+  })();
 
   // Update dashboard subtitle
   const active = arr.find(b => b.business_id === BIZ);
@@ -6212,134 +6257,7 @@ function updateDashActionCards(r) {
   if (banner) banner.style.display = total === 0 ? '' : 'none';
 }
 
-async function loadMyAccount() {
-  // Map USER fields safely
-  var fn  = USER.name  || '';
-  var em  = USER.email || '';
-  var pln = USER.plan  || 'pro';
-  var rol = USER.role  || 'owner';
-  var ini = fn
-    ? fn.split(' ').map(function(w){ return w[0] || ''; }).join('').slice(0,2).toUpperCase()
-    : (em ? em[0].toUpperCase() : 'A');
 
-  // Safe text setters — no innerHTML for user data
-  function st(id, val) {
-    var e = document.getElementById(id);
-    if (e) e.textContent = val || '';
-  }
-  function sh(id, val) {
-    var e = document.getElementById(id);
-    if (e) e.innerHTML = val || '';
-  }
-
-  st('acc-name',  fn || em || 'Account');
-  st('acc-role',  rol.charAt(0).toUpperCase() + rol.slice(1));
-  st('acc-email', em || '—');
-  st('acc-phone', '—');
-
-  var av = document.getElementById('acc-avatar');
-  if (av) av.textContent = ini;
-
-  var sn = document.getElementById('sb-user-name');
-  if (sn) sn.textContent = fn || em || 'Account';
-
-  var sp = document.getElementById('sb-plan-label');
-  if (sp) sp.textContent = pln + ' plan';
-
-  var planLabel = { free:'Free', starter:'Starter', growth:'Growth', pro:'Pro', agency:'Agency' }[pln] || 'Pro';
-  sh('acc-plan', 'MPilot ' + planLabel + ' &#128081;');
-
-  try {
-    var raw = await req('GET', '/api/businesses/');
-    var arr = Array.isArray(raw) ? raw : [];
-
-    // Map business data safely
-    var businesses = arr.map(function(b) {
-      return {
-        id:       b.business_id || '',
-        name:     b.name        || 'Unnamed',
-        location: b.location    || b.city || '',
-        category: b.category    || 'other',
-        phone:    b.phone       || b.whatsapp || '',
-        leads:    b.lead_count  || 0,
-        active:   b.business_id === BIZ
-      };
-    });
-
-    // Phone from active business
-    var ab = businesses.find(function(b){ return b.active; }) || businesses[0];
-    if (ab && ab.phone) {
-      var ph = String(ab.phone).replace(/^91/, '');
-      st('acc-phone', '+91 ' + ph);
-    }
-
-    // Render business list using DOM (no innerHTML for user data)
-    var listEl = document.getElementById('acc-biz-list');
-    if (listEl) {
-      listEl.innerHTML = '';
-      if (!businesses.length) {
-        var emptyDiv = document.createElement('div');
-        emptyDiv.style.cssText = 'text-align:center;padding:24px';
-        emptyDiv.innerHTML = '<div style="color:var(--muted);font-size:13px;margin-bottom:12px">No businesses yet.</div>'
-          + '<button onclick="goTo(\'setup\')" class="btn bp" style="height:36px;font-size:13px">+ Set Up First Business</button>';
-        listEl.appendChild(emptyDiv);
-      } else {
-        var icons = { petcare:'&#128062;', salon:'&#9986;', clinic:'&#129514;', retail:'&#128717;', restaurant:'&#127829;', cafe:'&#9749;', gym:'&#127947;', other:'&#127983;' };
-        businesses.forEach(function(b) {
-          var row = document.createElement('div');
-          row.className = 'acc-biz-row' + (b.active ? ' active-biz' : '');
-          row.dataset.bid   = b.id;
-          row.dataset.bname = b.name;
-
-          // Icon
-          var iconDiv = document.createElement('div');
-          iconDiv.className = 'acc-biz-icon';
-          iconDiv.innerHTML = icons[b.category] || '&#127983;';
-
-          // Info
-          var infoDiv = document.createElement('div');
-          infoDiv.style.cssText = 'flex:1;min-width:0';
-
-          var nameDiv = document.createElement('div');
-          nameDiv.style.cssText = 'font-size:13.5px;font-weight:600;color:var(--text)';
-          nameDiv.textContent = b.name;         // textContent — safe
-
-          var locDiv = document.createElement('div');
-          locDiv.style.cssText = 'font-size:12px;color:var(--muted);margin-top:2px';
-          locDiv.textContent = b.location;      // textContent — safe
-
-          infoDiv.appendChild(nameDiv);
-          if (b.location) infoDiv.appendChild(locDiv);
-
-          // Badge / action
-          var badge = document.createElement(b.active ? 'span' : 'button');
-          if (b.active) {
-            badge.style.cssText = 'font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(108,99,255,.12);color:var(--accent);font-weight:600';
-            badge.textContent = 'Active';
-          } else {
-            badge.className = 'btn bs sm';
-            badge.style.cssText += ';height:27px;font-size:11px';
-            badge.textContent = 'Switch';
-            badge.onclick = function(e) {
-              e.stopPropagation();
-              _pickBizAndEnter(b.id, b.name);
-            };
-          }
-
-          row.appendChild(iconDiv);
-          row.appendChild(infoDiv);
-          row.appendChild(badge);
-          row.onclick = function() {
-            if (!this.classList.contains('active-biz')) _pickBizAndEnter(b.id, b.name);
-          };
-          listEl.appendChild(row);
-        });
-      }
-    }
-  } catch(e) {
-    console.log('loadMyAccount err:', e);
-  }
-}
 
 function showInstaFlow() { goTo('instaflow'); }
 function showInstaFlowPage() { goTo('instaflow'); }
@@ -6353,6 +6271,151 @@ function saveInstaFlowTrigger(type) {
   if (!msg || !msg.value.trim()) { toast('Enter a message first','err'); return; }
   toast('InstaFlow ' + type + ' saved ✓');
 }
+
+async function loadMyAccount() {
+  // Safe text helper — never exposes raw HTML
+  function st(id, val, fallback) {
+    var e = document.getElementById(id);
+    if (e) e.textContent = val || fallback || '';
+  }
+  function sh(id, val) {
+    var e = document.getElementById(id);
+    if (e) e.innerHTML = val || '';  // only for trusted static HTML
+  }
+
+  var fn  = USER.name  || '';
+  var em  = USER.email || '';
+  var pln = USER.plan  || 'pro';
+  var rol = USER.role  || 'owner';
+  var ini = fn
+    ? fn.split(' ').map(function(w){ return w[0]||''; }).join('').slice(0,2).toUpperCase()
+    : (em ? em[0].toUpperCase() : 'A');
+
+  st('acc-name',  fn || em, 'Account');
+  st('acc-role',  rol.charAt(0).toUpperCase() + rol.slice(1));
+  st('acc-email', em, 'Not added — Edit Profile to add');
+  st('acc-phone', '', '—');  // filled from business below
+
+  var av = document.getElementById('acc-avatar'); if (av) av.textContent = ini;
+  var sn = document.getElementById('sb-user-name'); if (sn) sn.textContent = fn || em || 'Account';
+  var sp = document.getElementById('sb-plan-label'); if (sp) sp.textContent = pln + ' plan';
+
+  var planLabel = {free:'Free',starter:'Starter',growth:'Growth',pro:'Pro',agency:'Agency'}[pln] || 'Pro';
+  sh('acc-plan', 'MPilot ' + planLabel + ' &#128081;');
+  st('acc-plan-badge', 'MPilot ' + planLabel);
+
+  try {
+    var raw    = await req('GET', '/api/businesses/');
+    var apiArr = Array.isArray(raw) ? raw : [];
+
+    // Normalise using mapBusiness (handles business_id → id)
+    var businesses = apiArr.map(mapBusiness);
+
+    // Set default active if not already set
+    if (businesses.length > 0 && !BIZ) {
+      BIZ = businesses[0].id;
+      localStorage.setItem('mpilot_biz', BIZ);
+    }
+    businesses = businesses.map(function(b) {
+      return Object.assign({}, b, { isActive: b.id === BIZ });
+    });
+
+    // Phone from active business
+    var ab = businesses.find(function(b){ return b.isActive; }) || businesses[0];
+    if (ab && ab.phone) {
+      var ph = String(ab.phone).replace(/^91/, '');
+      st('acc-phone', '+91 ' + ph);
+    }
+
+    // Render business list using DOM (textContent for user data)
+    var listEl = document.getElementById('acc-biz-list');
+    if (listEl) {
+      listEl.innerHTML = '';
+
+      if (!businesses.length) {
+        var empty = document.createElement('div');
+        empty.style.cssText = 'text-align:center;padding:24px';
+        var msg = document.createElement('div');
+        msg.style.cssText = 'color:var(--muted);font-size:13px;margin-bottom:12px';
+        msg.textContent = 'No businesses yet — set up your first one';
+        var btn = document.createElement('button');
+        btn.className = 'btn bp';
+        btn.style.cssText = 'height:36px;font-size:13px';
+        btn.textContent = '+ Set Up Business';
+        btn.onclick = function(){ goTo('setup'); };
+        empty.appendChild(msg);
+        empty.appendChild(btn);
+        listEl.appendChild(empty);
+
+      } else {
+        var icons = {petcare:'&#128062;',salon:'&#9986;',clinic:'&#129514;',retail:'&#128717;',restaurant:'&#127829;',cafe:'&#9749;',gym:'&#127947;',other:'&#127983;'};
+
+        businesses.forEach(function(b) {
+          var row = document.createElement('div');
+          row.className = 'acc-biz-row' + (b.isActive ? ' active-biz' : '');
+          row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px;cursor:pointer;margin-bottom:8px';
+
+          // Icon (innerHTML OK — static string from icons map)
+          var iconEl = document.createElement('div');
+          iconEl.className = 'acc-biz-icon';
+          iconEl.innerHTML = icons[b.category] || icons.other;
+
+          // Name (textContent — user data)
+          var infoEl = document.createElement('div');
+          infoEl.style.cssText = 'flex:1;min-width:0';
+          var nameEl = document.createElement('div');
+          nameEl.style.cssText = 'font-size:13.5px;font-weight:600;color:var(--text)';
+          nameEl.textContent = b.name;                 // safe
+          var cityEl = document.createElement('div');
+          cityEl.style.cssText = 'font-size:11.5px;color:var(--muted);margin-top:2px';
+          cityEl.textContent = b.city || '';           // safe
+          infoEl.appendChild(nameEl);
+          if (b.city) infoEl.appendChild(cityEl);
+
+          // Badge / switch button
+          var actionEl;
+          if (b.isActive) {
+            actionEl = document.createElement('span');
+            actionEl.style.cssText = 'font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(108,99,255,.12);color:var(--accent);font-weight:600;white-space:nowrap';
+            actionEl.textContent = 'Active';           // safe
+          } else {
+            actionEl = document.createElement('button');
+            actionEl.className = 'btn bs sm';
+            actionEl.style.height = '28px';
+            actionEl.textContent = 'Switch';           // safe
+            (function(bid, bname) {
+              actionEl.onclick = function(e) {
+                e.stopPropagation();
+                _pickBizAndEnter(bid, bname);
+              };
+            })(b.id, b.name);
+          }
+
+          row.appendChild(iconEl);
+          row.appendChild(infoEl);
+          row.appendChild(actionEl);
+
+          (function(bid, bname, isA) {
+            row.onclick = function() { if (!isA) _pickBizAndEnter(bid, bname); };
+          })(b.id, b.name, b.isActive);
+
+          listEl.appendChild(row);
+        });
+      }
+    }
+
+  } catch(err) {
+    console.log('loadMyAccount err:', err);
+    var listEl2 = document.getElementById('acc-biz-list');
+    if (listEl2) {
+      listEl2.innerHTML = '';
+      var errDiv = document.createElement('div');
+      errDiv.style.cssText = 'text-align:center;padding:20px;color:var(--a3);font-size:13px';
+      errDiv.textContent = 'Could not load businesses. Check connection.';
+      listEl2.appendChild(errDiv);
+    }
+  }
+}
 </script>
 <div class="page" id="p-myaccount">
   <div class="ph">
@@ -6360,108 +6423,82 @@ function saveInstaFlowTrigger(type) {
     <button onclick="doLogout()" style="height:34px;padding:0 16px;border-radius:8px;background:rgba(255,107,107,.07);border:1px solid rgba(255,107,107,.2);color:var(--a3);font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--fb)">&#8594; Logout</button>
   </div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start">
-
-    <!-- PROFILE -->
-    <div class="card">
-      <div style="display:flex;align-items:center;gap:13px;margin-bottom:16px">
-        <div id="acc-avatar" style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#8b7cf8);display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;color:#fff;flex-shrink:0">A</div>
-        <div style="flex:1;min-width:0">
-          <div id="acc-name" style="font-size:15px;font-weight:700;color:var(--text)">—</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:3px"><span id="acc-role">Owner</span></div>
-        </div>
-        <button onclick="editAccountProfile()" class="btn bs sm">Edit</button>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <div style="padding:9px 12px;background:var(--s2);border:1px solid var(--border);border-radius:8px">
-          <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px">Phone / WhatsApp</div>
-          <div id="acc-phone" style="font-size:13px;font-weight:500;color:var(--text)">&#8212;</div>
-        </div>
-        <div style="padding:9px 12px;background:var(--s2);border:1px solid var(--border);border-radius:8px">
-          <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px">Email</div>
-          <div id="acc-email" style="font-size:13px;font-weight:500;color:var(--text)">&#8212;</div>
+  <!-- PROFILE ────────────────────────────────────── -->
+  <div class="card" style="margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+      <div id="acc-avatar" style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#8b7cf8);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;flex-shrink:0">A</div>
+      <div style="flex:1;min-width:0">
+        <div id="acc-name" style="font-size:16px;font-weight:700;color:var(--text)">&#8212;</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+          <span id="acc-role" style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(108,99,255,.1);color:var(--accent)">Owner</span>
+          <span id="acc-plan-badge" style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(16,185,129,.1);color:#10b981">Pro</span>
         </div>
       </div>
+      <button onclick="editAccountProfile()" class="btn bs sm">Edit Profile</button>
     </div>
-
-    <!-- BILLING -->
-    <div class="card">
-      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:14px">Plan &amp; Billing</div>
-      <div style="background:linear-gradient(135deg,rgba(108,99,255,.1),rgba(108,99,255,.03));border:1px solid rgba(108,99,255,.2);border-radius:10px;padding:14px;margin-bottom:14px">
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <div>
-            <div id="acc-plan" style="font-size:16px;font-weight:800;color:var(--text);font-family:var(--fh)">MPilot Pro &#128081;</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:4px">Renews <span id="acc-renew">May 25, 2026</span></div>
-          </div>
-          <span style="font-size:10.5px;font-weight:700;padding:3px 9px;background:rgba(16,185,129,.1);color:#10b981;border-radius:20px">Active</span>
-        </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+      <div style="padding:10px 13px;background:var(--s2);border:1px solid var(--border);border-radius:8px">
+        <div style="font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">&#128241; Phone / WhatsApp</div>
+        <div id="acc-phone" style="font-size:13.5px;font-weight:500;color:var(--text)">&#8212;</div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <button onclick="showUpgradePage()" class="btn bp" style="height:37px;font-size:13px">&#8599; Upgrade</button>
-        <button onclick="toast('Contact support@mpilot.in for invoices')" class="btn bs" style="height:37px;font-size:13px">&#128196; Invoices</button>
+      <div style="padding:10px 13px;background:var(--s2);border:1px solid var(--border);border-radius:8px">
+        <div style="font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">&#128231; Email</div>
+        <div id="acc-email" style="font-size:13.5px;font-weight:500;color:var(--text)">&#8212;</div>
       </div>
-    </div>
-
-    <!-- BUSINESSES -->
-    <div class="card" style="grid-column:1/-1">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <div style="font-size:12px;font-weight:700;color:var(--text)">My Businesses</div>
-        <button onclick="addNewBusinessQuick()" class="btn bp sm" style="height:30px;font-size:12px">+ Add Business</button>
-      </div>
-      <div id="acc-biz-list"><div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">Loading...</div></div>
-    </div>
-
-    <!-- SECURITY -->
-    <div class="card" style="grid-column:1/-1">
-      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:12px">Security</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 13px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
-          <div>
-            <div style="font-size:13px;font-weight:500;color:var(--text)">Phone Verification</div>
-            <div style="font-size:11px;color:#10b981;margin-top:2px;font-weight:600">&#10003; Verified</div>
-          </div>
-          <button onclick="toast('Change number — coming soon')" class="btn bs sm" style="height:27px;font-size:11px">Change</button>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 13px;background:var(--s2);border:1px sol
-<div class="page" id="p-onboarding">
-  <div style="display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 60px);padding:40px 20px">
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px 36px;max-width:480px;width:100%;text-align:center">
-      <div style="font-size:48px;margin-bottom:16px">&#9889;</div>
-      <div style="font-family:var(--fh);font-size:26px;font-weight:800;color:var(--text);margin-bottom:10px">Welcome to MPilot!</div>
-      <div style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:28px">Set up your business in 2 minutes and start getting customers automatically via WhatsApp AI.</div>
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:28px;text-align:left">
-        <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
-          <div style="width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>
-          <div style="font-size:12.5px;color:var(--text)">Tell us your business name &amp; category</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
-          <div style="width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>
-          <div style="font-size:12.5px;color:var(--text)">AI finds you on Google &amp; fills everything</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
-          <div style="width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>
-          <div style="font-size:12.5px;color:var(--text)">Print QR &#8594; customers come automatically</div>
-        </div>
-      </div>
-      <button onclick="goTo('setup');wizGo(1);" class="btn bp" style="width:100%;height:48px;font-size:15px;font-weight:800;box-shadow:0 6px 20px rgba(108,99,255,.4)">
-        &#9889; Set Up My Business — Free
-      </button>
-      <div style="margin-top:14px;font-size:12px;color:var(--muted)">&#10003; 2 minutes &nbsp;&nbsp; &#10003; No credit card &nbsp;&nbsp; &#10003; Works on WhatsApp</div>
     </div>
   </div>
-</div>
 
-id var(--border);border-radius:9px">
-          <div>
-            <div style="font-size:13px;font-weight:500;color:var(--text)">Session</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px">This device</div>
-          </div>
-          <button onclick="doLogout()" style="height:27px;padding:0 11px;border-radius:6px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.18);color:var(--a3);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--fb)">Logout</button>
+  <!-- MY BUSINESSES ───────────────────────────────── -->
+  <div class="card" style="margin-bottom:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div style="font-size:13px;font-weight:700;color:var(--text)">&#127968; My Businesses</div>
+      <button onclick="addNewBusinessQuick()" class="btn bp sm" style="height:30px;font-size:12px">+ Add Business</button>
+    </div>
+    <div id="acc-biz-list">
+      <div class="skel skel-block" style="height:52px;margin-bottom:8px;border-radius:9px"></div>
+      <div class="skel skel-block" style="height:52px;border-radius:9px"></div>
+    </div>
+  </div>
+
+  <!-- BILLING ─────────────────────────────────────── -->
+  <div class="card" style="margin-bottom:12px">
+    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px">&#128179; Billing</div>
+    <div style="background:linear-gradient(135deg,rgba(108,99,255,.1),rgba(108,99,255,.03));border:1px solid rgba(108,99,255,.2);border-radius:10px;padding:16px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div id="acc-plan" style="font-size:17px;font-weight:800;color:var(--text);font-family:var(--fh)">MPilot Pro &#128081;</div>
+          <div style="font-size:11.5px;color:var(--muted);margin-top:5px">Renews <span id="acc-renew" style="color:var(--text2)">May 25, 2026</span></div>
         </div>
+        <span style="font-size:10.5px;font-weight:700;padding:4px 10px;background:rgba(16,185,129,.1);color:#10b981;border-radius:20px;border:1px solid rgba(16,185,129,.18)">Active</span>
       </div>
     </div>
-
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+      <button onclick="showUpgradePage()" class="btn bp" style="height:38px;font-size:13px">&#8599; Upgrade Plan</button>
+      <button onclick="toast('Contact support@mpilot.in for invoices')" class="btn bs" style="height:38px;font-size:13px">&#128196; View Invoices</button>
+    </div>
   </div>
+
+  <!-- SECURITY ────────────────────────────────────── -->
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px">&#128274; Security</div>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
+        <div>
+          <div style="font-size:13px;font-weight:500;color:var(--text)">Phone Verified</div>
+          <div style="font-size:11.5px;color:#10b981;margin-top:2px;font-weight:600">&#10003; Verified</div>
+        </div>
+        <button onclick="toast('Change number — coming soon')" class="btn bs sm" style="height:28px;font-size:11.5px">Change</button>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
+        <div>
+          <div style="font-size:13px;font-weight:500;color:var(--text)">Active Sessions</div>
+          <div style="font-size:11.5px;color:var(--muted);margin-top:2px">Logged in on this device</div>
+        </div>
+        <button onclick="doLogout()" style="height:28px;padding:0 12px;border-radius:7px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.18);color:var(--a3);font-size:11.5px;font-weight:600;cursor:pointer;font-family:var(--fb)">Logout All</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 </div>
 </body>
