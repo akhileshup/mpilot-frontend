@@ -983,10 +983,7 @@ function showUpgradePage() {
 <aside class="sb" id="main-sidebar">
   <div class="sb-logo">
     <div style="width:30px;height:30px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;flex-shrink:0">&#9889;</div>
-    <div>
-      <div class="sb-logo-mark">MPilot</div>
-      <div class="sb-logo-sub">AI Growth Engine</div>
-    </div>
+    <div><div class="sb-logo-mark">MPilot</div><div class="sb-logo-sub">AI Growth Engine</div></div>
   </div>
 
   <div style="padding:8px 10px 10px;border-bottom:1px solid var(--border)">
@@ -998,23 +995,23 @@ function showUpgradePage() {
   </div>
 
   <nav class="sb-nav" style="padding:10px 8px;flex:1">
-    <div class="ni" data-p="dashboard" onclick="goTo('dashboard')">
+    <div class="ni" data-p="dashboard"  onclick="goTo('dashboard')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
       Dashboard
     </div>
-    <div class="ni" data-p="customers" onclick="goTo('customers')">
+    <div class="ni" data-p="customers"  onclick="goTo('customers')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
       Customers
     </div>
-    <div class="ni" data-p="campaigns" onclick="goTo('campaigns')">
+    <div class="ni" data-p="campaigns"  onclick="goTo('campaigns')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
       Growth Hub
     </div>
-    <div class="ni" data-p="reviews" onclick="goTo('reviews')">
+    <div class="ni" data-p="reviews"    onclick="goTo('reviews')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       Reputation
     </div>
-    <div class="ni" data-p="setup" onclick="goTo('setup')">
+    <div class="ni" data-p="setup"      onclick="goTo('setup')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       Setup
     </div>
@@ -1197,7 +1194,7 @@ function showUpgradePage() {
       <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Your QR Code</div>
       <div class="qr-preview-box">
         <div id="dash-qr-wrap" style="margin-bottom:12px">
-          <div id="dash-qr" style="width:140px;height:140px;margin:0 auto;background:var(--s3);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11px">Loading...</div>
+          <div id="dash-qr" style="width:140px;height:140px;margin:0 auto;border-radius:10px;overflow:hidden"><div class="skel" style="width:100%;height:100%;border-radius:10px"></div></div>
         </div>
         <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">Scan to Connect</div>
         <div style="font-size:10.5px;color:var(--muted);margin-bottom:14px;line-height:1.5">Print &amp; place in your store<br>to get customers on WhatsApp</div>
@@ -5843,12 +5840,10 @@ var PAGE_TITLES = {
 };
 
 // Patch goTo to update nav active state and page title
-var _origGoTo = typeof goTo === 'function' ? goTo : null;
 
 
 
 // ─── My Account ──────────────────────────────────────────────────
-/* loadMyAccount defined below */
 
 function editAccountProfile(){
   var ex=document.getElementById('edit-profile-modal'); if(ex)ex.remove();
@@ -6216,6 +6211,148 @@ function updateDashActionCards(r) {
   var banner = document.getElementById('dash-onboard-banner');
   if (banner) banner.style.display = total === 0 ? '' : 'none';
 }
+
+async function loadMyAccount() {
+  // Map USER fields safely
+  var fn  = USER.name  || '';
+  var em  = USER.email || '';
+  var pln = USER.plan  || 'pro';
+  var rol = USER.role  || 'owner';
+  var ini = fn
+    ? fn.split(' ').map(function(w){ return w[0] || ''; }).join('').slice(0,2).toUpperCase()
+    : (em ? em[0].toUpperCase() : 'A');
+
+  // Safe text setters — no innerHTML for user data
+  function st(id, val) {
+    var e = document.getElementById(id);
+    if (e) e.textContent = val || '';
+  }
+  function sh(id, val) {
+    var e = document.getElementById(id);
+    if (e) e.innerHTML = val || '';
+  }
+
+  st('acc-name',  fn || em || 'Account');
+  st('acc-role',  rol.charAt(0).toUpperCase() + rol.slice(1));
+  st('acc-email', em || '—');
+  st('acc-phone', '—');
+
+  var av = document.getElementById('acc-avatar');
+  if (av) av.textContent = ini;
+
+  var sn = document.getElementById('sb-user-name');
+  if (sn) sn.textContent = fn || em || 'Account';
+
+  var sp = document.getElementById('sb-plan-label');
+  if (sp) sp.textContent = pln + ' plan';
+
+  var planLabel = { free:'Free', starter:'Starter', growth:'Growth', pro:'Pro', agency:'Agency' }[pln] || 'Pro';
+  sh('acc-plan', 'MPilot ' + planLabel + ' &#128081;');
+
+  try {
+    var raw = await req('GET', '/api/businesses/');
+    var arr = Array.isArray(raw) ? raw : [];
+
+    // Map business data safely
+    var businesses = arr.map(function(b) {
+      return {
+        id:       b.business_id || '',
+        name:     b.name        || 'Unnamed',
+        location: b.location    || b.city || '',
+        category: b.category    || 'other',
+        phone:    b.phone       || b.whatsapp || '',
+        leads:    b.lead_count  || 0,
+        active:   b.business_id === BIZ
+      };
+    });
+
+    // Phone from active business
+    var ab = businesses.find(function(b){ return b.active; }) || businesses[0];
+    if (ab && ab.phone) {
+      var ph = String(ab.phone).replace(/^91/, '');
+      st('acc-phone', '+91 ' + ph);
+    }
+
+    // Render business list using DOM (no innerHTML for user data)
+    var listEl = document.getElementById('acc-biz-list');
+    if (listEl) {
+      listEl.innerHTML = '';
+      if (!businesses.length) {
+        var emptyDiv = document.createElement('div');
+        emptyDiv.style.cssText = 'text-align:center;padding:24px';
+        emptyDiv.innerHTML = '<div style="color:var(--muted);font-size:13px;margin-bottom:12px">No businesses yet.</div>'
+          + '<button onclick="goTo(\'setup\')" class="btn bp" style="height:36px;font-size:13px">+ Set Up First Business</button>';
+        listEl.appendChild(emptyDiv);
+      } else {
+        var icons = { petcare:'&#128062;', salon:'&#9986;', clinic:'&#129514;', retail:'&#128717;', restaurant:'&#127829;', cafe:'&#9749;', gym:'&#127947;', other:'&#127983;' };
+        businesses.forEach(function(b) {
+          var row = document.createElement('div');
+          row.className = 'acc-biz-row' + (b.active ? ' active-biz' : '');
+          row.dataset.bid   = b.id;
+          row.dataset.bname = b.name;
+
+          // Icon
+          var iconDiv = document.createElement('div');
+          iconDiv.className = 'acc-biz-icon';
+          iconDiv.innerHTML = icons[b.category] || '&#127983;';
+
+          // Info
+          var infoDiv = document.createElement('div');
+          infoDiv.style.cssText = 'flex:1;min-width:0';
+
+          var nameDiv = document.createElement('div');
+          nameDiv.style.cssText = 'font-size:13.5px;font-weight:600;color:var(--text)';
+          nameDiv.textContent = b.name;         // textContent — safe
+
+          var locDiv = document.createElement('div');
+          locDiv.style.cssText = 'font-size:12px;color:var(--muted);margin-top:2px';
+          locDiv.textContent = b.location;      // textContent — safe
+
+          infoDiv.appendChild(nameDiv);
+          if (b.location) infoDiv.appendChild(locDiv);
+
+          // Badge / action
+          var badge = document.createElement(b.active ? 'span' : 'button');
+          if (b.active) {
+            badge.style.cssText = 'font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(108,99,255,.12);color:var(--accent);font-weight:600';
+            badge.textContent = 'Active';
+          } else {
+            badge.className = 'btn bs sm';
+            badge.style.cssText += ';height:27px;font-size:11px';
+            badge.textContent = 'Switch';
+            badge.onclick = function(e) {
+              e.stopPropagation();
+              _pickBizAndEnter(b.id, b.name);
+            };
+          }
+
+          row.appendChild(iconDiv);
+          row.appendChild(infoDiv);
+          row.appendChild(badge);
+          row.onclick = function() {
+            if (!this.classList.contains('active-biz')) _pickBizAndEnter(b.id, b.name);
+          };
+          listEl.appendChild(row);
+        });
+      }
+    }
+  } catch(e) {
+    console.log('loadMyAccount err:', e);
+  }
+}
+
+function showInstaFlow() { goTo('instaflow'); }
+function showInstaFlowPage() { goTo('instaflow'); }
+function toggleInstaFlow(type, on) {
+  var slider = document.getElementById('if-'+type+'-slider');
+  if (slider) slider.style.background = on ? 'var(--accent)' : 'var(--s3)';
+  toast((on ? 'InstaFlow ' + type + ' ON' : 'InstaFlow ' + type + ' OFF'));
+}
+function saveInstaFlowTrigger(type) {
+  var msg = document.getElementById('if-'+type+'-msg');
+  if (!msg || !msg.value.trim()) { toast('Enter a message first','err'); return; }
+  toast('InstaFlow ' + type + ' saved ✓');
+}
 </script>
 <div class="page" id="p-myaccount">
   <div class="ph">
@@ -6223,15 +6360,15 @@ function updateDashActionCards(r) {
     <button onclick="doLogout()" style="height:34px;padding:0 16px;border-radius:8px;background:rgba(255,107,107,.07);border:1px solid rgba(255,107,107,.2);color:var(--a3);font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--fb)">&#8594; Logout</button>
   </div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start">
 
     <!-- PROFILE -->
     <div class="card">
       <div style="display:flex;align-items:center;gap:13px;margin-bottom:16px">
-        <div id="acc-avatar" style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#8b7cf8);display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;color:#fff;flex-shrink:0">P</div>
+        <div id="acc-avatar" style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#8b7cf8);display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;color:#fff;flex-shrink:0">A</div>
         <div style="flex:1;min-width:0">
-          <div id="acc-name" style="font-size:15px;font-weight:700;color:var(--text)">Loading...</div>
-          <div style="font-size:10.5px;color:var(--muted);margin-top:3px"><span id="acc-role">Owner</span></div>
+          <div id="acc-name" style="font-size:15px;font-weight:700;color:var(--text)">—</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px"><span id="acc-role">Owner</span></div>
         </div>
         <button onclick="editAccountProfile()" class="btn bs sm">Edit</button>
       </div>
@@ -6265,7 +6402,7 @@ function updateDashActionCards(r) {
       </div>
     </div>
 
-    <!-- BUSINESSES (full width) -->
+    <!-- BUSINESSES -->
     <div class="card" style="grid-column:1/-1">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
         <div style="font-size:12px;font-weight:700;color:var(--text)">My Businesses</div>
@@ -6276,98 +6413,45 @@ function updateDashActionCards(r) {
 
     <!-- SECURITY -->
     <div class="card" style="grid-column:1/-1">
-      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:14px">Security</div>
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:12px">Security</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 13px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
           <div>
             <div style="font-size:13px;font-weight:500;color:var(--text)">Phone Verification</div>
-            <di
-// ── InstaFlow ─────────────────────────────────────────────────
-function showInstaFlow() {
-  goTo('instaflow');
-}
-
-function toggleInstaFlow(type, on) {
-  var slider = document.getElementById('if-'+type+'-slider');
-  if (slider) slider.style.background = on ? 'var(--accent)' : 'var(--s3)';
-  toast((on ? 'InstaFlow ' + type + ' automation ON' : 'InstaFlow ' + type + ' OFF'));
-}
-
-function saveInstaFlowTrigger(type) {
-  var kw  = document.getElementById('if-'+type+'-kw');
-  var msg = document.getElementById('if-'+type+'-msg');
-  var kwVal  = kw  ? kw.value.trim()  : '';
-  var msgVal = msg ? msg.value.trim() : '';
-  if (!msgVal) { toast('Enter a message first', 'err'); return; }
-  toast('InstaFlow ' + type + ' trigger saved ✓');
-}
-
-// ── loadMyAccount (clean version) ────────────────────────────
-async function loadMyAccount() {
-  var fn  = USER.name  || '';
-  var em  = USER.email || '';
-  var pln = USER.plan  || 'pro';
-  var rol = USER.role  || 'owner';
-  var ini = fn ? fn.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase() : (em?em[0].toUpperCase():'A');
-  var setT = function(id,v){var e=document.getElementById(id); if(e)e.textContent=v||'';};
-  var setH = function(id,v){var e=document.getElementById(id); if(e)e.innerHTML=v||'';};
-
-  setT('acc-name', fn||em||'Account');
-  setT('acc-role', rol.charAt(0).toUpperCase()+rol.slice(1));
-  setT('acc-email', em||'—');
-  setT('acc-phone', '—');
-  var av=document.getElementById('acc-avatar'); if(av)av.textContent=ini;
-  var sn=document.getElementById('sb-user-name'); if(sn)sn.textContent=fn||em||'Account';
-  var sp=document.getElementById('sb-plan-label'); if(sp)sp.textContent=pln+' plan';
-
-  var planLabel={free:'Free',starter:'Starter',growth:'Growth',pro:'Pro',agency:'Agency'}[pln]||'Pro';
-  setH('acc-plan','MPilot '+planLabel+' &#128081;');
-
-  try {
-    var biz=await req('GET','/api/businesses/');
-    var arr=Array.isArray(biz)?biz:[];
-
-    // Phone from business (not stored on user object)
-    var ab=arr.find(function(b){return b.business_id===BIZ;})||arr[0];
-    if(ab){var ph=String(ab.phone||ab.whatsapp||'').replace(/^91/,''); if(ph)setT('acc-phone','+91 '+ph);}
-
-    // Business list
-    var icons={petcare:'&#128062;',salon:'&#9986;',clinic:'&#129514;',retail:'&#128717;',restaurant:'&#127829;',cafe:'&#9749;',gym:'&#127947;',other:'&#127983;'};
-    var listEl=document.getElementById('acc-biz-list');
-    if(listEl){
-      if(!arr.length){
-        listEl.innerHTML='<div style="text-align:center;padding:24px;font-size:13px;color:var(--muted)">No businesses yet.<br><button onclick="goTo(\'setup\')" class="btn bp" style="margin-top:12px;height:36px;font-size:13px">+ Set Up First Business</button></div>';
-      }else{
-        var frag=document.createDocumentFragment();
-        arr.forEach(function(b){
-          var isA=b.business_id===BIZ;
-          var row=document.createElement('div');
-          row.className='acc-biz-row'+(isA?' active-biz':'');
-          row.dataset.bid=b.business_id; row.dataset.bname=b.name||'';
-          var icon=icons[b.category]||'&#127983;';
-          var loc=b.location||b.city||'';
-          row.innerHTML='<div class="acc-biz-icon">'+icon+'</div>'
-            +'<div style="flex:1;min-width:0">'
-            +'<div style="font-size:13.5px;font-weight:600;color:var(--text)">'+(b.name||'')+'</div>'
-            +(loc?'<div style="font-size:12px;color:var(--muted);margin-top:2px">'+loc+'</div>':'')
-            +'</div>'
-            +(isA
-              ?'<span style="font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(108,99,255,.12);color:var(--accent);font-weight:600">Active</span>'
-              :'<button class="btn bs sm" style="height:27px;font-size:11px" onclick="event.stopPropagation();_pickBizAndEnter(this.closest(\'[data-bid]\').dataset.bid,this.closest(\'[data-bid]\').dataset.bname)">Switch</button>');
-          row.onclick=function(){if(!this.classList.contains('active-biz'))_pickBizAndEnter(this.dataset.bid,this.dataset.bname);};
-          frag.appendChild(row);
-        });
-        listEl.innerHTML=''; listEl.appendChild(frag);
-      }
-    }
-  }catch(e){console.log('loadMyAccount:',e);}
-}
-
-v style="font-size:11px;color:#10b981;margin-top:2px;font-weight:600">&#10003; Verified</div>
+            <div style="font-size:11px;color:#10b981;margin-top:2px;font-weight:600">&#10003; Verified</div>
           </div>
           <button onclick="toast('Change number — coming soon')" class="btn bs sm" style="height:27px;font-size:11px">Change</button>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 13px;background:var(--s2);border:1px sol
+<div class="page" id="p-onboarding">
+  <div style="display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 60px);padding:40px 20px">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px 36px;max-width:480px;width:100%;text-align:center">
+      <div style="font-size:48px;margin-bottom:16px">&#9889;</div>
+      <div style="font-family:var(--fh);font-size:26px;font-weight:800;color:var(--text);margin-bottom:10px">Welcome to MPilot!</div>
+      <div style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:28px">Set up your business in 2 minutes and start getting customers automatically via WhatsApp AI.</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:28px;text-align:left">
+        <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
+          <div style="width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>
+          <div style="font-size:12.5px;color:var(--text)">Tell us your business name &amp; category</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
+          <div style="width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>
+          <div style="font-size:12.5px;color:var(--text)">AI finds you on Google &amp; fills everything</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px">
+          <div style="width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>
+          <div style="font-size:12.5px;color:var(--text)">Print QR &#8594; customers come automatically</div>
+        </div>
+      </div>
+      <button onclick="goTo('setup');wizGo(1);" class="btn bp" style="width:100%;height:48px;font-size:15px;font-weight:800;box-shadow:0 6px 20px rgba(108,99,255,.4)">
+        &#9889; Set Up My Business — Free
+      </button>
+      <div style="margin-top:14px;font-size:12px;color:var(--muted)">&#10003; 2 minutes &nbsp;&nbsp; &#10003; No credit card &nbsp;&nbsp; &#10003; Works on WhatsApp</div>
+    </div>
+  </div>
+</div>
+
+id var(--border);border-radius:9px">
           <div>
             <div style="font-size:13px;font-weight:500;color:var(--text)">Session</div>
             <div style="font-size:11px;color:var(--muted);margin-top:2px">This device</div>
@@ -6378,6 +6462,7 @@ v style="font-size:11px;color:#10b981;margin-top:2px;font-weight:600">&#10003; V
     </div>
 
   </div>
+</div>
 </div>
 </body>
 </html>
